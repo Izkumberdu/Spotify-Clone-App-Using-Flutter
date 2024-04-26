@@ -1,40 +1,35 @@
+// ignore_for_file: non_constant_identifier_names
+
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 const Color kWhite = Color(0xFFFFFFFF);
-const Color kLightGrey = Color(0xFFF3F4F8);
-const Color kPink = Color(0xFFFA0078);
-const Color kMediumGrey = Color(0xFF808080);
-const Color kDarkBlue = Color(0xFF111828);
-const Color kGrey = Color(0xFF666666);
-const Color kDarkGrey = Color(0xFF8D8D8D);
-const Color kDarkerGrey = Color(0xFF454545);
-const Color kAsh = Color(0xFF9B9B9B);
-const Color kLightBlack = Color(0xFF272727);
-const Color kGreen = Color(0xFF36C07E);
-const Color kLightGreyer = Color(0xFFE8E8E8);
-const Color kContraGrey = Color(0xFF9B9B9B);
-final SoraBold = GoogleFonts.sora(
-  color: kDarkBlue,
-  fontWeight: FontWeight.w700,
+const Color kPink = Color(0xFFE9A6A6);
+const Color kDarkGrey = Color(0xFF14181c);
+const Color kGrey = Color(0xff485464);
+const Color kLightBlue = Color(0xffddeeff);
+
+final OpenSansBold = GoogleFonts.openSans(
+  color: kWhite,
+  fontWeight: FontWeight.bold,
 );
-final SoraSemiBold = GoogleFonts.sora(
-  color: kDarkBlue,
-  fontWeight: FontWeight.w600,
-);
-final SoraRegular = GoogleFonts.sora(
-  color: kDarkBlue,
+final OpenSansRegular = GoogleFonts.openSans(
+  color: kWhite,
   fontWeight: FontWeight.w400,
 );
-final SoraLight = GoogleFonts.sora(
-  color: kDarkBlue,
-  fontWeight: FontWeight.w300,
+final OpenSansSemiBold = GoogleFonts.openSans(
+  color: kWhite,
+  fontWeight: FontWeight.w600,
 );
-final SoraExtraLight = GoogleFonts.sora(
-  color: kDarkBlue,
-  fontWeight: FontWeight.w200,
+final RobotoSemiBold = GoogleFonts.roboto(
+  color: kWhite,
+  fontWeight: FontWeight.w600,
 );
-final SoraThin = GoogleFonts.sora(
-  color: kDarkBlue,
-  fontWeight: FontWeight.w100,
+final RobotoRegular = GoogleFonts.roboto(
+  color: kWhite,
+  fontWeight: FontWeight.w400,
+);
+final RobotoBold = GoogleFonts.roboto(
+  color: kWhite,
+  fontWeight: FontWeight.bold,
 );
