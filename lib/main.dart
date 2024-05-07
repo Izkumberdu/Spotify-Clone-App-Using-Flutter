@@ -13,11 +13,11 @@ void main() {
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
-  // This widget is the root of your application. test
+  // This widget is the root of your application. 
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      home: const AlbumQueuePage(), //akoa rani gitry akoang gihimo screen jus ignore!
+      home: const AlbumQueuePage(), //akoa rani gitry akoang gihimo screen jus ignore! cyber test
       routes: {
         '/onboarding': (context) => const Onboarding(),
         '/searchMenu': (context) => const SearchMenu(),
