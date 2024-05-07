@@ -1,5 +1,3 @@
-import 'dart:html';
-
 import 'package:flutter/material.dart';
 import 'package:lettersquared/screens/homepage.dart';
 import 'package:lettersquared/screens/library.dart';
