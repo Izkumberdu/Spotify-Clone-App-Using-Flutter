@@ -1,15 +1,45 @@
 import 'package:flutter/material.dart';
 
-class MyWidget extends StatefulWidget {
-  const MyWidget({super.key});
+class BotNavBar extends StatefulWidget {
+  const BotNavBar({Key? key, required this.currentIndex, required this.onTap})
+      : super(key: key);
+
+  final int currentIndex;
+  final Function(int) onTap;
 
   @override
-  State<MyWidget> createState() => _MyWidgetState();
+  _BotNavBarState createState() => _BotNavBarState();
 }
 
-class _MyWidgetState extends State<MyWidget> {
+class _BotNavBarState extends State<BotNavBar> {
   @override
   Widget build(BuildContext context) {
-    return const Placeholder();
+    return BottomNavigationBar(
+      elevation: 0,
+      backgroundColor: Colors.white,
+      type: BottomNavigationBarType.fixed,
+      items: <BottomNavigationBarItem>[
+        BottomNavigationBarItem(
+          icon: widget.currentIndex == 0
+              ? Image.asset('assets/navbar/home-active.png')
+              : Image.asset('assets/navbar/home-inactive.png'),
+          label: '',
+        ),
+        BottomNavigationBarItem(
+          icon: widget.currentIndex == 1
+              ? Image.asset('assets/navbar/bookmark-active.png')
+              : Image.asset('assets/navbar/bookmark-inactive.png'),
+          label: '',
+        ),
+        BottomNavigationBarItem(
+          icon: widget.currentIndex == 2
+              ? Image.asset('assets/navbar/chat-active.png')
+              : Image.asset('assets/navbar/chat-inactive.png'),
+          label: '',
+        ),
+      ],
+      currentIndex: widget.currentIndex,
+      onTap: widget.onTap,
+    );
   }
 }
