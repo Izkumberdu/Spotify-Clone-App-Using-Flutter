@@ -1,15 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:lettersquared/components/bottomNavbar.dart';
 
-class SearchMenu extends StatefulWidget {
-  const SearchMenu({super.key});
+class Homepage extends StatefulWidget {
+  const Homepage({super.key});
 
   @override
-  State<SearchMenu> createState() => _SearchMenuState();
+  State<Homepage> createState() => _HomepageState();
 }
 
-class _SearchMenuState extends State<SearchMenu> {
-  int _navbarIndex = 1;
+class _HomepageState extends State<Homepage> {
+  int _navbarIndex = 0;
   void _onTapped(int index) {
     setState(() {
       _navbarIndex = index;
