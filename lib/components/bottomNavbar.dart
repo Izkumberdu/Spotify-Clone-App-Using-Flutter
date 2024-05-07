@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:lettersquared/styles/app_styles.dart';
 
 class BotNavBar extends StatefulWidget {
   const BotNavBar({Key? key, required this.currentIndex, required this.onTap})
@@ -16,25 +17,25 @@ class _BotNavBarState extends State<BotNavBar> {
   Widget build(BuildContext context) {
     return BottomNavigationBar(
       elevation: 0,
-      backgroundColor: Colors.white,
+      backgroundColor: kBlack,
       type: BottomNavigationBarType.fixed,
       items: <BottomNavigationBarItem>[
         BottomNavigationBarItem(
           icon: widget.currentIndex == 0
-              ? Image.asset('assets/navbar/home-active.png')
-              : Image.asset('assets/navbar/home-inactive.png'),
-          label: '',
+              ? Image.asset('assets/images/navbar/Home_active.png')
+              : Image.asset('assets/images/navbar/Home_inactive.png'),
+          label: 'Home',
         ),
         BottomNavigationBarItem(
           icon: widget.currentIndex == 1
-              ? Image.asset('assets/navbar/bookmark-active.png')
-              : Image.asset('assets/navbar/bookmark-inactive.png'),
+              ? Image.asset('assets/images/navbar/Search_active.png')
+              : Image.asset('assets/images/navbar/Search_inactive.png'),
           label: '',
         ),
         BottomNavigationBarItem(
           icon: widget.currentIndex == 2
-              ? Image.asset('assets/navbar/chat-active.png')
-              : Image.asset('assets/navbar/chat-inactive.png'),
+              ? Image.asset('assets/images/navbar/Library_active.png')
+              : Image.asset('assets/images/navbar/Library_inactive.png'),
           label: '',
         ),
       ],
