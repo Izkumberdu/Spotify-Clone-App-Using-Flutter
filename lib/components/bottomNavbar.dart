@@ -30,17 +30,19 @@ class _BotNavBarState extends State<BotNavBar> {
           icon: widget.currentIndex == 1
               ? Image.asset('assets/images/navbar/Search_active.png')
               : Image.asset('assets/images/navbar/Search_inactive.png'),
-          label: '',
+          label: 'Search',
         ),
         BottomNavigationBarItem(
           icon: widget.currentIndex == 2
-              ? Image.asset('assets/images/navbar/Library_active.png')
-              : Image.asset('assets/images/navbar/Library_inactive.png'),
-          label: '',
+              ? Image.asset('assets/images/navbar/library_active.png')
+              : Image.asset('assets/images/navbar/library_inactive.png'),
+          label: 'Your Library',
         ),
       ],
       currentIndex: widget.currentIndex,
       onTap: widget.onTap,
+      selectedLabelStyle: SenMedium.copyWith(fontSize: 13, color: kLightGrey),
+      unselectedLabelStyle: SenMedium.copyWith(fontSize: 13, color: kLightGrey),
     );
   }
 }
