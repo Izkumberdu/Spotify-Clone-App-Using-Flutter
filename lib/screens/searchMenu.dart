@@ -51,7 +51,7 @@ class _SearchMenuState extends State<SearchMenu> {
               ],
             ),
             SizedBox(height: 20),
-            searchBar(),
+            searchBar(context),
             SizedBox(height: 25),
             Text(
               "Your Top Genres",
@@ -124,25 +124,30 @@ class _SearchMenuState extends State<SearchMenu> {
   }
 }
 
-Widget searchBar() {
-  return Container(
-    width: 393,
-    height: 46,
-    decoration: BoxDecoration(
-      color: kWhite,
-      borderRadius: BorderRadius.circular(10),
-    ),
-    child: Padding(
-      padding: EdgeInsets.only(left: 15),
-      child: Row(
-        children: [
-          Image.asset('assets/images/icons/search.png'),
-          SizedBox(width: 10),
-          Text(
-            'Artist, Songs, Podcasts',
-            style: SenMedium.copyWith(fontSize: 16, color: kBlack),
-          )
-        ],
+Widget searchBar(BuildContext context) {
+  return GestureDetector(
+    onTap: () {
+      Navigator.pushNamed(context, '/search');
+    },
+    child: Container(
+      width: 393,
+      height: 46,
+      decoration: BoxDecoration(
+        color: kWhite,
+        borderRadius: BorderRadius.circular(10),
+      ),
+      child: Padding(
+        padding: EdgeInsets.only(left: 15),
+        child: Row(
+          children: [
+            Image.asset('assets/images/icons/search.png'),
+            SizedBox(width: 10),
+            Text(
+              'Artist, Songs, Podcasts',
+              style: SenMedium.copyWith(fontSize: 16, color: kBlack),
+            )
+          ],
+        ),
       ),
     ),
   );
