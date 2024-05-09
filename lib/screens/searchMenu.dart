@@ -99,19 +99,19 @@ class _SearchMenuState extends State<SearchMenu> {
             SizedBox(
               height: 15,
             ),
-            songContainer(),
+            songContainer(context),
             SizedBox(
               height: 10,
             ),
-            songContainer(),
+            songContainer(context),
             SizedBox(
               height: 10,
             ),
-            songContainer(),
+            songContainer(context),
             SizedBox(
               height: 10,
             ),
-            songContainer(),
+            songContainer(context),
             SizedBox(
               height: 10,
             ),
@@ -197,40 +197,45 @@ Widget categoryContainer(String text, String imagePath, Color color) {
   );
 }
 
-Widget songContainer() {
-  return Container(
-    width: 393,
-    height: 50,
-    color: kBlack,
-    child: Row(
-      children: [
-        Image.asset(
-          'assets/images/songs/fragile.jpg',
-          height: 50,
-          width: 50,
-        ),
-        SizedBox(width: 10),
-        Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              "Fragile",
-              style: SenSemiBold.copyWith(fontSize: 16, color: kWhite),
-            ),
-            SizedBox(height: 5),
-            Text(
-              "Laufey",
-              style: SenSemiBold.copyWith(fontSize: 12, color: kGrey),
-            ),
-          ],
-        ),
-        Spacer(),
-        Image.asset('assets/images/icons/Play.png'),
-        SizedBox(width: 15),
-        Image.asset('assets/images/icons/Heart_Solid.png'),
-        SizedBox(width: 10),
-        Image.asset('assets/images/icons/more.png'),
-      ],
+Widget songContainer(BuildContext context) {
+  return GestureDetector(
+    onTap: () {
+      Navigator.pushNamed(context, '/trackview');
+    },
+    child: Container(
+      width: 393,
+      height: 50,
+      color: kBlack,
+      child: Row(
+        children: [
+          Image.asset(
+            'assets/images/songs/fragile.jpg',
+            height: 50,
+            width: 50,
+          ),
+          SizedBox(width: 10),
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                "Fragile",
+                style: SenSemiBold.copyWith(fontSize: 16, color: kWhite),
+              ),
+              SizedBox(height: 5),
+              Text(
+                "Laufey",
+                style: SenSemiBold.copyWith(fontSize: 12, color: kGrey),
+              ),
+            ],
+          ),
+          Spacer(),
+          Image.asset('assets/images/icons/Play.png'),
+          SizedBox(width: 15),
+          Image.asset('assets/images/icons/Heart_Solid.png'),
+          SizedBox(width: 10),
+          Image.asset('assets/images/icons/more.png'),
+        ],
+      ),
     ),
   );
 }
