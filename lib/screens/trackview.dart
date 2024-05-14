@@ -59,7 +59,13 @@ class _TrackviewState extends State<Trackview> {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Image.asset('assets/images/icons/arrow-down.png'),
+                GestureDetector(
+                  onTap: () {
+                    Navigator.pop(
+                        context); // This will pop the current route off the stack
+                  },
+                  child: Image.asset('assets/images/icons/arrow-down.png'),
+                ),
                 Text(
                   'Album Title', // album title
                   style: SenSemiBold.copyWith(

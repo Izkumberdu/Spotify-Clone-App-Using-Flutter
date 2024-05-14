@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:lettersquared/components/bottomNavbar.dart';
+import 'package:lettersquared/constants/size_config.dart';
 import 'package:lettersquared/models/genre.dart';
 import 'package:lettersquared/styles/app_styles.dart';
 import 'package:spotify_sdk/spotify_sdk.dart';
@@ -32,6 +33,8 @@ class _SearchState extends State<Search> {
 
   @override
   Widget build(BuildContext context) {
+    SizeConfig sizeConfig = SizeConfig();
+    sizeConfig.init(context);
     return Scaffold(
       backgroundColor: kBlack,
       body: Padding(
@@ -77,7 +80,7 @@ class _SearchState extends State<Search> {
 
 Widget searchBar() {
   return Container(
-    width: 321,
+    width: SizeConfig.blockSizeHorizontal! * 75,
     height: 40,
     decoration: BoxDecoration(
       color: kDarkGrey,
@@ -90,8 +93,6 @@ Widget searchBar() {
           Image.asset('assets/images/icons/search_white.png'),
           SizedBox(width: 10),
           Expanded(
-              child: Padding(
-            padding: EdgeInsets.only(bottom: 3.5),
             child: TextField(
               decoration: InputDecoration(
                 hintText: 'Search ',
@@ -100,14 +101,10 @@ Widget searchBar() {
               ),
               style: SenMedium.copyWith(fontSize: 16, color: kWhite),
               cursorColor: kBlack,
-              onChanged: (value) {
-                // Handle the onChanged event if needed
-              },
-              onSubmitted: (value) {
-                // Handle the onSubmitted event if needed
-              },
+              onChanged: (value) {},
+              onSubmitted: (value) {},
             ),
-          )),
+          ),
         ],
       ),
     ),
