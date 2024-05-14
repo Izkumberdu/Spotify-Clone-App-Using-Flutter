@@ -93,7 +93,7 @@ class _SearchMenuState extends State<SearchMenu> {
                     color: kWhite,
                   ),
                 ),
-                Image.asset('assets/images/icons/shuffle.png')
+                Image.asset('assets/images/icons/Shuffle.png')
               ],
             ),
             SizedBox(
