@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:lettersquared/screens/choose_artist.dart';
 import 'package:lettersquared/screens/signup1.dart';
 import 'package:lettersquared/screens/signup2.dart';
 import 'package:lettersquared/styles/app_styles.dart';
@@ -127,7 +128,7 @@ class Signup3 extends StatelessWidget {
                   Navigator.push(
                       context,
                       MaterialPageRoute(
-                          builder: ((context) => const Signup3())));
+                          builder: ((context) => const ChooseArtist())));
                 },
                 child: Button(
                   key: const ValueKey("su2_next"),
