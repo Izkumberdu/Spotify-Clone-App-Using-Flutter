@@ -1,18 +1,17 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:lettersquared/components/bottomNavbar.dart';
+import 'package:lettersquared/provider/providers.dart';
 
-class Homepage extends StatefulWidget {
+class Homepage extends ConsumerWidget {
   const Homepage({super.key});
 
   @override
-  State<Homepage> createState() => _HomepageState();
-}
+  Widget build(BuildContext context, WidgetRef ref) {
+    final navbarIndex = ref.watch(navbarIndexProvider);
 
-class _HomepageState extends State<Homepage> {
-  int _navbarIndex = 0;
-  void _onTapped(int index) {
-    setState(() {
-      _navbarIndex = index;
+    void _onTapped(int index) {
+      ref.read(navbarIndexProvider.notifier).state = index;
       switch (index) {
         case 0:
           Navigator.pushNamed(context, '/homepage');
@@ -24,14 +23,11 @@ class _HomepageState extends State<Homepage> {
           Navigator.pushNamed(context, '/playingqueue');
           break;
       }
-    });
-  }
+    }
 
-  @override
-  Widget build(BuildContext context) {
     return Scaffold(
       bottomNavigationBar:
-          BotNavBar(currentIndex: _navbarIndex, onTap: _onTapped),
+          BotNavBar(currentIndex: navbarIndex, onTap: _onTapped),
     );
   }
 }

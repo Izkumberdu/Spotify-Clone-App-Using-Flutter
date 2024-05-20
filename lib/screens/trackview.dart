@@ -2,9 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:just_audio/just_audio.dart';
 import 'package:lettersquared/constants/size_config.dart';
 import 'package:lettersquared/styles/app_styles.dart';
+import 'package:lettersquared/supabase/get_songs.dart';
 
 class Trackview extends StatefulWidget {
-  const Trackview({super.key});
+  const Trackview({
+    super.key,
+  });
 
   @override
   State<Trackview> createState() => _TrackviewState();
@@ -55,131 +58,157 @@ class _TrackviewState extends State<Trackview> {
     sizeConfig.init(context);
     return Scaffold(
       backgroundColor: kBlack,
-      body: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 20),
-        child: Column(
-          children: [
-            SizedBox(
-              height: 24,
-            ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                GestureDetector(
-                  onTap: () {
-                    Navigator.pop(context);
-                  },
-                  child: Image.asset('assets/images/icons/arrow-down.png'),
-                ),
-                Text(
-                  'Album Title',
-                  style: SenSemiBold.copyWith(
-                    fontSize: 14,
-                    color: kWhite,
-                  ),
-                ),
-                Image.asset('assets/images/icons/more-horizontal.png')
-              ],
-            ),
-            SizedBox(
-              height: 34,
-            ),
-            Container(
+      body: Stack(
+        children: [
+          Positioned(
+            top: 0,
+            left: 0,
+            right: 0,
+            height: SizeConfig.blockSizeVertical! * 70,
+            child: Container(
               decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(10), color: Colors.red),
-              height: SizeConfig.blockSizeVertical! * 50,
-              width: SizeConfig.blockSizeHorizontal! * 90,
-              child: Image.asset(
-                'assets/images/songs/fragile.jpg',
-                height: SizeConfig.blockSizeVertical! * 45,
-                width: SizeConfig.blockSizeHorizontal! * 70,
-                fit: BoxFit.cover,
+                gradient: LinearGradient(
+                  begin: Alignment.topCenter,
+                  end: Alignment.bottomCenter,
+                  colors: [
+                    Color(0xFF505424).withOpacity(0.2),
+                    kBlack,
+                  ],
+                  stops: [0.4, 1],
+                ),
               ),
             ),
-            SizedBox(
-              height: SizeConfig.blockSizeVertical! * 2,
-            ),
-            songInformation(),
-            SizedBox(
-              height: SizeConfig.blockSizeVertical! * 0.5,
-            ),
-            Slider(
-              min: 0,
-              max: duration.inSeconds.toDouble(),
-              value: position.inSeconds.toDouble(),
-              onChanged: (value) async {
-                final newPosition = Duration(seconds: value.toInt());
-                await audioPlayer.seek(newPosition);
-                if (!isPlaying) {
-                  await audioPlayer.play();
-                }
-              },
-            ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          ),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 20),
+            child: Column(
               children: [
-                Text(
-                  formatTime(position),
-                  style: SenMedium.copyWith(
-                    fontSize: 10,
-                    color: kLightGrey,
+                SizedBox(
+                  height: 24,
+                ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    GestureDetector(
+                      onTap: () {
+                        Navigator.pop(context);
+                      },
+                      child: Image.asset('assets/images/icons/arrow-down.png'),
+                    ),
+                    Text(
+                      'Album Title',
+                      style: SenSemiBold.copyWith(
+                        fontSize: 14,
+                        color: kWhite,
+                      ),
+                    ),
+                    Image.asset('assets/images/icons/more-horizontal.png')
+                  ],
+                ),
+                SizedBox(
+                  height: SizeConfig.blockSizeVertical! * 10,
+                ),
+                Container(
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(10),
+                    color: Colors.red,
+                  ),
+                  height: SizeConfig.blockSizeVertical! * 40,
+                  width: SizeConfig.blockSizeHorizontal! * 90,
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.circular(10),
+                    child: Image.asset(
+                      'assets/images/songs/fragile.jpg',
+                      fit: BoxFit.cover,
+                    ),
                   ),
                 ),
-                Text(
-                  formatTime(duration - position),
-                  style: SenMedium.copyWith(
-                    fontSize: 10,
-                    color: kLightGrey,
-                  ),
+                SizedBox(
+                  height: SizeConfig.blockSizeVertical! * 10,
+                ),
+                songInformation(),
+                SizedBox(
+                  height: SizeConfig.blockSizeVertical! * 0.5,
+                ),
+                Slider(
+                  min: 0,
+                  max: duration.inSeconds.toDouble(),
+                  value: position.inSeconds.toDouble(),
+                  onChanged: (value) async {
+                    final newPosition = Duration(seconds: value.toInt());
+                    await audioPlayer.seek(newPosition);
+                    if (!isPlaying) {
+                      await audioPlayer.play();
+                    }
+                  },
+                ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(
+                      formatTime(position),
+                      style: SenMedium.copyWith(
+                        fontSize: 10,
+                        color: kLightGrey,
+                      ),
+                    ),
+                    Text(
+                      formatTime(duration - position),
+                      style: SenMedium.copyWith(
+                        fontSize: 10,
+                        color: kLightGrey,
+                      ),
+                    ),
+                  ],
+                ),
+                SizedBox(
+                  height: SizeConfig.blockSizeVertical! * 0.5,
+                ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Image.asset(
+                      'assets/images/icons/Shuffle.png',
+                      height: 22,
+                      width: 22,
+                    ),
+                    Image.asset(
+                      'assets/images/icons/Back.png',
+                      height: 36,
+                      width: 36,
+                    ),
+                    CircleAvatar(
+                      radius: 35,
+                      backgroundColor: kWhite,
+                      child: IconButton(
+                        icon: Icon(isPlaying ? Icons.pause : Icons.play_arrow),
+                        iconSize: 50,
+                        color: kBlack,
+                        onPressed: () async {
+                          if (isPlaying) {
+                            await audioPlayer.pause();
+                          } else {
+                            await audioPlayer.play();
+                          }
+                        },
+                      ),
+                    ),
+                    Image.asset(
+                      'assets/images/icons/Forward.png',
+                      height: 36,
+                      width: 36,
+                    ),
+                    Image.asset(
+                      'assets/images/icons/Repeat-Inactive.png',
+                      height: 22,
+                      width: 22,
+                    ),
+                  ],
                 ),
               ],
             ),
-            SizedBox(
-              height: SizeConfig.blockSizeVertical! * 0.5,
-            ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Image.asset(
-                  'assets/images/icons/Shuffle.png',
-                  height: 22,
-                  width: 22,
-                ),
-                Image.asset(
-                  'assets/images/icons/Back.png',
-                  height: 36,
-                  width: 36,
-                ),
-                CircleAvatar(
-                  radius: 35,
-                  backgroundColor: kWhite,
-                  child: IconButton(
-                    icon: Icon(isPlaying ? Icons.pause : Icons.play_arrow),
-                    iconSize: 50,
-                    color: kBlack,
-                    onPressed: () async {
-                      if (isPlaying) {
-                        await audioPlayer.pause();
-                      } else {
-                        await audioPlayer.play();
-                      }
-                    },
-                  ),
-                ),
-                Image.asset(
-                  'assets/images/icons/Forward.png',
-                  height: 36,
-                  width: 36,
-                ),
-                Image.asset(
-                  'assets/images/icons/Repeat-Inactive.png',
-                  height: 22,
-                  width: 22,
-                ),
-              ],
-            )
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }
