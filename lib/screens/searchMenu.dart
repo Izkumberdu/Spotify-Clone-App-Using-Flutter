@@ -24,7 +24,7 @@ class _SearchMenuState extends State<SearchMenu> {
           Navigator.pushNamed(context, '/searchMenu');
           break;
         case 2:
-          Navigator.pushNamed(context, '/library');
+          Navigator.pushNamed(context, '/playingqueue');
           break;
       }
     });

@@ -27,6 +27,7 @@ class MyApp extends StatelessWidget {
         '/library': (context) => const Library(),
         '/search': (context) => const Search(),
         '/trackview': (context) => const Trackview(),
+        '/playingqueue': (context) => const AlbumQueuePage(),
       },
     );
   }

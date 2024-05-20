@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:lettersquared/components/bottomNavbar.dart';
 import 'package:lettersquared/constants/size_config.dart';
-import 'package:lettersquared/models/genre.dart';
+// import 'package:lettersquared/models/genre.dart';
 import 'package:lettersquared/styles/app_styles.dart';
-import 'package:spotify_sdk/spotify_sdk.dart';
+// import 'package:spotify_sdk/spotify_sdk.dart';
 
 class Search extends StatefulWidget {
   const Search({super.key});
@@ -25,7 +25,7 @@ class _SearchState extends State<Search> {
           Navigator.pushNamed(context, '/searchMenu');
           break;
         case 2:
-          Navigator.pushNamed(context, '/library');
+          Navigator.pushNamed(context, '/playingqueue');
           break;
       }
     });
