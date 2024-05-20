@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:lettersquared/components/bottomNavbar.dart';
 import 'package:lettersquared/models/genre.dart';
 import 'package:lettersquared/styles/app_styles.dart';
-import 'package:spotify_sdk/spotify_sdk.dart';
 
 class SearchMenu extends StatefulWidget {
   const SearchMenu({super.key});

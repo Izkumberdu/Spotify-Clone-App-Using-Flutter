@@ -6,20 +6,21 @@ import 'package:lettersquared/screens/playingqueue.dart';
 import 'package:lettersquared/screens/search.dart';
 import 'package:lettersquared/screens/searchMenu.dart';
 import 'package:lettersquared/screens/trackview.dart';
+import 'package:lettersquared/supabase/supabase_connection.dart';
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await initializeSupabase();
   runApp(const MyApp());
 }
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
-  // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      home:
-          SearchMenu(), //akoa rani gitry akoang gihimo screen jus ignore! cyber test
+      home: SearchMenu(),
       routes: {
         '/onboarding': (context) => const Onboarding(),
         '/searchMenu': (context) => const SearchMenu(),

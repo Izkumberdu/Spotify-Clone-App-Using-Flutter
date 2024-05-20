@@ -1,5 +1,5 @@
-import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/material.dart';
+import 'package:just_audio/just_audio.dart';
 import 'package:lettersquared/constants/size_config.dart';
 import 'package:lettersquared/styles/app_styles.dart';
 
@@ -20,27 +20,33 @@ class _TrackviewState extends State<Trackview> {
   void initState() {
     super.initState();
     setAudio();
-    audioPlayer.onPlayerStateChanged.listen((state) {
+    audioPlayer.playerStateStream.listen((state) {
       setState(() {
-        isPlaying = state == PlayerState.playing;
+        isPlaying = state.playing;
       });
     });
-    audioPlayer.onDurationChanged.listen((newDuration) {
+    audioPlayer.durationStream.listen((newDuration) {
       setState(() {
-        duration = newDuration;
+        duration = newDuration ?? Duration.zero;
       });
     });
-    audioPlayer.onPositionChanged.listen((newPosition) {
+    audioPlayer.positionStream.listen((newPosition) {
       setState(() {
         position = newPosition;
       });
     });
   }
 
-  Future setAudio() async {
-    final player = AudioCache(prefix: 'assets/audio/');
-    final bytes = await player.loadAsBytes('fragile.mp3');
-    audioPlayer.setSourceBytes(bytes);
+  Future<void> setAudio() async {
+    var url =
+        "https://ieczccbopoftaobhqmwz.supabase.co/storage/v1/object/public/Songs/Laufey%20-%20Fragile%20(Official%20Audio).mp3";
+    await audioPlayer.setAudioSource(AudioSource.uri(Uri.parse(url)));
+  }
+
+  @override
+  void dispose() {
+    audioPlayer.dispose();
+    super.dispose();
   }
 
   @override
@@ -61,13 +67,12 @@ class _TrackviewState extends State<Trackview> {
               children: [
                 GestureDetector(
                   onTap: () {
-                    Navigator.pop(
-                        context); // This will pop the current route off the stack
+                    Navigator.pop(context);
                   },
                   child: Image.asset('assets/images/icons/arrow-down.png'),
                 ),
                 Text(
-                  'Album Title', // album title
+                  'Album Title',
                   style: SenSemiBold.copyWith(
                     fontSize: 14,
                     color: kWhite,
@@ -85,7 +90,7 @@ class _TrackviewState extends State<Trackview> {
               height: SizeConfig.blockSizeVertical! * 50,
               width: SizeConfig.blockSizeHorizontal! * 90,
               child: Image.asset(
-                'assets/images/songs/fragile.jpg', //song image
+                'assets/images/songs/fragile.jpg',
                 height: SizeConfig.blockSizeVertical! * 45,
                 width: SizeConfig.blockSizeHorizontal! * 70,
                 fit: BoxFit.cover,
@@ -105,9 +110,8 @@ class _TrackviewState extends State<Trackview> {
               onChanged: (value) async {
                 final newPosition = Duration(seconds: value.toInt());
                 await audioPlayer.seek(newPosition);
-                // Optionally play immediately after seeking
                 if (!isPlaying) {
-                  await audioPlayer.resume();
+                  await audioPlayer.play();
                 }
               },
             ),
@@ -157,7 +161,7 @@ class _TrackviewState extends State<Trackview> {
                       if (isPlaying) {
                         await audioPlayer.pause();
                       } else {
-                        await audioPlayer.resume();
+                        await audioPlayer.play();
                       }
                     },
                   ),

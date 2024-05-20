@@ -6,15 +6,12 @@
 
 #include "generated_plugin_registrant.h"
 
-#include <audioplayers_windows/audioplayers_windows_plugin.h>
+#include <app_links/app_links_plugin_c_api.h>
 #include <url_launcher_windows/url_launcher_windows.h>
-#include <window_to_front/window_to_front_plugin.h>
 
 void RegisterPlugins(flutter::PluginRegistry* registry) {
-  AudioplayersWindowsPluginRegisterWithRegistrar(
-      registry->GetRegistrarForPlugin("AudioplayersWindowsPlugin"));
+  AppLinksPluginCApiRegisterWithRegistrar(
+      registry->GetRegistrarForPlugin("AppLinksPluginCApi"));
   UrlLauncherWindowsRegisterWithRegistrar(
       registry->GetRegistrarForPlugin("UrlLauncherWindows"));
-  WindowToFrontPluginRegisterWithRegistrar(
-      registry->GetRegistrarForPlugin("WindowToFrontPlugin"));
 }
