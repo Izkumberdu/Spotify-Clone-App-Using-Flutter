@@ -25,11 +25,15 @@ class _TrackviewState extends State<Trackview> {
   bool isPlaying = false;
   Duration duration = Duration.zero;
   Duration position = Duration.zero;
+  late int currentIndex;
+  late Song currentSong;
 
   @override
   void initState() {
     super.initState();
-    setAudio();
+    currentIndex = widget.index;
+    currentSong = widget.song;
+    setAudio(currentSong.url);
     audioPlayer.playerStateStream.listen((state) {
       setState(() {
         isPlaying = state.playing;
@@ -47,9 +51,18 @@ class _TrackviewState extends State<Trackview> {
     });
   }
 
-  Future<void> setAudio() async {
-    await audioPlayer
-        .setAudioSource(AudioSource.uri(Uri.parse(widget.song.url)));
+  Future<void> setAudio(String url) async {
+    await audioPlayer.setAudioSource(AudioSource.uri(Uri.parse(url)));
+  }
+
+  void updateSong(int newIndex) {
+    if (newIndex >= 0 && newIndex < widget.songs.length) {
+      setState(() {
+        currentIndex = newIndex;
+        currentSong = widget.songs[newIndex];
+        setAudio(currentSong.url);
+      });
+    }
   }
 
   @override
@@ -63,7 +76,7 @@ class _TrackviewState extends State<Trackview> {
     SizeConfig sizeConfig = SizeConfig();
 
     sizeConfig.init(context);
-    String color = widget.song.color;
+    String color = currentSong.color;
     final int colorValue = int.parse('0xff$color');
     return Scaffold(
       backgroundColor: kBlack,
@@ -106,7 +119,7 @@ class _TrackviewState extends State<Trackview> {
                       child: Image.asset('assets/images/icons/arrow-down.png'),
                     ),
                     Text(
-                      '${widget.index}', // Displaying index here
+                      '${currentIndex + 1}/${widget.songs.length}', // Displaying index here
                       style: SenSemiBold.copyWith(
                         fontSize: 14,
                         color: kWhite,
@@ -128,7 +141,7 @@ class _TrackviewState extends State<Trackview> {
                   child: ClipRRect(
                     borderRadius: BorderRadius.circular(10),
                     child: Image.network(
-                      widget.song.imageSource,
+                      currentSong.imageSource,
                       fit: BoxFit.cover,
                     ),
                   ),
@@ -182,10 +195,15 @@ class _TrackviewState extends State<Trackview> {
                       height: 22,
                       width: 22,
                     ),
-                    Image.asset(
-                      'assets/images/icons/Back.png',
-                      height: 36,
-                      width: 36,
+                    GestureDetector(
+                      onTap: () {
+                        updateSong(currentIndex - 1);
+                      },
+                      child: Image.asset(
+                        'assets/images/icons/Back.png',
+                        height: 36,
+                        width: 36,
+                      ),
                     ),
                     CircleAvatar(
                       radius: 35,
@@ -203,10 +221,15 @@ class _TrackviewState extends State<Trackview> {
                         },
                       ),
                     ),
-                    Image.asset(
-                      'assets/images/icons/Forward.png',
-                      height: 36,
-                      width: 36,
+                    GestureDetector(
+                      onTap: () {
+                        updateSong(currentIndex + 1);
+                      },
+                      child: Image.asset(
+                        'assets/images/icons/Forward.png',
+                        height: 36,
+                        width: 36,
+                      ),
                     ),
                     Image.asset(
                       'assets/images/icons/Repeat-Inactive.png',
@@ -229,7 +252,7 @@ class _TrackviewState extends State<Trackview> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            widget.song.name,
+            currentSong.name,
             textAlign: TextAlign.left,
             style: SenSemiBold.copyWith(fontSize: 22, color: kWhite),
           ),
@@ -240,7 +263,7 @@ class _TrackviewState extends State<Trackview> {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text(
-                widget.song.artist,
+                currentSong.artist,
                 style: SenMedium.copyWith(color: kLightGrey, fontSize: 16),
               ),
               Image.asset('assets/images/icons/heart-outline.png'),
