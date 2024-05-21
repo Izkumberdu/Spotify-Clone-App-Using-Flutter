@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:lettersquared/models/artist.dart';
 import 'package:lettersquared/screens/signup3.dart';
 import 'package:lettersquared/styles/app_styles.dart';
@@ -22,7 +23,8 @@ class _ChooseArtistState extends State<ChooseArtist> {
   }
 
   void _fetchArtists() async {
-    QuerySnapshot snapshot = await FirebaseFirestore.instance.collection('artists').get();
+    QuerySnapshot snapshot =
+        await FirebaseFirestore.instance.collection('artists').get();
     setState(() {
       _artists = snapshot.docs.map((doc) => Artist.fromDocument(doc)).toList();
     });
@@ -58,32 +60,81 @@ class _ChooseArtistState extends State<ChooseArtist> {
         ),
       ),
       body: Padding(
-        padding: const EdgeInsets.only(left: 31, right: 31),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-              TextField(
-                cursorColor: kDarkGrey,
-                decoration: InputDecoration(
-                  filled: true,
-                  fillColor: kWhite,
-                  hintText: "Search",
-                  focusedBorder: UnderlineInputBorder(
-                    borderSide: const BorderSide(color: Colors.transparent),
-                    borderRadius: BorderRadius.circular(5),
+          padding: const EdgeInsets.only(left: 31, right: 31),
+          child: Column(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                  TextField(
+                    cursorColor: kDarkGrey,
+                    decoration: InputDecoration(
+                      filled: true,
+                      fillColor: kWhite,
+                      hintText: "Search",
+                      focusedBorder: UnderlineInputBorder(
+                        borderSide: const BorderSide(color: Colors.transparent),
+                        borderRadius: BorderRadius.circular(5),
+                      ),
+                      enabledBorder: UnderlineInputBorder(
+                        borderSide: const BorderSide(color: Colors.transparent),
+                        borderRadius: BorderRadius.circular(5),
+                      ),
+                    ),
                   ),
-                  enabledBorder: UnderlineInputBorder(
-                    borderSide: const BorderSide(color: Colors.transparent),
-                    borderRadius: BorderRadius.circular(5),
-                  ),
+                ]),
+                const SizedBox(
+                  height: 21,
                 ),
-              ),
-            ]),
-            const SizedBox(height: 21,)
-          ],
-        ),
-      ),
+                Expanded(
+                  child: _artists.isEmpty
+                      ? const Center(child: CircularProgressIndicator())
+                      : GridView.builder(
+                          gridDelegate:
+                              const SliverGridDelegateWithFixedCrossAxisCount(
+                            crossAxisCount: 3,
+                            crossAxisSpacing: 10,
+                            mainAxisSpacing: 10,
+                          ),
+                          itemCount: _artists.length,
+                          itemBuilder: (context, index) {
+                            Artist artist = _artists[index];
+                            bool isSelected = _selectedArtists.contains(artist);
+                            return GestureDetector(
+                              onTap: () {
+                                setState(() {
+                                  if (isSelected) {
+                                    _selectedArtists.remove(artist);
+                                  } else {
+                                    _selectedArtists.add(artist);
+                                  }
+                                });
+                              },
+                              child: Column(
+                                children: [
+                                  CircleAvatar(
+                                    backgroundImage:
+                                        NetworkImage(artist.imageURL),
+                                    radius: 55,
+                                    child: isSelected
+                                        ? const Icon(Icons.check_circle,
+                                            color: Colors.green, size: 40)
+                                        : null,
+                                  ),
+                                  const SizedBox(height: 8),
+                                  Expanded(
+                                    child: Text(
+                                      artist.name,
+                                      textAlign: TextAlign.center,
+                                      style: SenBold.copyWith(fontSize: 16, color: kWhite)
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            );
+                          },
+                        ),
+                ),
+              ])),
     );
   }
 }
