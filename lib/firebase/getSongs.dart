@@ -6,7 +6,7 @@ class Song {
   final String url;
   final String artist;
   final String imageSource;
-  final int color;
+  final String color;
 
   Song({
     required this.id,
@@ -18,12 +18,12 @@ class Song {
   });
 
   factory Song.fromFirestore(DocumentSnapshot doc) {
-    Map data = doc.data() as Map<String, dynamic>;
+    Map<String, dynamic> data = doc.data() as Map<String, dynamic>;
     return Song(
       id: doc.id,
       name: data['Title'] ?? '',
       url: data['songUrl'] ?? '',
-      color: int.parse(data['color'] ?? '0xFF000000'),
+      color: data['Color'] ?? '',
       artist: data['Artist'] ?? '',
       imageSource: data['imageUrl'] ?? '',
     );

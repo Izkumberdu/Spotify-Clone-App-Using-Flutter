@@ -6,11 +6,15 @@ import 'package:lettersquared/styles/app_styles.dart';
 
 class Trackview extends StatefulWidget {
   const Trackview({
-    super.key,
+    Key? key,
     required this.song,
-  });
+    required this.songs,
+    required this.index,
+  }) : super(key: key);
 
   final Song song;
+  final List<Song> songs;
+  final int index;
 
   @override
   State<Trackview> createState() => _TrackviewState();
@@ -57,7 +61,10 @@ class _TrackviewState extends State<Trackview> {
   @override
   Widget build(BuildContext context) {
     SizeConfig sizeConfig = SizeConfig();
+
     sizeConfig.init(context);
+    String color = widget.song.color;
+    final int colorValue = int.parse('0xff$color');
     return Scaffold(
       backgroundColor: kBlack,
       body: Stack(
@@ -73,7 +80,7 @@ class _TrackviewState extends State<Trackview> {
                   begin: Alignment.topCenter,
                   end: Alignment.bottomCenter,
                   colors: [
-                    Color(widget.song.color).withOpacity(0.2),
+                    Color(colorValue).withOpacity(0.2),
                     kBlack,
                   ],
                   stops: [0.4, 1],
@@ -93,12 +100,13 @@ class _TrackviewState extends State<Trackview> {
                   children: [
                     GestureDetector(
                       onTap: () {
+                        audioPlayer.dispose();
                         Navigator.pop(context);
                       },
                       child: Image.asset('assets/images/icons/arrow-down.png'),
                     ),
                     Text(
-                      'Album Title',
+                      '${widget.index}', // Displaying index here
                       style: SenSemiBold.copyWith(
                         fontSize: 14,
                         color: kWhite,

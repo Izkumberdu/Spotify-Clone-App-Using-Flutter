@@ -7,3 +7,5 @@ final navbarIndexProvider = StateProvider<int>((ref) => 1);
 final getSongsProvider = FutureProvider<List<Song>>((ref) async {
   return GetSongs().fetchSongs();
 });
+
+final songIndexProvider = StateProvider<int>((ref) => 0);
