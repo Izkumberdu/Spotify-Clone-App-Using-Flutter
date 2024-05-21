@@ -4,7 +4,6 @@ import 'package:lettersquared/components/bottomNavbar.dart';
 import 'package:lettersquared/models/genre.dart';
 import 'package:lettersquared/provider/providers.dart';
 import 'package:lettersquared/styles/app_styles.dart';
-import 'package:lettersquared/supabase/get_songs.dart';
 
 class SearchMenu extends ConsumerWidget {
   const SearchMenu({super.key});
@@ -12,6 +11,7 @@ class SearchMenu extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final navbarIndex = ref.watch(navbarIndexProvider);
+
     return Scaffold(
       backgroundColor: kBlack,
       body: Padding(

@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "649915008702",
+    "project_id": "lettersquared-c1603",
+    "storage_bucket": "lettersquared-c1603.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:649915008702:android:4c6821d9bb40dbce8e00ef",
+        "android_client_info": {
+          "package_name": "com.example.lettersquared"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyARde5VkL7yRL5z2_PzyQHa-rhmwexrIcI"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

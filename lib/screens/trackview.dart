@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:just_audio/just_audio.dart';
 import 'package:lettersquared/constants/size_config.dart';
 import 'package:lettersquared/styles/app_styles.dart';
-import 'package:lettersquared/supabase/get_songs.dart';
 
 class Trackview extends StatefulWidget {
   const Trackview({
