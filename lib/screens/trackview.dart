@@ -1,12 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:just_audio/just_audio.dart';
 import 'package:lettersquared/constants/size_config.dart';
+import 'package:lettersquared/firebase/getSongs.dart';
 import 'package:lettersquared/styles/app_styles.dart';
 
 class Trackview extends StatefulWidget {
   const Trackview({
     super.key,
+    required this.song,
   });
+
+  final Song song;
 
   @override
   State<Trackview> createState() => _TrackviewState();
@@ -40,9 +44,8 @@ class _TrackviewState extends State<Trackview> {
   }
 
   Future<void> setAudio() async {
-    var url =
-        "https://ieczccbopoftaobhqmwz.supabase.co/storage/v1/object/public/Songs/Laufey%20-%20Fragile%20(Official%20Audio).mp3";
-    await audioPlayer.setAudioSource(AudioSource.uri(Uri.parse(url)));
+    await audioPlayer
+        .setAudioSource(AudioSource.uri(Uri.parse(widget.song.url)));
   }
 
   @override
@@ -70,7 +73,7 @@ class _TrackviewState extends State<Trackview> {
                   begin: Alignment.topCenter,
                   end: Alignment.bottomCenter,
                   colors: [
-                    Color(0xFF505424).withOpacity(0.2),
+                    Color(widget.song.color as int).withOpacity(0.2),
                     kBlack,
                   ],
                   stops: [0.4, 1],
@@ -116,8 +119,8 @@ class _TrackviewState extends State<Trackview> {
                   width: SizeConfig.blockSizeHorizontal! * 90,
                   child: ClipRRect(
                     borderRadius: BorderRadius.circular(10),
-                    child: Image.asset(
-                      'assets/images/songs/fragile.jpg',
+                    child: Image.network(
+                      widget.song.imageSource,
                       fit: BoxFit.cover,
                     ),
                   ),
@@ -211,44 +214,44 @@ class _TrackviewState extends State<Trackview> {
       ),
     );
   }
-}
 
-Widget songInformation() {
-  return Container(
-    child: Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          'Fragile',
-          textAlign: TextAlign.left,
-          style: SenSemiBold.copyWith(fontSize: 22, color: kWhite),
-        ),
-        SizedBox(
-          height: SizeConfig.blockSizeVertical! * 0.5,
-        ),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Text(
-              'Laufey',
-              style: SenMedium.copyWith(color: kLightGrey, fontSize: 16),
-            ),
-            Image.asset('assets/images/icons/heart-outline.png'),
-          ],
-        ),
-      ],
-    ),
-  );
-}
+  Widget songInformation() {
+    return Container(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            widget.song.name,
+            textAlign: TextAlign.left,
+            style: SenSemiBold.copyWith(fontSize: 22, color: kWhite),
+          ),
+          SizedBox(
+            height: SizeConfig.blockSizeVertical! * 0.5,
+          ),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(
+                widget.song.artist,
+                style: SenMedium.copyWith(color: kLightGrey, fontSize: 16),
+              ),
+              Image.asset('assets/images/icons/heart-outline.png'),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
 
-String formatTime(Duration duration) {
-  String twoDigits(int n) => n.toString().padLeft(2, '0');
-  final hours = twoDigits(duration.inHours);
-  final minutes = twoDigits(duration.inMinutes.remainder(60));
-  final seconds = twoDigits(duration.inSeconds.remainder(60));
-  return [
-    if (duration.inHours > 0) hours,
-    minutes,
-    seconds,
-  ].join(':');
+  String formatTime(Duration duration) {
+    String twoDigits(int n) => n.toString().padLeft(2, '0');
+    final hours = twoDigits(duration.inHours);
+    final minutes = twoDigits(duration.inMinutes.remainder(60));
+    final seconds = twoDigits(duration.inSeconds.remainder(60));
+    return [
+      if (duration.inHours > 0) hours,
+      minutes,
+      seconds,
+    ].join(':');
+  }
 }

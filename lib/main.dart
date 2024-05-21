@@ -36,7 +36,6 @@ class MyApp extends StatelessWidget {
         '/library': (context) => const Library(),
         '/search': (context) => const Search(),
         '/playingqueue': (context) => const AlbumQueuePage(),
-        '/trackview': (context) => const Trackview(),
       },
     );
   }
