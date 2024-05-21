@@ -42,6 +42,8 @@ class _BotNavBarState extends State<BotNavBar> {
       currentIndex: widget.currentIndex,
       onTap: widget.onTap,
       selectedLabelStyle: SenMedium.copyWith(fontSize: 13, color: kLightGrey),
+      selectedItemColor: kWhite,
+      unselectedItemColor: kGrey,
       unselectedLabelStyle: SenMedium.copyWith(fontSize: 13, color: kLightGrey),
     );
   }

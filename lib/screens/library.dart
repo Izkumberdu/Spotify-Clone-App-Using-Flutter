@@ -21,7 +21,7 @@ class _LibraryState extends State<Library> {
           Navigator.pushNamed(context, '/searchMenu');
           break;
         case 2:
-          Navigator.pushNamed(context, '/library');
+          Navigator.pushNamed(context, '/playingqueue');
           break;
       }
     });
