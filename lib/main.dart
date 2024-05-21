@@ -28,7 +28,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      home: SearchMenu(),
+      home: AlbumQueuePage(), //test 3am
       routes: {
         '/onboarding': (context) => const Onboarding(),
         '/searchMenu': (context) => const SearchMenu(),
