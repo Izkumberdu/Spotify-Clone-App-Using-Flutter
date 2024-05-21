@@ -4,6 +4,7 @@ import 'package:lettersquared/screens/homepage.dart';
 import 'package:lettersquared/screens/library.dart';
 import 'package:lettersquared/screens/onboarding.dart';
 import 'package:lettersquared/screens/playingqueue.dart';
+import 'package:lettersquared/screens/playlistview.dart';
 import 'package:lettersquared/screens/search.dart';
 import 'package:lettersquared/screens/searchMenu.dart';
 import 'package:lettersquared/screens/trackview.dart';
@@ -28,7 +29,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      home: AlbumQueuePage(), //test 3am
+      home: PlaylistViewPage(),
       routes: {
         '/onboarding': (context) => const Onboarding(),
         '/searchMenu': (context) => const SearchMenu(),
@@ -36,6 +37,7 @@ class MyApp extends StatelessWidget {
         '/library': (context) => const Library(),
         '/search': (context) => const Search(),
         '/playingqueue': (context) => const AlbumQueuePage(),
+        '/playlistview': (context) => const PlaylistViewPage(),
       },
     );
   }
