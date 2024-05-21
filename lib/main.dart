@@ -8,6 +8,8 @@ import 'package:lettersquared/screens/search.dart';
 import 'package:lettersquared/screens/trackview.dart';
 import 'package:lettersquared/screens/signup1.dart';
 import 'package:lettersquared/screens/start.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'firebase_options.dart';
 
 import 'package:firebase_core/firebase_core.dart';
 import 'firebase_options.dart';
@@ -15,7 +17,7 @@ import 'firebase_options.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(
-    options: DefaultFirebaseOptions.currentPlatform
+    options: DefaultFirebaseOptions.currentPlatform,
   );
   runApp(
     const ProviderScope(
