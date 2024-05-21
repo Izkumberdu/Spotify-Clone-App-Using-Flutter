@@ -6,7 +6,7 @@ class Song {
   final String url;
   final String artist;
   final String imageSource;
-  final String color;
+  final int color;
 
   Song({
     required this.id,
@@ -23,7 +23,7 @@ class Song {
       id: doc.id,
       name: data['Title'] ?? '',
       url: data['songUrl'] ?? '',
-      color: data['color'] ?? '',
+      color: int.parse(data['color'] ?? '0xFF000000'),
       artist: data['Artist'] ?? '',
       imageSource: data['imageUrl'] ?? '',
     );

@@ -73,7 +73,7 @@ class _TrackviewState extends State<Trackview> {
                   begin: Alignment.topCenter,
                   end: Alignment.bottomCenter,
                   colors: [
-                    Color(widget.song.color as int).withOpacity(0.2),
+                    Color(widget.song.color).withOpacity(0.2),
                     kBlack,
                   ],
                   stops: [0.4, 1],
