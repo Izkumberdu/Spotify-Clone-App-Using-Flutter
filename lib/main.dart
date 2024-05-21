@@ -7,11 +7,9 @@ import 'package:lettersquared/screens/playingqueue.dart';
 import 'package:lettersquared/screens/search.dart';
 import 'package:lettersquared/screens/searchMenu.dart';
 import 'package:lettersquared/screens/trackview.dart';
-import 'package:lettersquared/supabase/supabase_connection.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await initializeSupabase();
   runApp(
     const ProviderScope(
       child: MyApp(),
