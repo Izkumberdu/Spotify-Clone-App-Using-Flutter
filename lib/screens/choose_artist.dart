@@ -1,4 +1,6 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:lettersquared/models/artist.dart';
 import 'package:lettersquared/screens/signup3.dart';
 import 'package:lettersquared/styles/app_styles.dart';
 
@@ -10,6 +12,22 @@ class ChooseArtist extends StatefulWidget {
 }
 
 class _ChooseArtistState extends State<ChooseArtist> {
+  List<Artist> _artists = [];
+  List<Artist> _selectedArtists = [];
+
+  @override
+  void initState() {
+    super.initState();
+    _fetchArtists();
+  }
+
+  void _fetchArtists() async {
+    QuerySnapshot snapshot = await FirebaseFirestore.instance.collection('artists').get();
+    setState(() {
+      _artists = snapshot.docs.map((doc) => Artist.fromDocument(doc)).toList();
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -61,7 +79,8 @@ class _ChooseArtistState extends State<ChooseArtist> {
                   ),
                 ),
               ),
-            ])
+            ]),
+            const SizedBox(height: 21,)
           ],
         ),
       ),
