@@ -1,12 +1,20 @@
 import 'package:flutter/material.dart';
 import 'package:just_audio/just_audio.dart';
 import 'package:lettersquared/constants/size_config.dart';
+import 'package:lettersquared/firebase/getSongs.dart';
 import 'package:lettersquared/styles/app_styles.dart';
 
 class Trackview extends StatefulWidget {
   const Trackview({
-    super.key,
-  });
+    Key? key,
+    required this.song,
+    required this.index,
+    required this.songs,
+  }) : super(key: key);
+
+  final Song song;
+  final int index;
+  final List<Song> songs;
 
   @override
   State<Trackview> createState() => _TrackviewState();
@@ -17,10 +25,12 @@ class _TrackviewState extends State<Trackview> {
   bool isPlaying = false;
   Duration duration = Duration.zero;
   Duration position = Duration.zero;
+  late int currentIndex;
 
   @override
   void initState() {
     super.initState();
+    currentIndex = widget.index;
     setAudio();
     audioPlayer.playerStateStream.listen((state) {
       setState(() {
@@ -40,9 +50,20 @@ class _TrackviewState extends State<Trackview> {
   }
 
   Future<void> setAudio() async {
-    var url =
-        "https://ieczccbopoftaobhqmwz.supabase.co/storage/v1/object/public/Songs/Laufey%20-%20Fragile%20(Official%20Audio).mp3";
-    await audioPlayer.setAudioSource(AudioSource.uri(Uri.parse(url)));
+    await audioPlayer.setAudioSource(
+        AudioSource.uri(Uri.parse(widget.songs[currentIndex].url)));
+  }
+
+  void updateSong(int newIndex) {
+    setState(() {
+      currentIndex = newIndex;
+      if (currentIndex < 0) {
+        currentIndex = widget.songs.length - 1;
+      } else if (currentIndex >= widget.songs.length) {
+        currentIndex = 0;
+      }
+      setAudio();
+    });
   }
 
   @override
@@ -54,7 +75,10 @@ class _TrackviewState extends State<Trackview> {
   @override
   Widget build(BuildContext context) {
     SizeConfig sizeConfig = SizeConfig();
+
     sizeConfig.init(context);
+    String color = widget.songs[currentIndex].color;
+    final int colorValue = int.parse('0xff$color');
     return Scaffold(
       backgroundColor: kBlack,
       body: Stack(
@@ -70,7 +94,7 @@ class _TrackviewState extends State<Trackview> {
                   begin: Alignment.topCenter,
                   end: Alignment.bottomCenter,
                   colors: [
-                    Color(0xFF505424).withOpacity(0.2),
+                    Color(colorValue).withOpacity(0.2),
                     kBlack,
                   ],
                   stops: [0.4, 1],
@@ -82,7 +106,7 @@ class _TrackviewState extends State<Trackview> {
             padding: const EdgeInsets.symmetric(horizontal: 20),
             child: Column(
               children: [
-                SizedBox(
+                const SizedBox(
                   height: 24,
                 ),
                 Row(
@@ -90,12 +114,13 @@ class _TrackviewState extends State<Trackview> {
                   children: [
                     GestureDetector(
                       onTap: () {
+                        audioPlayer.dispose();
                         Navigator.pop(context);
                       },
                       child: Image.asset('assets/images/icons/arrow-down.png'),
                     ),
                     Text(
-                      'Album Title',
+                      '${currentIndex}',
                       style: SenSemiBold.copyWith(
                         fontSize: 14,
                         color: kWhite,
@@ -116,8 +141,8 @@ class _TrackviewState extends State<Trackview> {
                   width: SizeConfig.blockSizeHorizontal! * 90,
                   child: ClipRRect(
                     borderRadius: BorderRadius.circular(10),
-                    child: Image.asset(
-                      'assets/images/songs/fragile.jpg',
+                    child: Image.network(
+                      widget.songs[currentIndex].imageSource,
                       fit: BoxFit.cover,
                     ),
                   ),
@@ -171,10 +196,15 @@ class _TrackviewState extends State<Trackview> {
                       height: 22,
                       width: 22,
                     ),
-                    Image.asset(
-                      'assets/images/icons/Back.png',
-                      height: 36,
-                      width: 36,
+                    GestureDetector(
+                      onTap: () {
+                        updateSong(currentIndex - 1);
+                      },
+                      child: Image.asset(
+                        'assets/images/icons/Back.png',
+                        height: 36,
+                        width: 36,
+                      ),
                     ),
                     CircleAvatar(
                       radius: 35,
@@ -192,10 +222,15 @@ class _TrackviewState extends State<Trackview> {
                         },
                       ),
                     ),
-                    Image.asset(
-                      'assets/images/icons/Forward.png',
-                      height: 36,
-                      width: 36,
+                    GestureDetector(
+                      onTap: () {
+                        updateSong(currentIndex + 1);
+                      },
+                      child: Image.asset(
+                        'assets/images/icons/Forward.png',
+                        height: 36,
+                        width: 36,
+                      ),
                     ),
                     Image.asset(
                       'assets/images/icons/Repeat-Inactive.png',
@@ -211,44 +246,44 @@ class _TrackviewState extends State<Trackview> {
       ),
     );
   }
-}
 
-Widget songInformation() {
-  return Container(
-    child: Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          'Fragile',
-          textAlign: TextAlign.left,
-          style: SenSemiBold.copyWith(fontSize: 22, color: kWhite),
-        ),
-        SizedBox(
-          height: SizeConfig.blockSizeVertical! * 0.5,
-        ),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Text(
-              'Laufey',
-              style: SenMedium.copyWith(color: kLightGrey, fontSize: 16),
-            ),
-            Image.asset('assets/images/icons/heart-outline.png'),
-          ],
-        ),
-      ],
-    ),
-  );
-}
+  Widget songInformation() {
+    return Container(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            widget.songs[currentIndex].name,
+            textAlign: TextAlign.left,
+            style: SenSemiBold.copyWith(fontSize: 22, color: kWhite),
+          ),
+          SizedBox(
+            height: SizeConfig.blockSizeVertical! * 0.5,
+          ),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(
+                widget.songs[currentIndex].artist,
+                style: SenMedium.copyWith(color: kLightGrey, fontSize: 16),
+              ),
+              Image.asset('assets/images/icons/heart-outline.png'),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
 
-String formatTime(Duration duration) {
-  String twoDigits(int n) => n.toString().padLeft(2, '0');
-  final hours = twoDigits(duration.inHours);
-  final minutes = twoDigits(duration.inMinutes.remainder(60));
-  final seconds = twoDigits(duration.inSeconds.remainder(60));
-  return [
-    if (duration.inHours > 0) hours,
-    minutes,
-    seconds,
-  ].join(':');
+  String formatTime(Duration duration) {
+    String twoDigits(int n) => n.toString().padLeft(2, '0');
+    final hours = twoDigits(duration.inHours);
+    final minutes = twoDigits(duration.inMinutes.remainder(60));
+    final seconds = twoDigits(duration.inSeconds.remainder(60));
+    return [
+      if (duration.inHours > 0) hours,
+      minutes,
+      seconds,
+    ].join(':');
+  }
 }
