@@ -5,7 +5,9 @@ import 'package:lettersquared/screens/start.dart';
 import 'package:lettersquared/styles/app_styles.dart';
 
 class SignUp1 extends StatelessWidget {
-  const SignUp1({super.key});
+  SignUp1({super.key});
+
+  final TextEditingController emailController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -50,6 +52,7 @@ class SignUp1 extends StatelessWidget {
               style: SenBold.copyWith(fontSize: 20, color: kWhite),
             ),
             TextField(
+              controller: emailController,
               cursorColor: kDarkGrey,
               decoration: InputDecoration(
                 filled: true,
@@ -76,7 +79,7 @@ class SignUp1 extends StatelessWidget {
                   Navigator.push(
                     context,
                     MaterialPageRoute(
-                      builder: ((context) => const Signup2())
+                      builder: ((context) =>  Signup2(email: emailController.text))
                     )
                   );
                 }, 

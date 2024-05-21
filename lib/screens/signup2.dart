@@ -1,12 +1,36 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:lettersquared/screens/signup1.dart';
 import 'package:lettersquared/screens/signup3.dart';
 import 'package:lettersquared/styles/app_styles.dart';
-import 'package:lettersquared/screens/start.dart';
 import 'package:lettersquared/components/button.dart';
 
 class Signup2 extends StatelessWidget {
-  const Signup2({super.key});
+  final String email;
+  final TextEditingController passwordController = TextEditingController();
+ 
+  bool _obscureText = true; // rembmemrsm
+
+  Signup2({required this.email, super.key});
+  
+  Future<void> _register(BuildContext context) async {
+    try {
+      UserCredential userCredential = await FirebaseAuth.instance
+          .createUserWithEmailAndPassword(
+              email: email, password: passwordController.text);
+
+      Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) =>
+                Signup3(email: email, password: passwordController.text),
+          ));
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Failed to register: $e')),
+      );
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -22,8 +46,8 @@ class Signup2 extends StatelessWidget {
         elevation: 0,
         leading: GestureDetector(
           onTap: () {
-            Navigator.push(context,
-                MaterialPageRoute(builder: ((context) => const SignUp1())));
+            Navigator.push(
+                context, MaterialPageRoute(builder: ((context) => SignUp1())));
           },
           child: Container(
             margin: const EdgeInsets.all(10),
@@ -47,6 +71,8 @@ class Signup2 extends StatelessWidget {
               style: SenBold.copyWith(fontSize: 20, color: kWhite),
             ),
             TextField(
+              obscureText: true,
+              controller: passwordController,
               cursorColor: kDarkGrey,
               decoration: InputDecoration(
                 filled: true,
@@ -73,12 +99,7 @@ class Signup2 extends StatelessWidget {
             ),
             Center(
               child: GestureDetector(
-                onTap: () {
-                  Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: ((context) => const Signup3())));
-                },
+                onTap: () => _register(context),
                 child: Button(
                   key: const ValueKey("su2_next"),
                   text: "Next",

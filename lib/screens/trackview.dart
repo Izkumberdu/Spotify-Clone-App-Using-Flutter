@@ -70,10 +70,10 @@ class _TrackviewState extends State<Trackview> {
                   begin: Alignment.topCenter,
                   end: Alignment.bottomCenter,
                   colors: [
-                    Color(0xFF505424).withOpacity(0.2),
+                    const Color(0xFF505424).withOpacity(0.2),
                     kBlack,
                   ],
-                  stops: [0.4, 1],
+                  stops: const [0.4, 1],
                 ),
               ),
             ),
@@ -82,7 +82,7 @@ class _TrackviewState extends State<Trackview> {
             padding: const EdgeInsets.symmetric(horizontal: 20),
             child: Column(
               children: [
-                SizedBox(
+                const SizedBox(
                   height: 24,
                 ),
                 Row(

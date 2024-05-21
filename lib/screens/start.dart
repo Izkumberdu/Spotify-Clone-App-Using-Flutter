@@ -1,11 +1,6 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
-import 'package:google_fonts/google_fonts.dart';
-import 'package:lettersquared/components/bottomNavbar.dart';
 import 'package:lettersquared/components/button.dart';
 import 'package:lettersquared/screens/homepage.dart';
-import 'package:lettersquared/screens/onboarding.dart';
 import 'package:lettersquared/screens/signup1.dart';
 import 'package:lettersquared/styles/app_styles.dart';
 
@@ -39,7 +34,7 @@ class StartScreen extends StatelessWidget {
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                        builder: ((context) => const SignUp1())
+                        builder: ((context) => SignUp1())
                       )
                     );
                   },

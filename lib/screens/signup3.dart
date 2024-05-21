@@ -1,3 +1,5 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:lettersquared/screens/choose_artist.dart';
 import 'package:lettersquared/screens/signup2.dart';
@@ -5,7 +7,40 @@ import 'package:lettersquared/styles/app_styles.dart';
 import 'package:lettersquared/components/button.dart';
 
 class Signup3 extends StatelessWidget {
-  const Signup3({super.key});
+  final String email;
+  final String password;
+  final TextEditingController nameController = TextEditingController();
+
+  Signup3(
+    {
+      required this.email,
+      required this.password,
+      super.key
+    }
+  );
+
+  Future<void> _saveUserData(BuildContext context) async {
+    try {
+      User? user = FirebaseAuth.instance.currentUser;
+      if (user != null) {
+        await FirebaseFirestore.instance.collection('users').doc(user.uid).set({
+          'email': email,
+          'name': nameController.text
+        });
+      }
+
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => ChooseArtist(email: email, password: password, name: nameController.text)
+        )
+      );
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Failed to save user data: $e')),
+      );
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -22,7 +57,7 @@ class Signup3 extends StatelessWidget {
         leading: GestureDetector(
           onTap: () {
             Navigator.push(context,
-                MaterialPageRoute(builder: ((context) => const Signup2())));
+                MaterialPageRoute(builder: ((context) => Signup2(email: email))));
           },
           child: Container(
             margin: const EdgeInsets.all(10),
@@ -49,6 +84,7 @@ class Signup3 extends StatelessWidget {
                   style: SenBold.copyWith(fontSize: 20, color: kWhite),
                 ),
                 TextField(
+                  controller: nameController,
                   cursorColor: kDarkGrey,
                   decoration: InputDecoration(
                     filled: true,
@@ -123,12 +159,7 @@ class Signup3 extends StatelessWidget {
             ),
             Center(
               child: GestureDetector(
-                onTap: () {
-                  Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: ((context) => const ChooseArtist())));
-                },
+                onTap: () => _saveUserData(context),
                 child: Button(
                   key: const ValueKey("su2_next"),
                   text: "Next",

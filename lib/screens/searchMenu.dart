@@ -42,7 +42,7 @@ class SearchMenu extends ConsumerWidget {
               ),
             ),
             const SizedBox(height: 19),
-            Container(
+            SizedBox(
               height: 138,
               child: ListView.builder(
                 scrollDirection: Axis.horizontal,
@@ -148,7 +148,7 @@ Widget categoryContainer(String text, String imagePath, Color color) {
           color: Colors.black45.withOpacity(0.5),
           spreadRadius: 2,
           blurRadius: 5,
-          offset: Offset(0, 3),
+          offset: const Offset(0, 3),
         ),
       ],
     ),

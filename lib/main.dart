@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:lettersquared/screens/choose_artist.dart';
 import 'package:lettersquared/screens/homepage.dart';
 import 'package:lettersquared/screens/library.dart';
 import 'package:lettersquared/screens/playingqueue.dart';
@@ -8,8 +7,6 @@ import 'package:lettersquared/screens/search.dart';
 import 'package:lettersquared/screens/trackview.dart';
 import 'package:lettersquared/screens/signup1.dart';
 import 'package:lettersquared/screens/start.dart';
-import 'package:firebase_core/firebase_core.dart';
-import 'firebase_options.dart';
 
 import 'package:firebase_core/firebase_core.dart';
 import 'firebase_options.dart';
@@ -33,11 +30,11 @@ class MyApp extends StatelessWidget {
   @override
  Widget build(BuildContext context) {
     return MaterialApp(
+      debugShowCheckedModeBanner: false,
       initialRoute: '/',
       routes: {
-        '/': (context) => const ChooseArtist(),
-        '/onboarding': (context) => const ChooseArtist(),
-        '/signup1': (context) => const SignUp1(),
+        '/': (context) => const StartScreen(),
+        '/onboarding': (context) => const StartScreen(),
         '/homepage': (context) => const Homepage(),
         '/library': (context) => const Library(),
         '/search': (context) => const Search(),
