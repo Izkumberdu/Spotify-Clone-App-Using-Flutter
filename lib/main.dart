@@ -27,12 +27,12 @@ class MyApp extends StatelessWidget {
 
   // This widget is the root of your application. test
   @override
-  Widget build(BuildContext context) {
+ Widget build(BuildContext context) {
     return MaterialApp(
-      home: SearchMenu(),
+      initialRoute: '/',
       routes: {
         '/': (context) => const StartScreen(),
-        '/onboarding': (context) => const Onboarding(),
+        '/onboarding': (context) => const StartScreen(),
         '/signup1': (context) => const SignUp1(),
         '/homepage': (context) => const Homepage(),
         '/library': (context) => const Library(),
