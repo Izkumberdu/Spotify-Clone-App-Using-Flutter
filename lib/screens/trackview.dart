@@ -8,13 +8,13 @@ class Trackview extends StatefulWidget {
   const Trackview({
     Key? key,
     required this.song,
-    required this.songs,
     required this.index,
+    required this.songs,
   }) : super(key: key);
 
   final Song song;
-  final List<Song> songs;
   final int index;
+  final List<Song> songs;
 
   @override
   State<Trackview> createState() => _TrackviewState();
@@ -26,14 +26,12 @@ class _TrackviewState extends State<Trackview> {
   Duration duration = Duration.zero;
   Duration position = Duration.zero;
   late int currentIndex;
-  late Song currentSong;
 
   @override
   void initState() {
     super.initState();
     currentIndex = widget.index;
-    currentSong = widget.song;
-    setAudio(currentSong.url);
+    setAudio();
     audioPlayer.playerStateStream.listen((state) {
       setState(() {
         isPlaying = state.playing;
@@ -51,18 +49,21 @@ class _TrackviewState extends State<Trackview> {
     });
   }
 
-  Future<void> setAudio(String url) async {
-    await audioPlayer.setAudioSource(AudioSource.uri(Uri.parse(url)));
+  Future<void> setAudio() async {
+    await audioPlayer.setAudioSource(
+        AudioSource.uri(Uri.parse(widget.songs[currentIndex].url)));
   }
 
   void updateSong(int newIndex) {
-    if (newIndex >= 0 && newIndex < widget.songs.length) {
-      setState(() {
-        currentIndex = newIndex;
-        currentSong = widget.songs[newIndex];
-        setAudio(currentSong.url);
-      });
-    }
+    setState(() {
+      currentIndex = newIndex;
+      if (currentIndex < 0) {
+        currentIndex = widget.songs.length - 1;
+      } else if (currentIndex >= widget.songs.length) {
+        currentIndex = 0;
+      }
+      setAudio();
+    });
   }
 
   @override
@@ -76,7 +77,7 @@ class _TrackviewState extends State<Trackview> {
     SizeConfig sizeConfig = SizeConfig();
 
     sizeConfig.init(context);
-    String color = currentSong.color;
+    String color = widget.songs[currentIndex].color;
     final int colorValue = int.parse('0xff$color');
     return Scaffold(
       backgroundColor: kBlack,
@@ -105,7 +106,7 @@ class _TrackviewState extends State<Trackview> {
             padding: const EdgeInsets.symmetric(horizontal: 20),
             child: Column(
               children: [
-                SizedBox(
+                const SizedBox(
                   height: 24,
                 ),
                 Row(
@@ -119,7 +120,7 @@ class _TrackviewState extends State<Trackview> {
                       child: Image.asset('assets/images/icons/arrow-down.png'),
                     ),
                     Text(
-                      '${currentIndex + 1}/${widget.songs.length}', // Displaying index here
+                      '${currentIndex}',
                       style: SenSemiBold.copyWith(
                         fontSize: 14,
                         color: kWhite,
@@ -141,7 +142,7 @@ class _TrackviewState extends State<Trackview> {
                   child: ClipRRect(
                     borderRadius: BorderRadius.circular(10),
                     child: Image.network(
-                      currentSong.imageSource,
+                      widget.songs[currentIndex].imageSource,
                       fit: BoxFit.cover,
                     ),
                   ),
@@ -252,7 +253,7 @@ class _TrackviewState extends State<Trackview> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            currentSong.name,
+            widget.songs[currentIndex].name,
             textAlign: TextAlign.left,
             style: SenSemiBold.copyWith(fontSize: 22, color: kWhite),
           ),
@@ -263,7 +264,7 @@ class _TrackviewState extends State<Trackview> {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text(
-                currentSong.artist,
+                widget.songs[currentIndex].artist,
                 style: SenMedium.copyWith(color: kLightGrey, fontSize: 16),
               ),
               Image.asset('assets/images/icons/heart-outline.png'),
