@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:lettersquared/components/button.dart';
 import 'package:lettersquared/screens/signup3.dart';
 import 'package:lettersquared/styles/app_styles.dart';
 

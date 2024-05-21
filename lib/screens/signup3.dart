@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:lettersquared/screens/choose_artist.dart';
-import 'package:lettersquared/screens/signup1.dart';
 import 'package:lettersquared/screens/signup2.dart';
 import 'package:lettersquared/styles/app_styles.dart';
 import 'package:lettersquared/components/button.dart';
