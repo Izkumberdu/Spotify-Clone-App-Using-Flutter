@@ -17,7 +17,6 @@ class MusicTracker extends ConsumerWidget {
     final currentIndex = ref.watch(currentSongIndexProvider);
     final duration = ref.watch(lastDurationProvider);
     final position = ref.watch(lastPositionProvider);
-    bool isPlaying = musicTrackIsPlaying;
 
     final audioHandler = AudioHandler(ref);
 
@@ -28,6 +27,7 @@ class MusicTracker extends ConsumerWidget {
     WidgetsBinding.instance!.addPostFrameCallback((_) async {
       if (musicTrackIsPlaying) {
         await audioHandler.setAudioSource(currentSong.url);
+        await audioHandler.seek(ref, position);
         await audioHandler.play(ref);
       } else {
         audioHandler.dispose();
@@ -63,9 +63,9 @@ class MusicTracker extends ConsumerWidget {
               onChanged: (value) async {
                 final newPosition = Duration(seconds: value.toInt());
                 await audioHandler.seek(ref, newPosition);
-                if (!isPlaying) {
+                if (!musicTrackIsPlaying) {
                   await audioHandler.play(ref);
-                  isPlaying = true;
+                  ref.read(musicTrackerIsPlaying.notifier).state = true;
                 }
               },
             ),
@@ -106,37 +106,43 @@ class MusicTracker extends ConsumerWidget {
               ),
               IconButton(
                 icon: Icon(Icons.skip_previous, color: Colors.white),
-                onPressed: () {
-                  audioHandler.audioPlayer.stop();
+                onPressed: () async {
+                  await audioHandler.audioPlayer.stop();
                   int newIndex = currentIndex - 1;
                   if (newIndex < 0) {
                     newIndex = ref.read(songListProvider).length - 1;
                   }
                   ref.read(currentSongIndexProvider.notifier).state = newIndex;
+                  // Reset duration and position when moving to a new song
+                  ref.read(lastDurationProvider.notifier).state = Duration.zero;
+                  ref.read(lastPositionProvider.notifier).state = Duration.zero;
                 },
               ),
               IconButton(
-                icon: Icon(isPlaying ? Icons.pause : Icons.play_arrow,
+                icon: Icon(musicTrackIsPlaying ? Icons.pause : Icons.play_arrow,
                     color: Colors.white),
                 onPressed: () async {
-                  if (isPlaying) {
-                    isPlaying = false;
+                  if (musicTrackIsPlaying) {
                     await audioHandler.pause(ref);
+                    ref.read(musicTrackerIsPlaying.notifier).state = false;
                   } else {
-                    isPlaying = true;
                     await audioHandler.play(ref);
+                    ref.read(musicTrackerIsPlaying.notifier).state = true;
                   }
                 },
               ),
               IconButton(
                 icon: Icon(Icons.skip_next, color: Colors.white),
-                onPressed: () {
-                  audioHandler.audioPlayer.stop();
+                onPressed: () async {
+                  await audioHandler.audioPlayer.stop();
                   int newIndex = currentIndex + 1;
                   if (newIndex >= ref.read(songListProvider).length) {
                     newIndex = 0;
                   }
                   ref.read(currentSongIndexProvider.notifier).state = newIndex;
+                  // Reset duration and position when moving to a new song
+                  ref.read(lastDurationProvider.notifier).state = Duration.zero;
+                  ref.read(lastPositionProvider.notifier).state = Duration.zero;
                 },
               ),
             ],
