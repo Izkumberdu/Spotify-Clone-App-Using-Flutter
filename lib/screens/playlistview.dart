@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:lettersquared/components/bottomNavbar.dart';
 import 'package:lettersquared/provider/providers.dart';
 import 'package:lettersquared/styles/app_styles.dart';
@@ -34,25 +35,32 @@ class PlaylistViewPage extends ConsumerWidget {
             ),
           ),
           SingleChildScrollView(
-            child: Padding(
-              padding: const EdgeInsets.fromLTRB(20, 50, 20, 0),
-              child: Column(
-                children: [
-                  backChevron(),
-                  const SizedBox(height: 30),
-                  searchBar(),
-                  const SizedBox(height: 40),
-                  bigPicture(),
-                  const SizedBox(height: 30),
-                  Text(
-                    'data'
-                    ),
-                  const SizedBox(height: 10),
-                  Row(),
-                  const SizedBox(height: 10),
-                  Text('data')
-                ],
-              ),
+            child: Column(
+              children: [
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(20, 50, 20, 0),
+                  child: Column(
+                    children: [
+                      backChevron(),
+                      const SizedBox(height: 30),
+                      searchBar(),
+                      const SizedBox(height: 35),
+                      bigPicture(),
+                      const SizedBox(height: 30),
+                      albumName(),
+                      const SizedBox(height: 5),
+                      spotifyLabel(),
+                      const SizedBox(height: 5),
+                      buttonControls(),
+                      const SizedBox(height: 5)
+                    ],
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(5, 0, 5, 0),
+                  child: songList(screenSize),
+                )
+              ],
             ),
           )
  
@@ -78,12 +86,134 @@ class PlaylistViewPage extends ConsumerWidget {
     );
   }
 
+  SizedBox songList(Size screenSize) {
+    return SizedBox(                  
+                  width: screenSize.width,
+                  height: 250,
+                  child: ListView.builder(
+                    padding: EdgeInsets.zero,
+                    itemCount: 10, // replace with actual playlist song count
+                    itemBuilder: (context, index) {
+                      return ListTile(
+                      leading: Container(
+                        width: 50, 
+                        height: 50,
+                        decoration: BoxDecoration( //replace with actual stuff from the songs
+                          color: Colors.amber,
+                        ),
+                      ),
+                        title: Text('Song ${index + 1}', style: GoogleFonts.sen(color: Colors.white, fontSize: 16, fontWeight: FontWeight.w500)),
+                        subtitle: Text('Artist ${index + 1}', style: GoogleFonts.sen(color: const Color(0xFFB3B3B3), fontSize: 13, fontWeight: FontWeight.w600)),
+                        trailing:                                 Image.asset(
+                                'assets/images/icons/more-horizontal.png', 
+                                width: 30,
+                                height: 30,
+                              ),
+                      );
+                    },
+                  ),                    
+                );
+  }
+
+  Row buttonControls() {
+    return Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    SizedBox(
+                      height: 55,
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          likesDuration(),
+                          const Spacer(),
+                          SizedBox(
+                            width: 150,
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              children: [
+                                Image.asset(
+                                  'assets/images/icons/heart-outline.png', 
+                                  width: 20, 
+                                  height: 20, 
+                                ),
+                                const Spacer(),
+                                Image.asset(
+                                  'assets/images/icons/download-outline.png', 
+                                  width: 20,
+                                  height: 20,
+                                ),
+                                const Spacer(),
+                                Image.asset(
+                                  'assets/images/icons/more-horizontal.png', 
+                                  width: 30,
+                                  height: 30,
+                                ),
+                                const Spacer()
+                              ],
+                            ),
+                          )
+
+                        ],
+                      ),
+                    ),
+                    const Spacer(),
+                    ClipOval(
+                      child: SizedBox(
+                        width: 50,
+                        height: 50,
+                        child: Image.asset(
+                          'assets/images/icons/greenplay.png', // Path to your image asset
+                          fit: BoxFit.cover, // Ensures the image covers the container
+                        ),
+                      ),
+                    )                     
+                  ],
+                );
+  }
+
+  Align likesDuration() {
+    return Align(
+                  alignment: Alignment.centerLeft,
+                  child: Text(
+                    '1,629,592 likes • 6h 48m', // change to be based on playlist
+                    style: GoogleFonts.sen(color: const Color(0xFFB3B3B3), fontSize: 13, fontWeight: FontWeight.w500),
+                    ),
+                );
+  }
+
+  Row spotifyLabel() {
+    return Row(
+                            children: [
+                              Image.asset(
+                                'assets/images/icons/logo.png', 
+                                width: 24.0, 
+                                height: 24.0, 
+                              ),
+                              const SizedBox(width: 5.0), 
+                              Text(
+                              'Spotify', //change to be based on playlist
+                              style: GoogleFonts.sen(color: Colors.white, fontSize: 16, fontWeight: FontWeight.w600),
+                              ),
+                            ],
+                          );
+  }
+
+  Align albumName() {
+    return Align(
+                  alignment: Alignment.centerLeft,
+                  child: Text(
+                    'New and approved indie pop. Cover: No Rome', //change to be based on playlist
+                    style: GoogleFonts.sen(color: const Color(0xFFB3B3B3), fontSize: 13, fontWeight: FontWeight.w500),
+                    ),
+                );
+  }
+
   Container bigPicture() {
     return Container(
-                  width: 250,
-                  height: 250,
-                  color: Colors.amber,
-                );
+      width: 250,
+      height: 250,
+      child: Image.asset('assets/images/genreImages/indie.jpg', fit: BoxFit.cover),
+    );
   }
 
   Row searchBar() {
@@ -95,7 +225,7 @@ class PlaylistViewPage extends ConsumerWidget {
                       child: TextField(
                         decoration: InputDecoration(
                           hintText: 'Find in playlist',
-                          hintStyle: const TextStyle(color: Colors.white, fontSize: 14),
+                          hintStyle: GoogleFonts.sen(color: Colors.white, fontSize: 14, fontWeight: FontWeight.w600),
                           prefixIcon: const Icon(Icons.search, color: Colors.white, size: 20),
                           border: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(8.0),
@@ -114,7 +244,7 @@ class PlaylistViewPage extends ConsumerWidget {
                       child: TextField(
                         decoration: InputDecoration(
                           hintText: 'Sort',
-                          hintStyle: const TextStyle(color: Colors.white, fontSize: 14),
+                          hintStyle: GoogleFonts.sen(color: Colors.white, fontSize: 14, fontWeight: FontWeight.w600),
                           border: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(8.0),
                             borderSide: BorderSide.none,
