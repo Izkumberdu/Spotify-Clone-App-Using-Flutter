@@ -106,7 +106,7 @@ class SearchMenu extends ConsumerWidget {
               Navigator.pushNamed(context, '/searchMenu');
               break;
             case 2:
-              Navigator.pushNamed(context, '/playingqueue');
+              Navigator.pushNamed(context, '/library');
               break;
           }
         },
