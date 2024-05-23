@@ -60,7 +60,7 @@ class MusicTracker extends ConsumerWidget {
               min: 0,
               max: duration.inSeconds.toDouble(),
               value: position.inSeconds.toDouble(),
-              onChanged: (value) async {
+              onChanged: (value)  {
                 final newPosition = Duration(seconds: value.toInt());
                 await audioHandler.seek(ref, newPosition);
                 if (!isPlaying) {

@@ -27,6 +27,7 @@ class _TrackviewState extends ConsumerState<Trackview> {
   bool isPlaying = false;
   Duration duration = Duration.zero;
   Duration position = Duration.zero;
+
   late int currentIndex;
 
   @override
@@ -36,7 +37,7 @@ class _TrackviewState extends ConsumerState<Trackview> {
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       ref.read(songListProvider.notifier).state = widget.songs;
       ref.read(currentSongIndexProvider.notifier).state = widget.index;
-
+      ref.watch(musicTrackerIsPlaying.notifier).state = false;
       if (ref.watch(musicTrackerIsPlaying) == false) {
         ref.read(trackViewIsPlaying.notifier).state = true;
         setAudio();
