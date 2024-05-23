@@ -18,7 +18,8 @@ class ChooseArtist extends StatelessWidget {
   });
 
   Future<List<Artist>> _fetchArtists() async {
-    QuerySnapshot snapshot = await FirebaseFirestore.instance.collection('artists').get();
+    QuerySnapshot snapshot =
+        await FirebaseFirestore.instance.collection('artists').get();
     return snapshot.docs.map((doc) => Artist.fromDocument(doc)).toList();
   }
 
@@ -77,10 +78,15 @@ class _ChooseArtistPageState extends State<_ChooseArtistPage> {
   void _submit() async {
     User? user = FirebaseAuth.instance.currentUser;
     if (user != null) {
-      await FirebaseFirestore.instance.collection('users').doc(user.uid).update({
-        'favorite_artists': _selectedArtists.map((artist) => artist.name).toList(),
+      await FirebaseFirestore.instance
+          .collection('users')
+          .doc(user.uid)
+          .update({
+        'favorite_artists':
+            _selectedArtists.map((artist) => artist.name).toList(),
       });
-      Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => const Homepage()));
+      Navigator.pushReplacement(
+          context, MaterialPageRoute(builder: (context) => const Homepage()));
     }
   }
 
@@ -113,87 +119,129 @@ class _ChooseArtistPageState extends State<_ChooseArtistPage> {
           ),
         ),
       ),
-      body: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 31),
-        child: Column(
-          children: [
-            const SizedBox(height: 16),
-            TextField(
-              cursorColor: kDarkGrey,
-              decoration: InputDecoration(
-                filled: true,
-                fillColor: kWhite,
-                hintText: "Search",
-                focusedBorder: UnderlineInputBorder(
-                  borderSide: const BorderSide(color: Colors.transparent),
-                  borderRadius: BorderRadius.circular(5),
-                ),
-                enabledBorder: UnderlineInputBorder(
-                  borderSide: const BorderSide(color: Colors.transparent),
-                  borderRadius: BorderRadius.circular(5),
-                ),
-              ),
-            ),
-            const SizedBox(height: 21),
-            Expanded(
-              child: GridView.builder(
-                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount: 3,
-                  crossAxisSpacing: 10,
-                  mainAxisSpacing: 20,
-                ),
-                itemCount: widget.artists.length,
-                itemBuilder: (context, index) {
-                  Artist artist = widget.artists[index];
-                  bool isSelected = _selectedArtists.contains(artist);
-                  return GestureDetector(
-                    onTap: () {
-                      setState(() {
-                        if (isSelected) {
-                          _selectedArtists.remove(artist);
-                        } else {
-                          _selectedArtists.add(artist);
-                        }
-                      });
-                    },
-                    child: Column(
-                      children: [
-                        CircleAvatar(
-                          backgroundImage: NetworkImage(artist.imageURL),
-                          radius: 55,
-                          child: isSelected
-                              ? const Icon(Icons.check_circle, color: kGreen, size: 40)
-                              : null,
-                        ),
-                        const SizedBox(height: 8),
-                        Text(
-                          artist.name,
-                          textAlign: TextAlign.center,
-                          style: SenMedium.copyWith(fontSize: 14, color: kWhite),
-                        ),
-                      ],
+      body: Stack(
+        children: [
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 31),
+            child: Column(
+              children: [
+                const SizedBox(height: 16),
+                TextField(
+                  cursorColor: kDarkGrey,
+                  decoration: InputDecoration(
+                    filled: true,
+                    fillColor: kWhite,
+                    hintText: "Search",
+                    focusedBorder: UnderlineInputBorder(
+                      borderSide: const BorderSide(color: Colors.transparent),
+                      borderRadius: BorderRadius.circular(5),
                     ),
-                  );
-                },
+                    enabledBorder: UnderlineInputBorder(
+                      borderSide: const BorderSide(color: Colors.transparent),
+                      borderRadius: BorderRadius.circular(5),
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 21),
+                Expanded(
+                  child: GridView.builder(
+                    gridDelegate:
+                        const SliverGridDelegateWithFixedCrossAxisCount(
+                      crossAxisCount: 3,
+                      crossAxisSpacing: 10,
+                      mainAxisSpacing: 20,
+                    ),
+                    itemCount: widget.artists.length,
+                    itemBuilder: (context, index) {
+                      Artist artist = widget.artists[index];
+                      bool isSelected = _selectedArtists.contains(artist);
+                      return GestureDetector(
+                        onTap: () {
+                          setState(() {
+                            if (isSelected) {
+                              _selectedArtists.remove(artist);
+                            } else {
+                              _selectedArtists.add(artist);
+                            }
+                          });
+                        },
+                        child: Column(
+                          children: [
+                            CircleAvatar(
+                              radius: 40,
+                              backgroundImage: NetworkImage(artist.imageURL),
+                              onBackgroundImageError: (exception, stackTrace) {
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  SnackBar(
+                                    content:
+                                        Text('Error loading image: $exception'),
+                                  ),
+                                );
+                              },
+                              backgroundColor: Colors.grey,
+                              child: isSelected
+                                  ? const Icon(Icons.check_circle,
+                                      color: kGreen, size: 40)
+                                  : null,
+                            ),
+                            const SizedBox(height: 4),
+                            Text(
+                              artist.name,
+                              textAlign: TextAlign.center,
+                              style: SenMedium.copyWith(
+                                  fontSize: 10, color: kWhite),
+                            ),
+                          ],
+                        ),
+                      );
+                    },
+                  ),
+                ),
+              ],
+            ),
+          ),
+          if (_selectedArtists.length >= 3)
+            Align(
+              alignment: Alignment.bottomCenter,
+              child: Container(
+                height: 100,
+                decoration: const BoxDecoration(
+                  gradient: LinearGradient(
+                    begin: Alignment.topCenter,
+                    end: Alignment.bottomCenter,
+                    colors: [Colors.transparent, kBlack],
+                  ),
+                ),
               ),
             ),
-            Padding(
-              padding: const EdgeInsets.only(bottom: 16),
+          AnimatedPositioned(
+            duration: const Duration(milliseconds: 300),
+            bottom: _selectedArtists.length >= 3 ? 16 : -60,
+            left: 0,
+            right: 0,
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 31),
               child: ElevatedButton(
                 onPressed: _selectedArtists.length >= 3 ? _submit : null,
                 style: ElevatedButton.styleFrom(
                   backgroundColor: kGreen,
-                  padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 12),
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(50)),
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 40, vertical: 12),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(50),
+                  ),
                 ),
-                child: Text(
-                  'Next',
-                  style: SenSemiBold.copyWith(fontSize: 15, color: kBlack),
+                child: GestureDetector(
+                  onTap: _submit,
+                  child: Text(
+                    'Next',
+                    style: SenSemiBold.copyWith(fontSize: 15, color: kBlack),
+                  ),
                 ),
               ),
             ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }

@@ -11,13 +11,11 @@ class Signup3 extends StatelessWidget {
   final String password;
   final TextEditingController nameController = TextEditingController();
 
-  Signup3(
-    {
-      required this.email,
-      required this.password,
-      super.key
-    }
-  );
+  Signup3({
+    required this.email,
+    required this.password,
+    super.key,
+  });
 
   Future<void> _saveUserData(BuildContext context) async {
     try {
@@ -25,15 +23,15 @@ class Signup3 extends StatelessWidget {
       if (user != null) {
         await FirebaseFirestore.instance.collection('users').doc(user.uid).set({
           'email': email,
-          'name': nameController.text
+          'name': nameController.text,
         });
       }
 
       Navigator.push(
         context,
         MaterialPageRoute(
-          builder: (context) => ChooseArtist(email: email, password: password, name: nameController.text)
-        )
+          builder: (context) => ChooseArtist(email: email, password: password, name: nameController.text),
+        ),
       );
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -56,14 +54,14 @@ class Signup3 extends StatelessWidget {
         elevation: 0,
         leading: GestureDetector(
           onTap: () {
-            Navigator.push(context,
-                MaterialPageRoute(builder: ((context) => Signup2(email: email))));
+            Navigator.push(context, MaterialPageRoute(builder: (context) => Signup2(email: email)));
           },
           child: Container(
             margin: const EdgeInsets.all(10),
             decoration: BoxDecoration(
-                color: const Color(0xff030303),
-                borderRadius: BorderRadius.circular(50)),
+              color: const Color(0xff030303),
+              borderRadius: BorderRadius.circular(50),
+            ),
             child: const Icon(
               Icons.chevron_left,
               color: kWhite,
@@ -71,109 +69,115 @@ class Signup3 extends StatelessWidget {
           ),
         ),
       ),
-      body: Padding(
-        padding: const EdgeInsets.only(left: 31, right: 31),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  "What's your name?",
-                  style: SenBold.copyWith(fontSize: 20, color: kWhite),
-                ),
-                TextField(
-                  controller: nameController,
-                  cursorColor: kDarkGrey,
-                  decoration: InputDecoration(
-                    filled: true,
-                    fillColor: kGrey,
-                    focusedBorder: UnderlineInputBorder(
-                      borderSide: const BorderSide(color: Colors.transparent),
-                      borderRadius: BorderRadius.circular(5),
-                    ),
-                    enabledBorder: UnderlineInputBorder(
-                      borderSide: const BorderSide(color: Colors.transparent),
-                      borderRadius: BorderRadius.circular(5),
+      body: SingleChildScrollView(
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 31),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    "What's your name?",
+                    style: SenBold.copyWith(fontSize: 20, color: kWhite),
+                  ),
+                  TextField(
+                    controller: nameController,
+                    cursorColor: kDarkGrey,
+                    decoration: InputDecoration(
+                      filled: true,
+                      fillColor: kGrey,
+                      focusedBorder: UnderlineInputBorder(
+                        borderSide: const BorderSide(color: Colors.transparent),
+                        borderRadius: BorderRadius.circular(5),
+                      ),
+                      enabledBorder: UnderlineInputBorder(
+                        borderSide: const BorderSide(color: Colors.transparent),
+                        borderRadius: BorderRadius.circular(5),
+                      ),
                     ),
                   ),
-                ),
-                const SizedBox(
-                  height: 8,
-                ),
-                Text(
-                  "This appears on your Spotify profile.",
-                  style: SenBold.copyWith(fontSize: 8, color: kWhite),
-                ),
-                const SizedBox(
-                  height: 31,
-                ),
-                const Divider(
-                  color: kWhite,
-                  thickness: 1,
-                ),
-                const SizedBox(
-                  height: 25,
-                ),
-                Text(
-                  "By tapping on “Create account”, you agree to the spotify Terms of Use.",
-                  style: SenMedium.copyWith(fontSize: 10, color: kWhite),
-                ),
-                const SizedBox(
-                  height: 32,
-                ),
-                Text(
-                  "Terms of Use",
-                  style: SenMedium.copyWith(fontSize: 10, color: kGreen),
-                ),
-                const SizedBox(
-                  height: 20,
-                ),
-                Text(
-                  "To learn more about how Spotify collect, uses, shares and protects your personal data, Please see the Spotify Privacy Policy.",
-                  style: SenMedium.copyWith(fontSize: 10, color: kWhite),
-                ),
-                const SizedBox(
-                  height: 32,
-                ),
-                Text(
-                  "Privacy Police",
-                  style: SenMedium.copyWith(fontSize: 10, color: kGreen),
-                ),
-                const SizedBox(
-                  height: 20,
-                ),
-                Text(
-                  "Please send me news and offers from Spotify.",
-                  style: SenMedium.copyWith(fontSize: 10, color: kWhite),
-                ),
-                const SizedBox(
-                  height: 20,
-                ),
-                Text(
-                  "Share my registration data with Spotify’s content providers for marketing purposes.",
-                  style: SenMedium.copyWith(fontSize: 10, color: kWhite),
-                ),
-              ],
-            ),
-            Center(
-              child: GestureDetector(
-                onTap: () => _saveUserData(context),
-                child: Button(
-                  key: const ValueKey("su2_next"),
-                  text: "Next",
-                  textStyle: SenSemiBold.copyWith(fontSize: 15, color: kBlack),
-                  width: 82,
-                  height: 42,
-                  color: const Color(0xff535353),
+                  const SizedBox(
+                    height: 8,
+                  ),
+                  Text(
+                    "This appears on your Spotify profile.",
+                    style: SenBold.copyWith(fontSize: 8, color: kWhite),
+                  ),
+                  const SizedBox(
+                    height: 31,
+                  ),
+                  const Divider(
+                    color: kWhite,
+                    thickness: 1,
+                  ),
+                  const SizedBox(
+                    height: 25,
+                  ),
+                  Text(
+                    "By tapping on “Create account”, you agree to the spotify Terms of Use.",
+                    style: SenMedium.copyWith(fontSize: 10, color: kWhite),
+                  ),
+                  const SizedBox(
+                    height: 32,
+                  ),
+                  Text(
+                    "Terms of Use",
+                    style: SenMedium.copyWith(fontSize: 10, color: kGreen),
+                  ),
+                  const SizedBox(
+                    height: 20,
+                  ),
+                  Text(
+                    "To learn more about how Spotify collect, uses, shares and protects your personal data, Please see the Spotify Privacy Policy.",
+                    style: SenMedium.copyWith(fontSize: 10, color: kWhite),
+                  ),
+                  const SizedBox(
+                    height: 32,
+                  ),
+                  Text(
+                    "Privacy Policy",
+                    style: SenMedium.copyWith(fontSize: 10, color: kGreen),
+                  ),
+                  const SizedBox(
+                    height: 20,
+                  ),
+                  Text(
+                    "Please send me news and offers from Spotify.",
+                    style: SenMedium.copyWith(fontSize: 10, color: kWhite),
+                  ),
+                  const SizedBox(
+                    height: 20,
+                  ),
+                  Text(
+                    "Share my registration data with Spotify’s content providers for marketing purposes.",
+                    style: SenMedium.copyWith(fontSize: 10, color: kWhite),
+                  ),
+                ],
+              ),
+              const SizedBox(
+                height: 32,
+              ),
+              Center(
+                child: GestureDetector(
+                  onTap: () => _saveUserData(context),
+                  child: Button(
+                    key: const ValueKey("su2_next"),
+                    text: "Next",
+                    textStyle: SenSemiBold.copyWith(fontSize: 15, color: kBlack),
+                    width: 82,
+                    height: 42,
+                    color: const Color(0xff535353),
+                  ),
                 ),
               ),
-            ),
-            const SizedBox(
-              height: 96,
-            ),
-          ],
+              const SizedBox(
+                height: 96,
+              ),
+            ],
+          ),
         ),
       ),
     );
