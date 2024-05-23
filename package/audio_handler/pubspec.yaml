@@ -1,15 +1,17 @@
-name: audiohandler
+name: audio_handler
 description: "A new Flutter package project."
 version: 0.0.1
 homepage:
 
 environment:
-  sdk: '>=3.3.4 <4.0.0'
+  sdk: ">=3.3.4 <4.0.0"
   flutter: ">=1.17.0"
 
 dependencies:
+  audio_service: ^0.18.13
   flutter:
     sdk: flutter
+  just_audio: ^0.9.38
 
 dev_dependencies:
   flutter_test:

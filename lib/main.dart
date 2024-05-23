@@ -1,3 +1,5 @@
+import 'package:audio_handler/audio_handler.dart';
+import 'package:audio_service/audio_service.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:lettersquared/screens/homepage.dart';
@@ -15,6 +17,10 @@ void main() async {
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
+
+  AudioHandler audioHandler = await initAudioService(
+      androidNotificationChannelId: 'com.example.beats',
+      androidNotificationChannelName: 'Beatss');
   runApp(
     const ProviderScope(
       child: MyApp(),
