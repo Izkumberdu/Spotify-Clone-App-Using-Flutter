@@ -27,7 +27,6 @@ class _MusicTrackerState extends ConsumerState<MusicTracker> {
     sizeConfig.init(context);
     final currentSong = ref.watch(currentSongProvider);
     final musicTrackIsPlaying = ref.watch(musicTrackerIsPlaying);
-    final trackIsPlaying = ref.watch(trackViewIsPlaying);
     final currentIndex = ref.watch(currentSongIndexProvider);
     final duration = ref.watch(lastDurationProvider);
     final position = ref.watch(lastPositionProvider);
@@ -56,7 +55,7 @@ class _MusicTrackerState extends ConsumerState<MusicTracker> {
         final currentIndex = ref.read(currentSongIndexProvider);
         final songs = ref.watch(songListProvider);
         audioHandler.dispose();
-        ref.read(musicTrackerIsPlaying.notifier).state == false;
+        ref.read(musicTrackerIsPlaying.notifier).state = false;
         Navigator.of(context).push(MaterialPageRoute(
           builder: (context) => Trackview(
             song: currentSong,

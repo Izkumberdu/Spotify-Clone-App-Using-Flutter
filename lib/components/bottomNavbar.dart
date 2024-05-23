@@ -34,8 +34,8 @@ class _BotNavBarState extends State<BotNavBar> {
         ),
         BottomNavigationBarItem(
           icon: widget.currentIndex == 2
-              ? Image.asset('assets/images/navbar/library_active.png')
-              : Image.asset('assets/images/navbar/library_inactive.png'),
+              ? Image.asset('assets/images/navbar/Library_active.png')
+              : Image.asset('assets/images/navbar/Library_inactive.png'),
           label: 'Your Library',
         ),
       ],
