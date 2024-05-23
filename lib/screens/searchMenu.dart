@@ -4,6 +4,7 @@ import 'package:lettersquared/components/bottomNavbar.dart';
 import 'package:lettersquared/components/musicTracker.dart';
 import 'package:lettersquared/firebase/getSongs.dart';
 import 'package:lettersquared/models/genre.dart';
+import 'package:lettersquared/models/songs.dart';
 import 'package:lettersquared/provider/providers.dart';
 import 'package:lettersquared/styles/app_styles.dart';
 import 'package:lettersquared/screens/trackview.dart';
@@ -97,12 +98,12 @@ class SearchMenu extends ConsumerWidget {
               ],
             ),
           ),
-          Positioned(
-            bottom: 0,
-            left: 0,
-            right: 0,
-            child: MusicTracker(),
-          ),
+          // Positioned(
+          //   bottom: 0,
+          //   left: 0,
+          //   right: 0,
+          //   child: MusicTracker(),
+          // ),
         ],
       ),
       bottomNavigationBar: BotNavBar(
@@ -156,7 +157,7 @@ class SearchMenu extends ConsumerWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  song.name,
+                  song.title,
                   style: SenSemiBold.copyWith(fontSize: 16, color: kWhite),
                 ),
                 const SizedBox(height: 5),

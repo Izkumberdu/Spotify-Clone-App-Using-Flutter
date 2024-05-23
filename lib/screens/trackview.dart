@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:lettersquared/constants/size_config.dart';
 import 'package:lettersquared/firebase/getSongs.dart';
+import 'package:lettersquared/models/songs.dart';
 import 'package:lettersquared/styles/app_styles.dart';
 import 'package:lettersquared/provider/providers.dart';
 import 'package:lettersquared/provider/audioplayer.dart';
+import 'package:audio_service/audio_service.dart';
 
 class Trackview extends ConsumerStatefulWidget {
   const Trackview({
@@ -32,7 +35,7 @@ class _TrackviewState extends ConsumerState<Trackview> {
   @override
   void initState() {
     super.initState();
-    audioHandler = AudioHandler(ref);
+    audioHandler = RepositoryProvider.of<AudioHandler>(context);
     currentIndex = widget.index;
 
     WidgetsBinding.instance.addPostFrameCallback((_) async {
@@ -41,43 +44,37 @@ class _TrackviewState extends ConsumerState<Trackview> {
       ref.read(currentSongIndexProvider.notifier).state = widget.index;
       ref.watch(musicTrackerIsPlaying.notifier).state = false;
 
-      if (ref.watch(musicTrackerIsPlaying) == false) {
+      if (!ref.watch(musicTrackerIsPlaying)) {
         ref.read(trackViewIsPlaying.notifier).state = true;
         await setAudio();
       } else {
-        await audioHandler.pause(ref);
+        await audioHandler.pause();
       }
     });
 
-    audioHandler.audioPlayer.playerStateStream.listen((state) {
+    audioHandler.playbackState.listen((state) {
       setState(() {
         isPlaying = state.playing;
       });
     });
 
-    audioHandler.audioPlayer.durationStream.listen((newDuration) {
+    audioHandler.mediaItem.listen((mediaItem) {
       setState(() {
-        duration = newDuration ?? Duration.zero;
-      });
-    });
-
-    audioHandler.audioPlayer.positionStream.listen((newPosition) {
-      setState(() {
-        position = newPosition;
+        duration = mediaItem?.duration ?? Duration.zero;
       });
     });
   }
 
   Future<void> setAudio() async {
     final lastPosition = ref.read(lastPositionProvider);
-    await audioHandler.setAudioSource(
-      widget.songs[currentIndex].url,
-      ref,
-    );
+    final songUrl = widget.songs[currentIndex].url;
+
+    await audioHandler.addQueueItem(widget.songs[currentIndex].toMediaItem());
+    await audioHandler.skipToQueueItem(currentIndex);
     if (lastPosition != Duration.zero) {
-      await audioHandler.seek(ref, lastPosition);
-      await audioHandler.play(ref);
+      await audioHandler.seek(lastPosition);
     }
+    await audioHandler.play();
   }
 
   void updateSong(int newIndex) {
@@ -94,7 +91,7 @@ class _TrackviewState extends ConsumerState<Trackview> {
 
   @override
   void dispose() {
-    audioHandler.dispose();
+    audioHandler.stop();
     super.dispose();
   }
 
@@ -146,7 +143,7 @@ class _TrackviewState extends ConsumerState<Trackview> {
                             currentIndex;
                         ref.read(lastPositionProvider.notifier).state =
                             position;
-                        audioHandler.dispose();
+                        audioHandler.stop();
                         Navigator.pop(context);
                       },
                       child: Image.asset('assets/images/icons/arrow-down.png'),
@@ -179,15 +176,13 @@ class _TrackviewState extends ConsumerState<Trackview> {
                 SizedBox(height: SizeConfig.blockSizeVertical! * 0.5),
                 Slider(
                   min: 0,
-                  max: duration > Duration.zero
-                      ? duration.inSeconds.toDouble()
-                      : 0.0,
+                  max: duration.inSeconds.toDouble(),
                   value: position.inSeconds.toDouble(),
                   onChanged: (value) async {
                     final newPosition = Duration(seconds: value.toInt());
-                    await audioHandler.seek(ref, newPosition);
+                    await audioHandler.seek(newPosition);
                     if (!isPlaying) {
-                      await audioHandler.play(ref);
+                      await audioHandler.play();
                     }
                   },
                 ),
@@ -215,7 +210,7 @@ class _TrackviewState extends ConsumerState<Trackview> {
                     GestureDetector(
                       onTap: () {
                         updateSong(currentIndex - 1);
-                        audioHandler.resetTime(ref);
+                        audioHandler.seek(Duration.zero);
                       },
                       child: Image.asset('assets/images/icons/Back.png',
                           height: 36, width: 36),
@@ -229,9 +224,9 @@ class _TrackviewState extends ConsumerState<Trackview> {
                         color: kBlack,
                         onPressed: () async {
                           if (isPlaying) {
-                            await audioHandler.pause(ref);
+                            await audioHandler.pause();
                           } else {
-                            await audioHandler.play(ref);
+                            await audioHandler.play();
                           }
                         },
                       ),
@@ -239,7 +234,7 @@ class _TrackviewState extends ConsumerState<Trackview> {
                     GestureDetector(
                       onTap: () {
                         updateSong(currentIndex + 1);
-                        audioHandler.resetTime(ref);
+                        audioHandler.seek(Duration.zero);
                       },
                       child: Image.asset('assets/images/icons/Forward.png',
                           height: 36, width: 36),
@@ -262,7 +257,7 @@ class _TrackviewState extends ConsumerState<Trackview> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            widget.songs[currentIndex].name,
+            widget.songs[currentIndex].title,
             textAlign: TextAlign.left,
             style: SenSemiBold.copyWith(fontSize: 22, color: kWhite),
           ),
