@@ -14,7 +14,30 @@ class Library extends ConsumerWidget {
 
     return Scaffold(
       backgroundColor: kBlack,
-      body: Placeholder(),
+      body: SingleChildScrollView(
+        child: SafeArea(
+          child: Padding(
+            padding: const EdgeInsets.all(15.0),
+            child: Container(
+              color: Colors.amber,
+              width: screenSize.width,
+              height: screenSize.height,
+              child: Column(
+                children: [
+                  Row(
+                    children: [
+                      Container(),
+                      Text('data'),
+                      Container()
+                    ],
+                  )
+                ],
+              ),
+              
+            ),
+          )
+        ),
+      ),
       bottomNavigationBar: BotNavBar(
         currentIndex: navbarIndex,
         onTap: (index) {
