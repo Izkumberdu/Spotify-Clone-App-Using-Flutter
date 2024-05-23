@@ -335,7 +335,7 @@ class UserLibraryPage extends ConsumerWidget {
 Widget moreDots(BuildContext context) {
   return GestureDetector(
     onTap: () {
-      Navigator.pushNamed(context, '/playlistView'); // Navigate to PlaylistViewPage
+      Navigator.pushNamed(context, '/settings'); // Navigate to PlaylistViewPage
     },
     child: Align(
       alignment: Alignment.centerRight,

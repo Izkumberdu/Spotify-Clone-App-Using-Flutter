@@ -33,7 +33,16 @@ class SearchMenu extends ConsumerWidget {
                       'Search',
                       style: SenBold.copyWith(fontSize: 25, color: kWhite),
                     ),
-                    Image.asset('assets/images/icons/camera.png'),
+                    GestureDetector(
+                      onTap: () {
+                        Navigator.pushNamed(context, '/photo'); // Navigate to PlaylistViewPage
+                      },
+                      child: Image.asset(
+                        'assets/images/icons/camera.png',
+                        // Add width and height properties if needed
+                      ),
+                    )
+
                   ],
                 ),
                 const SizedBox(height: 20),
