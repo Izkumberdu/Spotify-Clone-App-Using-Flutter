@@ -24,7 +24,7 @@ class Library extends ConsumerWidget {
             padding: const EdgeInsets.fromLTRB(15, 30, 15, 15),
             child: Column(
               children: [
-                topRow(),
+                topRow(context),
                 const SizedBox(height: 20),
                 categories(context, ref),
                 const SizedBox(height: 20),
@@ -267,20 +267,26 @@ class Library extends ConsumerWidget {
     );
   }
 
-  Row topRow() {
+  Row topRow(context) {
     return Row(
       children: [
-        Container(
-          width: 45,
-          height: 45,
-          decoration: const BoxDecoration(
-            shape: BoxShape.circle,
-            image: DecorationImage(
-              image: AssetImage('assets/images/profilepic.png'), // change with actual profile pic of user
-              fit: BoxFit.cover, 
+        GestureDetector(
+          onTap: () {
+            Navigator.pushNamed(context, '/userLibrary'); 
+          },
+          child: Container(
+            width: 45,
+            height: 45,
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              image: DecorationImage(
+                image: AssetImage('assets/images/profilepic.png'), // change with actual profile pic of user
+                fit: BoxFit.cover, 
+              ),
             ),
           ),
         ),
+
         const SizedBox(width: 10),
         Text(
           'Your Library',

@@ -9,6 +9,7 @@ import 'package:lettersquared/screens/search.dart';
 import 'package:lettersquared/screens/searchMenu.dart';
 import 'package:lettersquared/screens/trackview.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:lettersquared/screens/userlibrary.dart';
 import 'firebase_options.dart';
 
 void main() async {
@@ -36,8 +37,9 @@ class MyApp extends StatelessWidget {
         '/homepage': (context) => const Homepage(),
         '/library': (context) => const Library(),
         '/search': (context) => const Search(),
-        '/playingqueue': (context) => const AlbumQueuePage(),
-        '/playlistview': (context) => const PlaylistViewPage(),
+        '/playingQueue': (context) => const AlbumQueuePage(),
+        '/playlistView': (context) => const PlaylistViewPage(),
+        '/userLibrary': (context) => const UserLibraryPage(),
       },
     );
   }
