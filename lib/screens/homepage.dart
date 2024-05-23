@@ -1,12 +1,16 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 import 'package:flutter/widgets.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:lettersquared/components/bottomNavbar.dart';
+import 'package:lettersquared/components/cards.dart';
 import 'package:lettersquared/components/recently_played_item.dart';
 import 'package:lettersquared/styles/app_styles.dart';
+import 'package:lettersquared/provider/providers.dart';
 
-class Homepage extends StatelessWidget {
+class Homepage extends ConsumerWidget {
   const Homepage({super.key});
 
   Future<List<Map<String, dynamic>>> _fetchRecentlyPlayed() async {
@@ -25,7 +29,9 @@ class Homepage extends StatelessWidget {
   }
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final navbarIndex = ref.watch(navbarIndexProvider);
+
     return FutureBuilder<List<Map<String, dynamic>>>(
       future: _fetchRecentlyPlayed(),
       builder: (context, snapshot) {
@@ -56,9 +62,18 @@ class Homepage extends StatelessWidget {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Text(
-                        "Recently Played",
-                        style: SenBold.copyWith(fontSize: 19, color: kWhite),
+                      Container(
+                        width: 30,
+                        height: 30,
+                        decoration: const BoxDecoration(
+                            shape: BoxShape.circle, color: kGreen),
+                        child: Center(
+                          child: Text(
+                            "T",
+                            style:
+                                SenMedium.copyWith(fontSize: 20, color: kWhite),
+                          ),
+                        ),
                       ),
                       Row(
                         children: [
@@ -87,6 +102,68 @@ class Homepage extends StatelessWidget {
                     ],
                   ),
                   const SizedBox(height: 16),
+                  const Column(
+                    children: [
+                      Row(
+                        children: [
+                          CustomContainer(
+                            imagePath: "assets/images/genreImages/rock.jpg",
+                            text: "Liked Songs",
+                            isLikedSongs: true,
+                          ),
+                          SizedBox(width: 12),
+                          CustomContainer(
+                            imagePath: "assets/images/genreImages/rock.jpg",
+                            text: "Liked Songs",
+                            isLikedSongs: true,
+                          ),
+                        ],
+                      ),
+                      SizedBox(height: 8),
+                      Row(
+                        children: [
+                          CustomContainer(
+                            imagePath: "assets/images/genreImages/rock.jpg",
+                            text: "Liked Songs",
+                            isLikedSongs: true,
+                          ),
+                          SizedBox(width: 12),
+                          CustomContainer(
+                            imagePath: "assets/images/genreImages/rock.jpg",
+                            text: "Liked Songs",
+                            isLikedSongs: true,
+                          ),
+                        ],
+                      ),
+                      SizedBox(height: 8),
+                      Row(
+                        children: [
+                          CustomContainer(
+                            imagePath: "assets/images/genreImages/rock.jpg",
+                            text: "Liked Songs",
+                            isLikedSongs: true,
+                          ),
+                          SizedBox(width: 12),
+                          CustomContainer(
+                            imagePath: "assets/images/genreImages/rock.jpg",
+                            text: "Liked Songs",
+                            isLikedSongs: true,
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                  SizedBox(height: 12),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(
+                        "Recently Played",
+                        style: SenBold.copyWith(fontSize: 19, color: kWhite),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 16),
                   SingleChildScrollView(
                     scrollDirection: Axis.horizontal,
                     child: Row(
@@ -109,6 +186,23 @@ class Homepage extends StatelessWidget {
                 ],
               ),
             ),
+          ),
+          bottomNavigationBar: BotNavBar(
+            currentIndex: navbarIndex,
+            onTap: (index) {
+              ref.read(navbarIndexProvider.notifier).state = index;
+              switch (index) {
+                case 0:
+                  Navigator.pushNamed(context, '/homepage');
+                  break;
+                case 1:
+                  Navigator.pushNamed(context, '/searchMenu');
+                  break;
+                case 2:
+                  Navigator.pushNamed(context, '/playingqueue');
+                  break;
+              }
+            },
           ),
         );
       },
