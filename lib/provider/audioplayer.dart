@@ -44,4 +44,14 @@ class AudioHandler {
   Future<void> dispose() async {
     await _audioPlayer.dispose();
   }
+
+  Future<void> resetTime(WidgetRef ref) async {
+    ref.read(lastDurationProvider.notifier).state = Duration.zero;
+    ref.read(lastPositionProvider.notifier).state = Duration.zero;
+  }
+
+  Future<void> resetStoredTime(WidgetRef ref) async {
+    ref.read(storedLastDurationProvider.notifier).state = Duration.zero;
+    ref.read(storedLastPositionProvider.notifier).state = Duration.zero;
+  }
 }

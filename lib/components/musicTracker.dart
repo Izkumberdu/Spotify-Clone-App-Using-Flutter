@@ -49,8 +49,8 @@ class _MusicTrackerState extends ConsumerState<MusicTracker> {
 
     return GestureDetector(
       onTap: () {
-        ref.read(lastDurationProvider.notifier).state = duration;
-        ref.read(lastPositionProvider.notifier).state = position;
+        ref.read(storedLastDurationProvider.notifier).state = duration;
+        ref.read(storedLastPositionProvider.notifier).state = position;
         audioHandler.dispose();
         Navigator.of(context).push(MaterialPageRoute(
           builder: (context) => Trackview(
