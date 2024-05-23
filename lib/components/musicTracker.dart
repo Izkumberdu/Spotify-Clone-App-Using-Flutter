@@ -27,19 +27,21 @@ class _MusicTrackerState extends ConsumerState<MusicTracker> {
     sizeConfig.init(context);
     final currentSong = ref.watch(currentSongProvider);
     final musicTrackIsPlaying = ref.watch(musicTrackerIsPlaying);
+    final trackIsPlaying = ref.watch(trackViewIsPlaying);
     final currentIndex = ref.watch(currentSongIndexProvider);
     final duration = ref.watch(lastDurationProvider);
     final position = ref.watch(lastPositionProvider);
     final audioHandler = AudioHandler(ref);
-    final song = ref.watch(songProvider);
 
     if (currentSong == null) {
       return SizedBox.shrink();
     }
-
+    if (trackViewIsPlaying == true) {
+      audioHandler.dispose();
+    }
     WidgetsBinding.instance!.addPostFrameCallback((_) async {
       if (musicTrackIsPlaying) {
-        await audioHandler.setAudioSource(currentSong.url);
+        await audioHandler.setAudioSource(currentSong.url, ref);
         await audioHandler.audioPlayer.seek(position);
         await audioHandler.play(ref);
       } else {
@@ -49,14 +51,18 @@ class _MusicTrackerState extends ConsumerState<MusicTracker> {
 
     return GestureDetector(
       onTap: () {
-        ref.read(storedLastDurationProvider.notifier).state = duration;
-        ref.read(storedLastPositionProvider.notifier).state = position;
+        ref.read(lastDurationProvider.notifier).state = duration;
+        ref.read(lastPositionProvider.notifier).state = position;
+        final currentIndex = ref.read(currentSongIndexProvider);
+        final songs = ref.watch(songListProvider);
         audioHandler.dispose();
+        ref.read(musicTrackerIsPlaying.notifier).state == false;
         Navigator.of(context).push(MaterialPageRoute(
           builder: (context) => Trackview(
-              song: currentSong,
-              index: currentIndex,
-              songs: ref.watch(songListProvider)),
+            song: currentSong,
+            index: currentIndex,
+            songs: songs,
+          ),
         ));
       },
       child: Container(
@@ -135,8 +141,7 @@ class _MusicTrackerState extends ConsumerState<MusicTracker> {
                     }
                     ref.read(currentSongIndexProvider.notifier).state =
                         newIndex;
-                    ref.read(lastPositionProvider.notifier).state =
-                        Duration.zero;
+                    audioHandler.resetTime(ref);
                   },
                 ),
                 IconButton(
@@ -163,8 +168,7 @@ class _MusicTrackerState extends ConsumerState<MusicTracker> {
                     }
                     ref.read(currentSongIndexProvider.notifier).state =
                         newIndex;
-                    ref.read(lastPositionProvider.notifier).state =
-                        Duration.zero;
+                    audioHandler.resetTime(ref);
                   },
                 ),
               ],

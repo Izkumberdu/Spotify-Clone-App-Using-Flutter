@@ -24,7 +24,7 @@ class AudioHandler {
     });
   }
 
-  Future<void> setAudioSource(String url) async {
+  Future<void> setAudioSource(String url, WidgetRef ref) async {
     await _audioPlayer.setAudioSource(AudioSource.uri(Uri.parse(url)));
   }
 

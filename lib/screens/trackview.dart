@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:just_audio/just_audio.dart';
 import 'package:lettersquared/constants/size_config.dart';
 import 'package:lettersquared/firebase/getSongs.dart';
 import 'package:lettersquared/styles/app_styles.dart';
 import 'package:lettersquared/provider/providers.dart';
+import 'package:lettersquared/provider/audioplayer.dart';
 
 class Trackview extends ConsumerStatefulWidget {
   const Trackview({
@@ -23,41 +23,45 @@ class Trackview extends ConsumerStatefulWidget {
 }
 
 class _TrackviewState extends ConsumerState<Trackview> {
-  final audioPlayer = AudioPlayer();
+  late AudioHandler audioHandler;
   bool isPlaying = false;
   Duration duration = Duration.zero;
   Duration position = Duration.zero;
-
   late int currentIndex;
 
   @override
   void initState() {
     super.initState();
+    audioHandler = AudioHandler(ref);
     currentIndex = widget.index;
+
     WidgetsBinding.instance.addPostFrameCallback((_) async {
+      duration = ref.watch(lastDurationProvider);
       ref.read(songListProvider.notifier).state = widget.songs;
       ref.read(currentSongIndexProvider.notifier).state = widget.index;
       ref.watch(musicTrackerIsPlaying.notifier).state = false;
+
       if (ref.watch(musicTrackerIsPlaying) == false) {
         ref.read(trackViewIsPlaying.notifier).state = true;
-        setAudio();
+        await setAudio();
       } else {
-        audioPlayer.pause();
+        await audioHandler.pause(ref);
       }
     });
 
-    setAudio();
-    audioPlayer.playerStateStream.listen((state) {
+    audioHandler.audioPlayer.playerStateStream.listen((state) {
       setState(() {
         isPlaying = state.playing;
       });
     });
-    audioPlayer.durationStream.listen((newDuration) {
+
+    audioHandler.audioPlayer.durationStream.listen((newDuration) {
       setState(() {
         duration = newDuration ?? Duration.zero;
       });
     });
-    audioPlayer.positionStream.listen((newPosition) {
+
+    audioHandler.audioPlayer.positionStream.listen((newPosition) {
       setState(() {
         position = newPosition;
       });
@@ -65,8 +69,15 @@ class _TrackviewState extends ConsumerState<Trackview> {
   }
 
   Future<void> setAudio() async {
-    await audioPlayer.setAudioSource(
-        AudioSource.uri(Uri.parse(widget.songs[currentIndex].url)));
+    final lastPosition = ref.read(lastPositionProvider);
+    await audioHandler.setAudioSource(
+      widget.songs[currentIndex].url,
+      ref,
+    );
+    if (lastPosition != Duration.zero) {
+      await audioHandler.seek(ref, lastPosition);
+      await audioHandler.play(ref);
+    }
   }
 
   void updateSong(int newIndex) {
@@ -83,17 +94,17 @@ class _TrackviewState extends ConsumerState<Trackview> {
 
   @override
   void dispose() {
-    audioPlayer.dispose();
+    audioHandler.dispose();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
     SizeConfig sizeConfig = SizeConfig();
-
     sizeConfig.init(context);
     String color = widget.songs[currentIndex].color;
     final int colorValue = int.parse('0xff$color');
+
     return Scaffold(
       backgroundColor: kBlack,
       body: Stack(
@@ -121,9 +132,7 @@ class _TrackviewState extends ConsumerState<Trackview> {
             padding: const EdgeInsets.symmetric(horizontal: 20),
             child: Column(
               children: [
-                const SizedBox(
-                  height: 24,
-                ),
+                const SizedBox(height: 24),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
@@ -133,26 +142,23 @@ class _TrackviewState extends ConsumerState<Trackview> {
                         ref.read(musicTrackerIsPlaying.notifier).state = true;
                         ref.read(lastDurationProvider.notifier).state =
                             duration;
+                        ref.read(currentSongIndexProvider.notifier).state =
+                            currentIndex;
                         ref.read(lastPositionProvider.notifier).state =
                             position;
-                        audioPlayer.dispose();
+                        audioHandler.dispose();
                         Navigator.pop(context);
                       },
                       child: Image.asset('assets/images/icons/arrow-down.png'),
                     ),
                     Text(
-                      '${currentIndex}',
-                      style: SenSemiBold.copyWith(
-                        fontSize: 14,
-                        color: kWhite,
-                      ),
+                      '$currentIndex',
+                      style: SenSemiBold.copyWith(fontSize: 14, color: kWhite),
                     ),
                     Image.asset('assets/images/icons/more-horizontal.png')
                   ],
                 ),
-                SizedBox(
-                  height: SizeConfig.blockSizeVertical! * 10,
-                ),
+                SizedBox(height: SizeConfig.blockSizeVertical! * 10),
                 Container(
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(10),
@@ -168,22 +174,20 @@ class _TrackviewState extends ConsumerState<Trackview> {
                     ),
                   ),
                 ),
-                SizedBox(
-                  height: SizeConfig.blockSizeVertical! * 10,
-                ),
+                SizedBox(height: SizeConfig.blockSizeVertical! * 10),
                 songInformation(),
-                SizedBox(
-                  height: SizeConfig.blockSizeVertical! * 0.5,
-                ),
+                SizedBox(height: SizeConfig.blockSizeVertical! * 0.5),
                 Slider(
                   min: 0,
-                  max: duration.inSeconds.toDouble(),
+                  max: duration > Duration.zero
+                      ? duration.inSeconds.toDouble()
+                      : 0.0,
                   value: position.inSeconds.toDouble(),
                   onChanged: (value) async {
                     final newPosition = Duration(seconds: value.toInt());
-                    await audioPlayer.seek(newPosition);
+                    await audioHandler.seek(ref, newPosition);
                     if (!isPlaying) {
-                      await audioPlayer.play();
+                      await audioHandler.play(ref);
                     }
                   },
                 ),
@@ -192,40 +196,29 @@ class _TrackviewState extends ConsumerState<Trackview> {
                   children: [
                     Text(
                       formatTime(position),
-                      style: SenMedium.copyWith(
-                        fontSize: 10,
-                        color: kLightGrey,
-                      ),
+                      style:
+                          SenMedium.copyWith(fontSize: 10, color: kLightGrey),
                     ),
                     Text(
                       formatTime(duration - position),
-                      style: SenMedium.copyWith(
-                        fontSize: 10,
-                        color: kLightGrey,
-                      ),
+                      style:
+                          SenMedium.copyWith(fontSize: 10, color: kLightGrey),
                     ),
                   ],
                 ),
-                SizedBox(
-                  height: SizeConfig.blockSizeVertical! * 0.5,
-                ),
+                SizedBox(height: SizeConfig.blockSizeVertical! * 0.5),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Image.asset(
-                      'assets/images/icons/Shuffle.png',
-                      height: 22,
-                      width: 22,
-                    ),
+                    Image.asset('assets/images/icons/Shuffle.png',
+                        height: 22, width: 22),
                     GestureDetector(
                       onTap: () {
                         updateSong(currentIndex - 1);
+                        audioHandler.resetTime(ref);
                       },
-                      child: Image.asset(
-                        'assets/images/icons/Back.png',
-                        height: 36,
-                        width: 36,
-                      ),
+                      child: Image.asset('assets/images/icons/Back.png',
+                          height: 36, width: 36),
                     ),
                     CircleAvatar(
                       radius: 35,
@@ -236,9 +229,9 @@ class _TrackviewState extends ConsumerState<Trackview> {
                         color: kBlack,
                         onPressed: () async {
                           if (isPlaying) {
-                            await audioPlayer.pause();
+                            await audioHandler.pause(ref);
                           } else {
-                            await audioPlayer.play();
+                            await audioHandler.play(ref);
                           }
                         },
                       ),
@@ -246,18 +239,13 @@ class _TrackviewState extends ConsumerState<Trackview> {
                     GestureDetector(
                       onTap: () {
                         updateSong(currentIndex + 1);
+                        audioHandler.resetTime(ref);
                       },
-                      child: Image.asset(
-                        'assets/images/icons/Forward.png',
-                        height: 36,
-                        width: 36,
-                      ),
+                      child: Image.asset('assets/images/icons/Forward.png',
+                          height: 36, width: 36),
                     ),
-                    Image.asset(
-                      'assets/images/icons/Repeat-Inactive.png',
-                      height: 22,
-                      width: 22,
-                    ),
+                    Image.asset('assets/images/icons/Repeat-Inactive.png',
+                        height: 22, width: 22),
                   ],
                 ),
               ],
@@ -278,9 +266,7 @@ class _TrackviewState extends ConsumerState<Trackview> {
             textAlign: TextAlign.left,
             style: SenSemiBold.copyWith(fontSize: 22, color: kWhite),
           ),
-          SizedBox(
-            height: SizeConfig.blockSizeVertical! * 0.5,
-          ),
+          SizedBox(height: SizeConfig.blockSizeVertical! * 0.5),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [

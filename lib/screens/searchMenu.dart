@@ -70,7 +70,7 @@ class SearchMenu extends ConsumerWidget {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Text(
-                      ref.watch(trackViewIsPlaying).toString(),
+                      ref.watch(storedLastPositionProvider).toString(),
                       textAlign: TextAlign.left,
                       style: SenSemiBold.copyWith(
                         fontSize: 18,
@@ -132,8 +132,11 @@ class SearchMenu extends ConsumerWidget {
         Navigator.push(
           context,
           MaterialPageRoute(
-            builder: (context) =>
-                Trackview(song: song, songs: songs, index: index),
+            builder: (context) => Trackview(
+              song: song,
+              songs: songs,
+              index: index,
+            ),
           ),
         );
       },
