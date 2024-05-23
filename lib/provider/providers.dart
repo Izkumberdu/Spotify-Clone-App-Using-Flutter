@@ -34,3 +34,5 @@ final lastDurationProvider = StateProvider<Duration>((ref) => Duration.zero);
 final lastPositionProvider = StateProvider<Duration>((ref) => Duration.zero);
 
 final songListProvider = StateProvider<List<Song>>((ref) => []);
+
+final selectedCategoryProvider = StateProvider<String>((ref) => 'Playlists');
