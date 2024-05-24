@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:lettersquared/audio/song_handler.dart';
 import 'package:lettersquared/components/bottomNavbar.dart';
 import 'package:lettersquared/components/musicTracker.dart';
 import 'package:lettersquared/firebase/getSongs.dart';
@@ -9,7 +10,8 @@ import 'package:lettersquared/styles/app_styles.dart';
 import 'package:lettersquared/screens/trackview.dart';
 
 class SearchMenu extends ConsumerWidget {
-  const SearchMenu({Key? key});
+  final SongHandler songHandler;
+  const SearchMenu({Key? key, required this.songHandler});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {

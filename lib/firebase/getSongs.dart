@@ -1,5 +1,7 @@
+import 'package:audio_service/audio_service.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
+// Uncomment the Song class
 class Song {
   final String id;
   final String name;
@@ -41,4 +43,27 @@ class GetSongs {
 
     return songs;
   }
+}
+
+Future<List<MediaItem>> getSongs() async {
+  GetSongs getSongs = GetSongs();
+  List<Song> songs = await getSongs.fetchSongs();
+
+  List<MediaItem> mediaItems = songs.map((song) {
+    return MediaItem(
+      id: song.id,
+      album: "", // Add album information if available
+      title: song.name,
+      artist: song.artist,
+      genre: "", // Add genre information if available
+      duration: Duration.zero, // Add duration if available
+      artUri: Uri.parse(song.imageSource),
+      extras: {
+        'url': song.url,
+        'color': song.color,
+      },
+    );
+  }).toList();
+
+  return mediaItems;
 }
