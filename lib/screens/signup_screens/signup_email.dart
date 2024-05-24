@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:lettersquared/components/button.dart';
-import 'package:lettersquared/screens/signup2.dart';
+import 'package:lettersquared/screens/signup_screens/signup_password.dart';
 import 'package:lettersquared/screens/start.dart';
 import 'package:lettersquared/styles/app_styles.dart';
 
-class SignUp1 extends StatelessWidget {
-  SignUp1({super.key});
+class SignUpEmail extends StatelessWidget {
+  SignUpEmail({super.key});
 
   final TextEditingController emailController = TextEditingController();
 
@@ -79,7 +79,7 @@ class SignUp1 extends StatelessWidget {
                   Navigator.push(
                     context,
                     MaterialPageRoute(
-                      builder: ((context) =>  Signup2(email: emailController.text))
+                      builder: ((context) =>  SignUpPassword(email: emailController.text))
                     )
                   );
                 }, 

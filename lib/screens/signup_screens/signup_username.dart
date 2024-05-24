@@ -1,42 +1,44 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:lettersquared/screens/choose_artist.dart';
-import 'package:lettersquared/screens/signup2.dart';
+import 'package:lettersquared/screens/signup_screens/signup_artist.dart';
+import 'package:lettersquared/screens/signup_screens/signup_password.dart';
+import 'package:lettersquared/services/firebase_auth.dart';
 import 'package:lettersquared/styles/app_styles.dart';
 import 'package:lettersquared/components/button.dart';
 
-class Signup3 extends StatelessWidget {
+class SignUpUsername extends StatelessWidget {
   final String email;
   final String password;
   final TextEditingController nameController = TextEditingController();
 
-  Signup3({
+  final FirebaseAuthService _firebaseAuthService = FirebaseAuthService();
+
+  SignUpUsername({
     required this.email,
     required this.password,
     super.key,
   });
 
-  Future<void> _saveUserData(BuildContext context) async {
-    try {
-      User? user = FirebaseAuth.instance.currentUser;
-      if (user != null) {
-        await FirebaseFirestore.instance.collection('users').doc(user.uid).set({
-          'email': email,
-          'name': nameController.text,
-        });
-      }
+  void _next(BuildContext context) async {
+    User? user = await _firebaseAuthService.signUpWithEmailAndPassword(
+        context, email, password);
+
+    if (user != null) {
+      final firestore = FirebaseFirestore.instance;
+
+      await firestore.collection('users').doc(user.uid).set({
+        'email': user.email,
+        'name': nameController.text,
+      });
 
       Navigator.push(
-        context,
-        MaterialPageRoute(
-          builder: (context) => ChooseArtist(email: email, password: password, name: nameController.text),
-        ),
-      );
-    } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Failed to save user data: $e')),
-      );
+          context,
+          MaterialPageRoute(
+              builder: (context) => SignUpArtist(
+                  email: email,
+                  password: password,
+                  name: nameController.text)));
     }
   }
 
@@ -54,7 +56,10 @@ class Signup3 extends StatelessWidget {
         elevation: 0,
         leading: GestureDetector(
           onTap: () {
-            Navigator.push(context, MaterialPageRoute(builder: (context) => Signup2(email: email)));
+            Navigator.push(
+                context,
+                MaterialPageRoute(
+                    builder: (context) => SignUpPassword(email: email)));
           },
           child: Container(
             margin: const EdgeInsets.all(10),
@@ -162,11 +167,12 @@ class Signup3 extends StatelessWidget {
               ),
               Center(
                 child: GestureDetector(
-                  onTap: () => _saveUserData(context),
+                  onTap: () => _next(context),
                   child: Button(
                     key: const ValueKey("su2_next"),
                     text: "Next",
-                    textStyle: SenSemiBold.copyWith(fontSize: 15, color: kBlack),
+                    textStyle:
+                        SenSemiBold.copyWith(fontSize: 15, color: kBlack),
                     width: 82,
                     height: 42,
                     color: const Color(0xff535353),

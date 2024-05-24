@@ -3,14 +3,15 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:lettersquared/models/artist.dart';
 import 'package:lettersquared/screens/homepage.dart';
+import 'package:lettersquared/services/firebase_auth.dart';
 import 'package:lettersquared/styles/app_styles.dart';
 
-class ChooseArtist extends StatelessWidget {
+class SignUpArtist extends StatelessWidget {
   final String email;
   final String password;
   final String name;
 
-  const ChooseArtist({
+  const SignUpArtist({
     required this.email,
     required this.password,
     required this.name,
@@ -27,41 +28,41 @@ class ChooseArtist extends StatelessWidget {
   Widget build(BuildContext context) {
     return FutureBuilder<List<Artist>>(
       future: _fetchArtists(),
-      builder: (context, snapshot) {
-        if (snapshot.connectionState == ConnectionState.waiting) {
+      builder: (context, artistSnapshot) {
+        if (artistSnapshot.connectionState == ConnectionState.waiting) {
           return const Scaffold(
             body: Center(child: CircularProgressIndicator()),
           );
         }
-        if (snapshot.hasError) {
+        if (artistSnapshot.hasError) {
           return Scaffold(
-            body: Center(child: Text('Error: ${snapshot.error}')),
+            body: Center(child: Text('Error: ${artistSnapshot.error}')),
           );
         }
-        if (!snapshot.hasData || snapshot.data!.isEmpty) {
-          return Scaffold(
+        if (!artistSnapshot.hasData || artistSnapshot.data!.isEmpty) {
+          return const Scaffold(
             body: Center(child: Text('No artists found')),
           );
         }
 
-        return _ChooseArtistPage(
+        return _SignUpArtistPage(
           email: email,
           password: password,
           name: name,
-          artists: snapshot.data!,
+          artists: artistSnapshot.data!,
         );
       },
     );
   }
 }
 
-class _ChooseArtistPage extends StatefulWidget {
+class _SignUpArtistPage extends StatefulWidget {
   final String email;
   final String password;
   final String name;
   final List<Artist> artists;
 
-  const _ChooseArtistPage({
+  const _SignUpArtistPage({
     required this.email,
     required this.password,
     required this.name,
@@ -69,26 +70,30 @@ class _ChooseArtistPage extends StatefulWidget {
   });
 
   @override
-  State<_ChooseArtistPage> createState() => _ChooseArtistPageState();
+  State<_SignUpArtistPage> createState() => _SignUpArtistPageState();
 }
 
-class _ChooseArtistPageState extends State<_ChooseArtistPage> {
+class _SignUpArtistPageState extends State<_SignUpArtistPage> {
   final List<Artist> _selectedArtists = [];
+  final FirebaseAuthService _firebaseAuthService = FirebaseAuthService();
 
   void _submit() async {
-    User? user = FirebaseAuth.instance.currentUser;
-    if (user != null) {
-      await FirebaseFirestore.instance
-          .collection('users')
-          .doc(user.uid)
-          .update({
-        'favorite_artists':
-            _selectedArtists.map((artist) => artist.name).toList(),
-      });
-      Navigator.pushReplacement(
-          context, MaterialPageRoute(builder: (context) => const Homepage()));
-    }
+  User? user = await _firebaseAuthService.getCurrentUser();
+  if (user != null) {
+    await FirebaseFirestore.instance
+        .collection('users')
+        .doc(user.uid)
+        .update({
+      'favorite_artists':
+          _selectedArtists.map((artist) => artist.id).toList(),
+    });
+    Navigator.pushReplacement(
+        context, MaterialPageRoute(builder: (context) => const Homepage()));
+  } else {
+    // nofin
   }
+}
+
 
   @override
   Widget build(BuildContext context) {

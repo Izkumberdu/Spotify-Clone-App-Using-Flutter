@@ -4,8 +4,6 @@ import 'package:lettersquared/screens/homepage.dart';
 import 'package:lettersquared/screens/library.dart';
 import 'package:lettersquared/screens/playingqueue.dart';
 import 'package:lettersquared/screens/search.dart';
-import 'package:lettersquared/screens/trackview.dart';
-import 'package:lettersquared/screens/signup1.dart';
 import 'package:lettersquared/screens/start.dart';
 
 import 'package:firebase_core/firebase_core.dart';

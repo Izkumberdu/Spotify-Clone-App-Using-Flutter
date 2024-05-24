@@ -1,7 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/rendering.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:lettersquared/components/bottomNavbar.dart';
@@ -28,6 +27,33 @@ class Homepage extends ConsumerWidget {
         .toList();
   }
 
+  Future<List<Map<String, dynamic>>> _fetchFavoriteArtists() async {
+    User? user = FirebaseAuth.instance.currentUser;
+    if (user == null) {
+      throw Exception("No user logged in");
+    }
+    DocumentSnapshot userDoc = await FirebaseFirestore.instance
+        .collection('users')
+        .doc(user.uid)
+        .get();
+
+    List<dynamic> favoriteArtistIds = userDoc['favorite_artists'] ?? [];
+    if (favoriteArtistIds.isEmpty) {
+      return [];
+    }
+
+    List<Map<String, dynamic>> favoriteArtists = [];
+    for (String artistId in favoriteArtistIds) {
+      DocumentSnapshot artistDoc = await FirebaseFirestore.instance
+          .collection('artists')
+          .doc(artistId)
+          .get();
+      favoriteArtists.add(artistDoc.data() as Map<String, dynamic>);
+    }
+
+    return favoriteArtists;
+  }
+
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final navbarIndex = ref.watch(navbarIndexProvider);
@@ -46,7 +72,7 @@ class Homepage extends ConsumerWidget {
           );
         }
         if (!snapshot.hasData || snapshot.data!.isEmpty) {
-          return Scaffold(
+          return const Scaffold(
             body: Center(child: Text('No recently played items found')),
           );
         }
@@ -153,7 +179,7 @@ class Homepage extends ConsumerWidget {
                       ),
                     ],
                   ),
-                  SizedBox(height: 12),
+                  const SizedBox(height: 12),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
@@ -183,6 +209,58 @@ class Homepage extends ConsumerWidget {
                       ],
                     ),
                   ),
+                  const SizedBox(height: 12),
+                  FutureBuilder<List<Map<String, dynamic>>>(
+                    future: _fetchFavoriteArtists(),
+                    builder: (context, favSnapshot) {
+                      if (favSnapshot.connectionState ==
+                          ConnectionState.waiting) {
+                        return const Center(child: CircularProgressIndicator());
+                      }
+                      if (favSnapshot.hasError) {
+                        return Center(
+                            child: Text('Error: ${favSnapshot.error}'));
+                      }
+                      if (!favSnapshot.hasData || favSnapshot.data!.isEmpty) {
+                        return const Center(
+                            child: Text('No favorite artists found'));
+                      }
+
+                      return Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            "Your Favorite Artists",
+                            style:
+                                SenBold.copyWith(fontSize: 19, color: kWhite),
+                          ),
+                          const SizedBox(height: 16),
+                          SingleChildScrollView(
+                            scrollDirection: Axis.horizontal,
+                            child: Row(
+                              children: [
+                                for (var i = 0;
+                                    i < favSnapshot.data!.length;
+                                    i++) ...[
+                                  RecentlyPlayedItem(
+                                    height: 106,
+                                    width: 106,
+                                    imageUrl:
+                                        favSnapshot.data![i]['imageUrl'] ?? '',
+                                    isArtist: true,
+                                    name: favSnapshot.data![i]['name'] ?? '',
+                                  ),
+                                  if (i < favSnapshot.data!.length - 1)
+                                    const SizedBox(width: 20),
+                                ],
+                              ],
+                            ),
+                          )
+                        ],
+                      );
+                    },
+                  ),
+                  const SizedBox(height: 16),
                 ],
               ),
             ),
@@ -196,7 +274,7 @@ class Homepage extends ConsumerWidget {
                   Navigator.pushNamed(context, '/homepage');
                   break;
                 case 1:
-                  Navigator.pushNamed(context, '/searchMenu');
+                  Navigator.pushNamed(context, '/search');
                   break;
                 case 2:
                   Navigator.pushNamed(context, '/playingqueue');

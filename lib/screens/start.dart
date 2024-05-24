@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:lettersquared/components/button.dart';
 import 'package:lettersquared/screens/homepage.dart';
 import 'package:lettersquared/screens/login.dart';
-import 'package:lettersquared/screens/signup1.dart';
+import 'package:lettersquared/screens/signup_screens/signup_email.dart';
 import 'package:lettersquared/styles/app_styles.dart';
 
 class StartScreen extends StatelessWidget {
@@ -33,7 +33,7 @@ class StartScreen extends StatelessWidget {
                 GestureDetector(
                   onTap: () {
                     Navigator.push(context,
-                        MaterialPageRoute(builder: ((context) => SignUp1())));
+                        MaterialPageRoute(builder: ((context) => SignUpEmail())));
                   },
                   child: Button(
                     key: const ValueKey("start_signup"),

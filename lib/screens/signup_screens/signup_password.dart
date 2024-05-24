@@ -1,36 +1,14 @@
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:lettersquared/screens/signup1.dart';
-import 'package:lettersquared/screens/signup3.dart';
+import 'package:lettersquared/screens/signup_screens/signup_email.dart';
+import 'package:lettersquared/screens/signup_screens/signup_username.dart';
 import 'package:lettersquared/styles/app_styles.dart';
 import 'package:lettersquared/components/button.dart';
 
-class Signup2 extends StatelessWidget {
+class SignUpPassword extends StatelessWidget {
   final String email;
   final TextEditingController passwordController = TextEditingController();
- 
-  bool _obscureText = true; // rembmemrsm
 
-  Signup2({required this.email, super.key});
-  
-  Future<void> _register(BuildContext context) async {
-    try {
-      UserCredential userCredential = await FirebaseAuth.instance
-          .createUserWithEmailAndPassword(
-              email: email, password: passwordController.text);
-
-      Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (context) =>
-                Signup3(email: email, password: passwordController.text),
-          ));
-    } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Failed to register: $e')),
-      );
-    }
-  }
+  SignUpPassword({required this.email, super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -47,7 +25,7 @@ class Signup2 extends StatelessWidget {
         leading: GestureDetector(
           onTap: () {
             Navigator.push(
-                context, MaterialPageRoute(builder: ((context) => SignUp1())));
+                context, MaterialPageRoute(builder: ((context) => SignUpEmail())));
           },
           child: Container(
             margin: const EdgeInsets.all(10),
@@ -99,7 +77,14 @@ class Signup2 extends StatelessWidget {
             ),
             Center(
               child: GestureDetector(
-                onTap: () => _register(context),
+                onTap:() => {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: ((context) => SignUpUsername(email: email, password: passwordController.text))
+                    )
+                  )
+                },
                 child: Button(
                   key: const ValueKey("su2_next"),
                   text: "Next",
