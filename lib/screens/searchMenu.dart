@@ -1,148 +1,181 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:lettersquared/audio/song_handler.dart';
 import 'package:lettersquared/components/bottomNavbar.dart';
-import 'package:lettersquared/components/musicTracker.dart';
 import 'package:lettersquared/firebase/getSongs.dart';
 import 'package:lettersquared/models/genre.dart';
-import 'package:lettersquared/provider/providers.dart';
+import 'package:lettersquared/provider/song_provider.dart';
 import 'package:lettersquared/styles/app_styles.dart';
-import 'package:lettersquared/screens/trackview.dart';
+import 'package:provider/provider.dart';
 
-class SearchMenu extends ConsumerWidget {
+class SearchMenu extends StatefulWidget {
   final SongHandler songHandler;
-  const SearchMenu({Key? key, required this.songHandler});
+  const SearchMenu({Key? key, required this.songHandler}) : super(key: key);
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final navbarIndex = ref.watch(navbarIndexProvider);
-    final songsAsyncValue = ref.watch(getSongsProvider);
+  _SearchMenuState createState() => _SearchMenuState();
+}
 
-    return Scaffold(
-      backgroundColor: kBlack,
-      body: Stack(
-        children: [
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 12),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                const SizedBox(height: 26),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text(
-                      'Search',
-                      style: SenBold.copyWith(fontSize: 25, color: kWhite),
-                    ),
-                    Image.asset('assets/images/icons/camera.png'),
-                  ],
-                ),
-                const SizedBox(height: 20),
-                searchBar(context),
-                const SizedBox(height: 25),
-                Text(
-                  "Your Top Genres",
-                  textAlign: TextAlign.left,
-                  style: SenSemiBold.copyWith(
-                    fontSize: 18,
-                    color: kWhite,
-                  ),
-                ),
-                const SizedBox(height: 19),
-                Container(
-                  height: 138,
-                  child: ListView.builder(
-                    scrollDirection: Axis.horizontal,
-                    itemCount: genres.length,
-                    itemBuilder: (context, index) {
-                      return Padding(
-                        padding: const EdgeInsets.only(right: 10),
-                        child: categoryContainer(
-                          genres[index].title,
-                          genres[index].imagePath,
-                          genres[index].color,
+class _SearchMenuState extends State<SearchMenu> {
+  int _navbarIndex = 1;
+  Future<List<Song>>? _songsFuture;
+
+  @override
+  void initState() {
+    super.initState();
+    _songsFuture = _fetchSongs();
+  }
+
+  Future<List<Song>> _fetchSongs() async {
+    GetSongs getSongs = GetSongs();
+    return await getSongs.fetchSongs();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Consumer<SongProvider>(builder: (context, ref, child) {
+      return Scaffold(
+        backgroundColor: kBlack,
+        body: ref.isLoading
+            ? _buildLoadingIndicator()
+            : Stack(
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 12),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const SizedBox(height: 26),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Text(
+                              'Search',
+                              style:
+                                  SenBold.copyWith(fontSize: 25, color: kWhite),
+                            ),
+                            Image.asset('assets/images/icons/camera.png'),
+                          ],
                         ),
-                      );
-                    },
-                  ),
-                ),
-                const SizedBox(height: 25),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text(
-                      ref.watch(storedLastPositionProvider).toString(),
-                      textAlign: TextAlign.left,
-                      style: SenSemiBold.copyWith(
-                        fontSize: 18,
-                        color: kWhite,
-                      ),
+                        const SizedBox(height: 20),
+                        searchBar(context),
+                        const SizedBox(height: 25),
+                        Text(
+                          "Your Top Genres",
+                          textAlign: TextAlign.left,
+                          style: SenSemiBold.copyWith(
+                            fontSize: 18,
+                            color: kWhite,
+                          ),
+                        ),
+                        const SizedBox(height: 19),
+                        Container(
+                          height: 138,
+                          child: ListView.builder(
+                            scrollDirection: Axis.horizontal,
+                            itemCount: genres.length,
+                            itemBuilder: (context, index) {
+                              return Padding(
+                                padding: const EdgeInsets.only(right: 10),
+                                child: categoryContainer(
+                                  genres[index].title,
+                                  genres[index].imagePath,
+                                  genres[index].color,
+                                ),
+                              );
+                            },
+                          ),
+                        ),
+                        const SizedBox(height: 25),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Text(
+                              '', // Replace with actual last position data if available
+                              textAlign: TextAlign.left,
+                              style: SenSemiBold.copyWith(
+                                fontSize: 18,
+                                color: kWhite,
+                              ),
+                            ),
+                            Image.asset('assets/images/icons/Shuffle.png'),
+                          ],
+                        ),
+                        const SizedBox(height: 15),
+                        FutureBuilder<List<Song>>(
+                          future: _songsFuture,
+                          builder: (context, snapshot) {
+                            if (snapshot.connectionState ==
+                                ConnectionState.waiting) {
+                              return const CircularProgressIndicator();
+                            } else if (snapshot.hasError) {
+                              return Text('Error: ${snapshot.error}');
+                            } else if (snapshot.hasData) {
+                              final songs = snapshot.data!;
+                              return Expanded(
+                                child: ListView.builder(
+                                  itemCount: songs.length,
+                                  itemBuilder: (context, index) {
+                                    final song = songs[index];
+                                    return songContainer(
+                                        context, song, index, songs);
+                                  },
+                                ),
+                              );
+                            } else {
+                              return const Text('No songs available');
+                            }
+                          },
+                        ),
+                      ],
                     ),
-                    Image.asset('assets/images/icons/Shuffle.png'),
-                  ],
-                ),
-                const SizedBox(height: 15),
-                songsAsyncValue.when(
-                  loading: () => const CircularProgressIndicator(),
-                  error: (error, stackTrace) => Text('Error: $error'),
-                  data: (songs) => Expanded(
-                    child: ListView.builder(
-                      itemCount: songs.length,
-                      itemBuilder: (context, index) {
-                        final song = songs[index];
-                        return songContainer(context, song, index, songs);
-                      },
-                    ),
                   ),
-                ),
-              ],
-            ),
-          ),
-          Positioned(
-            bottom: 0,
-            left: 0,
-            right: 0,
-            child: MusicTracker(),
-          ),
-        ],
-      ),
-      bottomNavigationBar: BotNavBar(
-        currentIndex: navbarIndex,
-        onTap: (index) {
-          ref.read(navbarIndexProvider.notifier).state = index;
-          switch (index) {
-            case 0:
-              Navigator.pushNamed(context, '/homepage');
-              break;
-            case 1:
-              Navigator.pushNamed(context, '/searchMenu');
-              break;
-            case 2:
-              Navigator.pushNamed(context, '/playingqueue');
-              break;
-          }
-        },
-      ),
-    );
+                  // Positioned(
+                  //   bottom: 0,
+                  //   left: 0,
+                  //   right: 0,
+                  //   child: MusicTracker(),
+                  // ),
+                ],
+              ),
+        bottomNavigationBar: BotNavBar(
+          currentIndex: _navbarIndex,
+          onTap: (index) {
+            setState(() {
+              _navbarIndex = index;
+            });
+            switch (index) {
+              case 0:
+                Navigator.pushNamed(context, '/homepage');
+                break;
+              case 1:
+                Navigator.pushNamed(context, '/searchMenu');
+                break;
+              case 2:
+                Navigator.pushNamed(context, '/playingqueue');
+                break;
+            }
+          },
+        ),
+      );
+    });
   }
 
   Widget songContainer(
       BuildContext context, Song song, int index, List<Song> songs) {
     return GestureDetector(
       onTap: () {
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (context) => Trackview(
-              song: song,
-              songs: songs,
-              index: index,
-              duration: Duration.zero,
-              position: Duration.zero,
-            ),
-          ),
-        );
+        // Navigator.push(
+        //   context,
+        //   MaterialPageRoute(
+        //     builder: (context) => Trackview(
+        //       song: song,
+        //       songs: songs,
+        //       index: index,
+        //       duration: Duration.zero,
+        //       position: Duration.zero,
+        //     ),
+        //   ),
+        // );
       },
       child: Container(
         width: 393,
@@ -251,6 +284,14 @@ class SearchMenu extends ConsumerWidget {
             ),
           ],
         ),
+      ),
+    );
+  }
+
+  Widget _buildLoadingIndicator() {
+    return const Center(
+      child: CircularProgressIndicator(
+        strokeCap: StrokeCap.round,
       ),
     );
   }
