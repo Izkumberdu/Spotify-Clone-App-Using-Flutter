@@ -136,6 +136,8 @@ class SearchMenu extends ConsumerWidget {
               song: song,
               songs: songs,
               index: index,
+              duration: Duration.zero,
+              position: Duration.zero,
             ),
           ),
         );

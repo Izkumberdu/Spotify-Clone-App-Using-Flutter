@@ -12,11 +12,15 @@ class Trackview extends ConsumerStatefulWidget {
     required this.song,
     required this.index,
     required this.songs,
+    required this.duration,
+    required this.position,
   }) : super(key: key);
 
   final Song song;
   final int index;
   final List<Song> songs;
+  final Duration duration;
+  final Duration position;
 
   @override
   ConsumerState<Trackview> createState() => _TrackviewState();
@@ -36,12 +40,13 @@ class _TrackviewState extends ConsumerState<Trackview> {
     currentIndex = widget.index;
 
     WidgetsBinding.instance.addPostFrameCallback((_) async {
-      duration = ref.watch(lastDurationProvider);
+      duration = widget.duration;
+      position = widget.position;
       ref.read(songListProvider.notifier).state = widget.songs;
       ref.read(currentSongIndexProvider.notifier).state = widget.index;
-      ref.watch(musicTrackerIsPlaying.notifier).state = false;
+      ref.read(musicTrackerIsPlaying.notifier).state = false;
 
-      if (ref.watch(musicTrackerIsPlaying) == false) {
+      if (!ref.read(musicTrackerIsPlaying)) {
         ref.read(trackViewIsPlaying.notifier).state = true;
         await setAudio();
       } else {
@@ -69,13 +74,9 @@ class _TrackviewState extends ConsumerState<Trackview> {
   }
 
   Future<void> setAudio() async {
-    final lastPosition = ref.read(lastPositionProvider);
-    await audioHandler.setAudioSource(
-      widget.songs[currentIndex].url,
-      ref,
-    );
-    if (lastPosition != Duration.zero) {
-      await audioHandler.seek(ref, lastPosition);
+    await audioHandler.setAudioSource(widget.songs[currentIndex].url, ref);
+    if (position != Duration.zero) {
+      await audioHandler.seek(ref, position);
       await audioHandler.play(ref);
     }
   }

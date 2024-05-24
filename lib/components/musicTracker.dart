@@ -1,11 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:lettersquared/constants/size_config.dart';
-import 'package:lettersquared/firebase/getSongs.dart';
 import 'package:lettersquared/provider/audioplayer.dart';
 import 'package:lettersquared/provider/providers.dart';
 import 'package:lettersquared/screens/trackview.dart';
-import 'package:lettersquared/styles/app_styles.dart';
 
 class MusicTracker extends ConsumerStatefulWidget {
   const MusicTracker({Key? key}) : super(key: key);
@@ -15,12 +13,6 @@ class MusicTracker extends ConsumerStatefulWidget {
 }
 
 class _MusicTrackerState extends ConsumerState<MusicTracker> {
-  void _subscribeToPositionChanges(WidgetRef ref, AudioHandler audioHandler) {
-    audioHandler.audioPlayer.positionStream.listen((newPosition) {
-      ref.read(lastPositionProvider.notifier).state = newPosition;
-    });
-  }
-
   @override
   Widget build(BuildContext context) {
     SizeConfig sizeConfig = SizeConfig();
@@ -33,12 +25,10 @@ class _MusicTrackerState extends ConsumerState<MusicTracker> {
     final position = ref.watch(lastPositionProvider);
     final audioHandler = AudioHandler(ref);
 
-    if (currentSong == null) {
+    if (currentSong == null || trackIsPlaying) {
       return SizedBox.shrink();
     }
-    if (trackViewIsPlaying == true) {
-      audioHandler.dispose();
-    }
+
     WidgetsBinding.instance!.addPostFrameCallback((_) async {
       if (musicTrackIsPlaying) {
         await audioHandler.setAudioSource(currentSong.url, ref);
@@ -53,15 +43,16 @@ class _MusicTrackerState extends ConsumerState<MusicTracker> {
       onTap: () {
         ref.read(lastDurationProvider.notifier).state = duration;
         ref.read(lastPositionProvider.notifier).state = position;
-        final currentIndex = ref.read(currentSongIndexProvider);
         final songs = ref.watch(songListProvider);
         audioHandler.dispose();
-        ref.read(musicTrackerIsPlaying.notifier).state == false;
+        ref.read(musicTrackerIsPlaying.notifier).state = false;
         Navigator.of(context).push(MaterialPageRoute(
           builder: (context) => Trackview(
             song: currentSong,
             index: currentIndex,
             songs: songs,
+            duration: duration,
+            position: position,
           ),
         ));
       },
@@ -97,9 +88,7 @@ class _MusicTrackerState extends ConsumerState<MusicTracker> {
                 },
               ),
             ),
-            SizedBox(
-              height: 8,
-            ),
+            SizedBox(height: 8),
             Row(
               mainAxisSize: MainAxisSize.min,
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -110,9 +99,7 @@ class _MusicTrackerState extends ConsumerState<MusicTracker> {
                   height: 50,
                   fit: BoxFit.cover,
                 ),
-                SizedBox(
-                  width: 10,
-                ),
+                SizedBox(width: 10),
                 Expanded(
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
