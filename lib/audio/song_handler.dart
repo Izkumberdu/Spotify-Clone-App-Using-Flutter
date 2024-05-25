@@ -21,28 +21,29 @@ class SongHandler extends BaseAudioHandler with QueueHandler, SeekHandler {
 
   void _broadCastState(PlaybackEvent event) {
     playbackState.add(playbackState.value.copyWith(
-        controls: [
-          MediaControl.skipToPrevious,
-          if (audioPlayer.playing) MediaControl.pause else MediaControl.play,
-          MediaControl.skipToNext,
-        ],
-        systemActions: {
-          MediaAction.seek,
-          MediaAction.seekForward,
-          MediaAction.seekBackward,
-        },
-        processingState: const {
-          ProcessingState.idle: AudioProcessingState.idle,
-          ProcessingState.loading: AudioProcessingState.loading,
-          ProcessingState.buffering: AudioProcessingState.buffering,
-          ProcessingState.completed: AudioProcessingState.completed,
-          ProcessingState.ready: AudioProcessingState.ready,
-        }[audioPlayer.processingState]!,
-        playing: audioPlayer.playing,
-        updatePosition: audioPlayer.position,
-        bufferedPosition: audioPlayer.bufferedPosition,
-        speed: audioPlayer.speed,
-        queueIndex: event.currentIndex));
+      controls: [
+        MediaControl.skipToPrevious,
+        if (audioPlayer.playing) MediaControl.pause else MediaControl.play,
+        MediaControl.skipToNext,
+      ],
+      systemActions: {
+        MediaAction.seek,
+        MediaAction.seekForward,
+        MediaAction.seekBackward,
+      },
+      processingState: const {
+        ProcessingState.idle: AudioProcessingState.idle,
+        ProcessingState.loading: AudioProcessingState.loading,
+        ProcessingState.buffering: AudioProcessingState.buffering,
+        ProcessingState.completed: AudioProcessingState.completed,
+        ProcessingState.ready: AudioProcessingState.ready,
+      }[audioPlayer.processingState]!,
+      playing: audioPlayer.playing,
+      updatePosition: audioPlayer.position,
+      bufferedPosition: audioPlayer.bufferedPosition,
+      speed: audioPlayer.speed,
+      queueIndex: event.currentIndex,
+    ));
   }
 
   Future<void> initSongs(List<MediaItem> songs) async {
@@ -80,8 +81,26 @@ class SongHandler extends BaseAudioHandler with QueueHandler, SeekHandler {
   }
 
   @override
-  Future<void> skipToNext() => audioPlayer.seekToNext();
+  Future<void> skipToNext() async {
+    final currentIndex = audioPlayer.currentIndex;
+    final lastIndex = queue.value.length - 1;
+    if (currentIndex == lastIndex) {
+      await audioPlayer.seek(Duration.zero, index: 0);
+    } else {
+      await audioPlayer.seekToNext();
+    }
+    play();
+  }
 
   @override
-  Future<void> skipToPrevious() => audioPlayer.seekToPrevious();
+  Future<void> skipToPrevious() async {
+    final currentIndex = audioPlayer.currentIndex;
+    if (currentIndex == 0) {
+      final lastIndex = queue.value.length - 1;
+      await audioPlayer.seek(Duration.zero, index: lastIndex);
+    } else {
+      await audioPlayer.seekToPrevious();
+    }
+    play();
+  }
 }
