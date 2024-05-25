@@ -1,7 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:lettersquared/components/bottomNavbar.dart';
 import 'package:lettersquared/components/cards.dart';
@@ -71,11 +70,8 @@ class Homepage extends ConsumerWidget {
             body: Center(child: Text('Error: ${snapshot.error}')),
           );
         }
-        if (!snapshot.hasData || snapshot.data!.isEmpty) {
-          return const Scaffold(
-            body: Center(child: Text('No recently played items found')),
-          );
-        }
+
+        List<Map<String, dynamic>> recentlyPlayedItems = snapshot.data ?? [];
 
         return Scaffold(
           backgroundColor: kBlack,
@@ -190,25 +186,38 @@ class Homepage extends ConsumerWidget {
                     ],
                   ),
                   const SizedBox(height: 16),
-                  SingleChildScrollView(
-                    scrollDirection: Axis.horizontal,
-                    child: Row(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        for (var i = 0; i < snapshot.data!.length; i++) ...[
-                          RecentlyPlayedItem(
-                            height: 106,
-                            width: 106,
-                            imageUrl: snapshot.data![i]['imageUrl'] ?? '',
-                            isArtist: snapshot.data![i]['artist'] ?? false,
-                            name: snapshot.data![i]['name'] ?? '',
+                  recentlyPlayedItems.isEmpty
+                      ? Container(
+                          padding: const EdgeInsets.all(16),
+                          color: Colors.red,
+                          child: const Text(
+                            'No recently played items found',
+                            style: TextStyle(color: Colors.white),
                           ),
-                          if (i < snapshot.data!.length - 1)
-                            const SizedBox(width: 20),
-                        ],
-                      ],
-                    ),
-                  ),
+                        )
+                      : SingleChildScrollView(
+                          scrollDirection: Axis.horizontal,
+                          child: Row(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              for (var i = 0;
+                                  i < recentlyPlayedItems.length;
+                                  i++) ...[
+                                RecentlyPlayedItem(
+                                  height: 106,
+                                  width: 106,
+                                  imageUrl:
+                                      recentlyPlayedItems[i]['imageUrl'] ?? '',
+                                  isArtist:
+                                      recentlyPlayedItems[i]['artist'] ?? false,
+                                  name: recentlyPlayedItems[i]['name'] ?? '',
+                                ),
+                                if (i < recentlyPlayedItems.length - 1)
+                                  const SizedBox(width: 20),
+                              ],
+                            ],
+                          ),
+                        ),
                   const SizedBox(height: 12),
                   FutureBuilder<List<Map<String, dynamic>>>(
                     future: _fetchFavoriteArtists(),
@@ -226,6 +235,9 @@ class Homepage extends ConsumerWidget {
                             child: Text('No favorite artists found'));
                       }
 
+                      List<Map<String, dynamic>> favoriteArtists =
+                          favSnapshot.data!;
+
                       return Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
@@ -239,23 +251,29 @@ class Homepage extends ConsumerWidget {
                             scrollDirection: Axis.horizontal,
                             child: Row(
                               children: [
-                                for (var i = 0;
-                                    i < favSnapshot.data!.length;
-                                    i++) ...[
-                                  RecentlyPlayedItem(
-                                    height: 106,
-                                    width: 106,
-                                    imageUrl:
-                                        favSnapshot.data![i]['imageUrl'] ?? '',
-                                    isArtist: true,
-                                    name: favSnapshot.data![i]['name'] ?? '',
+                                for (var artist in favoriteArtists) ...[
+                                  Column(
+                                    children: [
+                                      CircleAvatar(
+                                        radius: 50,
+                                        backgroundImage: NetworkImage(
+                                            artist['imageURL'] ?? ''),
+                                        backgroundColor: Colors.grey,
+                                      ),
+                                      const SizedBox(height: 4),
+                                      Text(
+                                        artist['name'] ?? '',
+                                        textAlign: TextAlign.center,
+                                        style: SenMedium.copyWith(
+                                            fontSize: 16, color: kWhite),
+                                      ),
+                                    ],
                                   ),
-                                  if (i < favSnapshot.data!.length - 1)
-                                    const SizedBox(width: 20),
+                                  const SizedBox(width: 12),
                                 ],
                               ],
                             ),
-                          )
+                          ),
                         ],
                       );
                     },
