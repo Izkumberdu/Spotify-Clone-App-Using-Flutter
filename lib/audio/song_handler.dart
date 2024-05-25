@@ -53,7 +53,6 @@ class SongHandler extends BaseAudioHandler with QueueHandler, SeekHandler {
     queue.value.clear();
     queue.value.addAll(songs);
     queue.add(queue.value);
-
     _listenForCurrentSongIndexChanges();
 
     audioPlayer.processingStateStream.listen(
@@ -63,13 +62,6 @@ class SongHandler extends BaseAudioHandler with QueueHandler, SeekHandler {
         }
       },
     );
-  }
-
-  Future<void> setAsPlayingSong(MediaItem song) async {
-    final index = queue.value.indexWhere((item) => item == song);
-    if (index != -1) {
-      await skipToQueueItem(index);
-    }
   }
 
   @override

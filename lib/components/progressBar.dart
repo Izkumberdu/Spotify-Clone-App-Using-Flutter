@@ -7,8 +7,12 @@ import 'package:lettersquared/styles/app_styles.dart';
 class SongProgress extends StatelessWidget {
   final Duration totalDuration;
   final SongHandler songHandler;
+  final TimeLabelLocation timeLabelLocation;
   const SongProgress(
-      {super.key, required this.totalDuration, required this.songHandler});
+      {super.key,
+      required this.totalDuration,
+      required this.songHandler,
+      required this.timeLabelLocation});
 
   @override
   Widget build(BuildContext context) {
@@ -26,6 +30,7 @@ class SongProgress extends StatelessWidget {
           progressBarColor: kWhite,
           baseBarColor: kGrey,
           thumbColor: kGrey,
+          timeLabelLocation: timeLabelLocation,
           thumbGlowRadius: 5,
           timeLabelTextStyle: SenSemiBold.copyWith(fontSize: 14),
         );

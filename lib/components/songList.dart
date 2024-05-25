@@ -89,7 +89,6 @@ class SongList extends StatelessWidget {
                           color: kWhite,
                         ),
                   onPressed: () {
-                    // Add functionality to pause/play the song
                     if (isPlaying) {
                       songHandler.pause();
                     } else {
