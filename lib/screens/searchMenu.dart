@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:lettersquared/audio/song_handler.dart';
 import 'package:lettersquared/components/bottomNavbar.dart';
+import 'package:lettersquared/components/playerDeck.dart';
+import 'package:lettersquared/components/songList.dart';
 import 'package:lettersquared/firebase/getSongs.dart';
 import 'package:lettersquared/models/genre.dart';
 import 'package:lettersquared/provider/song_provider.dart';
@@ -9,7 +11,7 @@ import 'package:provider/provider.dart';
 
 class SearchMenu extends StatefulWidget {
   final SongHandler songHandler;
-  const SearchMenu({Key? key, required this.songHandler}) : super(key: key);
+  const SearchMenu({super.key, required this.songHandler});
 
   @override
   _SearchMenuState createState() => _SearchMenuState();
@@ -17,19 +19,8 @@ class SearchMenu extends StatefulWidget {
 
 class _SearchMenuState extends State<SearchMenu> {
   int _navbarIndex = 1;
-  Future<List<Song>>? _songsFuture;
 
   @override
-  void initState() {
-    super.initState();
-    _songsFuture = _fetchSongs();
-  }
-
-  Future<List<Song>> _fetchSongs() async {
-    GetSongs getSongs = GetSongs();
-    return await getSongs.fetchSongs();
-  }
-
   @override
   Widget build(BuildContext context) {
     return Consumer<SongProvider>(builder: (context, ref, child) {
@@ -90,7 +81,7 @@ class _SearchMenuState extends State<SearchMenu> {
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
                             Text(
-                              '', // Replace with actual last position data if available
+                              'Quick Picks',
                               textAlign: TextAlign.left,
                               style: SenSemiBold.copyWith(
                                 fontSize: 18,
@@ -101,40 +92,22 @@ class _SearchMenuState extends State<SearchMenu> {
                           ],
                         ),
                         const SizedBox(height: 15),
-                        FutureBuilder<List<Song>>(
-                          future: _songsFuture,
-                          builder: (context, snapshot) {
-                            if (snapshot.connectionState ==
-                                ConnectionState.waiting) {
-                              return const CircularProgressIndicator();
-                            } else if (snapshot.hasError) {
-                              return Text('Error: ${snapshot.error}');
-                            } else if (snapshot.hasData) {
-                              final songs = snapshot.data!;
-                              return Expanded(
-                                child: ListView.builder(
-                                  itemCount: songs.length,
-                                  itemBuilder: (context, index) {
-                                    final song = songs[index];
-                                    return songContainer(
-                                        context, song, index, songs);
-                                  },
-                                ),
-                              );
-                            } else {
-                              return const Text('No songs available');
-                            }
-                          },
+                        Expanded(
+                          child: SongList(
+                            songHandler: widget.songHandler,
+                          ),
                         ),
                       ],
                     ),
                   ),
-                  // Positioned(
-                  //   bottom: 0,
-                  //   left: 0,
-                  //   right: 0,
-                  //   child: MusicTracker(),
-                  // ),
+                  Positioned(
+                    bottom: 0,
+                    left: 0,
+                    right: 0,
+                    child: PlayerDeck(
+                      songHandler: widget.songHandler,
+                    ),
+                  ),
                 ],
               ),
         bottomNavigationBar: BotNavBar(
@@ -158,61 +131,6 @@ class _SearchMenuState extends State<SearchMenu> {
         ),
       );
     });
-  }
-
-  Widget songContainer(
-      BuildContext context, Song song, int index, List<Song> songs) {
-    return GestureDetector(
-      onTap: () {
-        // Navigator.push(
-        //   context,
-        //   MaterialPageRoute(
-        //     builder: (context) => Trackview(
-        //       song: song,
-        //       songs: songs,
-        //       index: index,
-        //       duration: Duration.zero,
-        //       position: Duration.zero,
-        //     ),
-        //   ),
-        // );
-      },
-      child: Container(
-        width: 393,
-        height: 50,
-        color: kBlack,
-        child: Row(
-          children: [
-            Image.network(
-              song.imageSource,
-              height: 50,
-              width: 50,
-            ),
-            const SizedBox(width: 10),
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  song.name,
-                  style: SenSemiBold.copyWith(fontSize: 16, color: kWhite),
-                ),
-                const SizedBox(height: 5),
-                Text(
-                  song.artist,
-                  style: SenSemiBold.copyWith(fontSize: 12, color: kGrey),
-                ),
-              ],
-            ),
-            const Spacer(),
-            Image.asset('assets/images/icons/Play.png'),
-            const SizedBox(width: 15),
-            Image.asset('assets/images/icons/Heart_Solid.png'),
-            const SizedBox(width: 10),
-            Image.asset('assets/images/icons/more.png'),
-          ],
-        ),
-      ),
-    );
   }
 
   Widget searchBar(BuildContext context) {

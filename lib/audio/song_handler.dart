@@ -5,7 +5,8 @@ class SongHandler extends BaseAudioHandler with QueueHandler, SeekHandler {
   final AudioPlayer audioPlayer = AudioPlayer();
 
   UriAudioSource _createAudioSource(MediaItem item) {
-    return ProgressiveAudioSource(Uri.parse(item.id));
+    final url = item.extras!['url'] as String;
+    return ProgressiveAudioSource(Uri.parse(url));
   }
 
   void _listenForCurrentSongIndexChanges() {
@@ -62,6 +63,13 @@ class SongHandler extends BaseAudioHandler with QueueHandler, SeekHandler {
         }
       },
     );
+  }
+
+  Future<void> setAsPlayingSong(MediaItem song) async {
+    final index = queue.value.indexWhere((item) => item == song);
+    if (index != -1) {
+      await skipToQueueItem(index);
+    }
   }
 
   @override

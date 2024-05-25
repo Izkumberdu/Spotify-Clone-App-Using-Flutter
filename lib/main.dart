@@ -24,7 +24,7 @@ Future<void> main() async {
   _songHandler = await AudioService.init(
       builder: () => SongHandler(),
       config: const AudioServiceConfig(
-        androidNotificationChannelId: 'com.letterSquared.app',
+        androidNotificationChannelId: 'com.lettersquared.app',
         androidNotificationChannelName: 'Letter Squared',
         androidNotificationOngoing: true,
         androidShowNotificationBadge: true,
