@@ -53,6 +53,22 @@ class Homepage extends ConsumerWidget {
     return favoriteArtists;
   }
 
+  Future<List<Map<String, dynamic>>> _fetchPopularArtists() async {
+    User? user = FirebaseAuth.instance.currentUser;
+    if (user == null) {
+      throw Exception("No user logged in");
+    }
+
+    QuerySnapshot snapshot = await FirebaseFirestore.instance
+        .collection('artists')
+        .where('isPopular', isEqualTo: true)
+        .get();
+
+    return snapshot.docs
+        .map((doc) => doc.data() as Map<String, dynamic>)
+        .toList();
+  }
+
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final navbarIndex = ref.watch(navbarIndexProvider);
@@ -129,7 +145,7 @@ class Homepage extends ConsumerWidget {
                       Row(
                         children: [
                           CustomContainer(
-                            imagePath: "assets/images/genreImages/rock.jpg",
+                            imagePath: "assets/images/rnqa7yhv4il71.webp",
                             text: "Liked Songs",
                             isLikedSongs: true,
                           ),
@@ -137,7 +153,7 @@ class Homepage extends ConsumerWidget {
                           CustomContainer(
                             imagePath: "assets/images/genreImages/rock.jpg",
                             text: "Liked Songs",
-                            isLikedSongs: true,
+                            isLikedSongs: false,
                           ),
                         ],
                       ),
@@ -147,13 +163,13 @@ class Homepage extends ConsumerWidget {
                           CustomContainer(
                             imagePath: "assets/images/genreImages/rock.jpg",
                             text: "Liked Songs",
-                            isLikedSongs: true,
+                            isLikedSongs: false,
                           ),
                           SizedBox(width: 12),
                           CustomContainer(
                             imagePath: "assets/images/genreImages/rock.jpg",
                             text: "Liked Songs",
-                            isLikedSongs: true,
+                            isLikedSongs: false,
                           ),
                         ],
                       ),
@@ -163,13 +179,13 @@ class Homepage extends ConsumerWidget {
                           CustomContainer(
                             imagePath: "assets/images/genreImages/rock.jpg",
                             text: "Liked Songs",
-                            isLikedSongs: true,
+                            isLikedSongs: false,
                           ),
                           SizedBox(width: 12),
                           CustomContainer(
                             imagePath: "assets/images/genreImages/rock.jpg",
                             text: "Liked Songs",
-                            isLikedSongs: true,
+                            isLikedSongs: false,
                           ),
                         ],
                       ),
@@ -279,6 +295,66 @@ class Homepage extends ConsumerWidget {
                     },
                   ),
                   const SizedBox(height: 16),
+                  FutureBuilder<List<Map<String, dynamic>>>(
+                    future: _fetchPopularArtists(),
+                    builder: (context, popularSnapshot) {
+                      if (popularSnapshot.connectionState ==
+                          ConnectionState.waiting) {
+                        return const Center(child: CircularProgressIndicator());
+                      }
+                      if (popularSnapshot.hasError) {
+                        return Center(
+                            child: Text('Error: ${popularSnapshot.error}'));
+                      }
+                      if (!popularSnapshot.hasData ||
+                          popularSnapshot.data!.isEmpty) {
+                        return const Center(
+                            child: Text('No popular artists found'));
+                      }
+
+                      List<Map<String, dynamic>> popularArtists =
+                          popularSnapshot.data!;
+
+                      return Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            "Popular Artists",
+                            style:
+                                SenBold.copyWith(fontSize: 19, color: kWhite),
+                          ),
+                          const SizedBox(height: 16),
+                          SingleChildScrollView(
+                            scrollDirection: Axis.horizontal,
+                            child: Row(
+                              children: [
+                                for (var artist in popularArtists) ...[
+                                  Column(
+                                    children: [
+                                      CircleAvatar(
+                                        radius: 50,
+                                        backgroundImage: NetworkImage(
+                                            artist['imageURL'] ?? ''),
+                                        backgroundColor: Colors.grey,
+                                      ),
+                                      const SizedBox(height: 4),
+                                      Text(
+                                        artist['name'] ?? '',
+                                        textAlign: TextAlign.center,
+                                        style: SenMedium.copyWith(
+                                            fontSize: 16, color: kWhite),
+                                      ),
+                                    ],
+                                  ),
+                                  const SizedBox(width: 12),
+                                ],
+                              ],
+                            ),
+                          ),
+                        ],
+                      );
+                    },
+                  ),
                 ],
               ),
             ),
