@@ -95,7 +95,7 @@ class TrackView extends StatelessWidget {
                 SongProgress(
                   totalDuration: playingSong.duration!,
                   songHandler: songHandler,
-                  timeLabelLocation: TimeLabelLocation.none,
+                  timeLabelLocation: TimeLabelLocation.below,
                 ),
                 SizedBox(height: SizeConfig.blockSizeVertical! * 0.5),
                 Row(
