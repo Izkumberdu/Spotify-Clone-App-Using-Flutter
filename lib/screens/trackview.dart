@@ -86,6 +86,7 @@ class TrackView extends StatelessWidget {
                     borderRadius: BorderRadius.circular(10),
                     child: Image.network(
                       playingSong.artUri.toString(),
+                      fit: BoxFit.cover,
                     ),
                   ),
                 ),
