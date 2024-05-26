@@ -92,6 +92,21 @@ class SongHandler extends BaseAudioHandler with QueueHandler, SeekHandler {
     });
   }
 
+  Future<void> addToQueue(MediaItem song) async {
+    final currentQueue = queue.value;
+    currentQueue.add(song);
+    queue.add(currentQueue);
+    if (currentQueue.length == 1) {
+      // If this is the first song in the queue, start playback
+      play();
+    }
+  }
+
+
+  void clearQueue() {
+    queue.value.clear();
+  }
+
   Future<void> toggleShuffle() async {
     final isShuffling = audioPlayer.shuffleModeEnabled;
     if (isShuffling) {

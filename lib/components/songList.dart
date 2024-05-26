@@ -113,7 +113,6 @@ class SongList extends StatelessWidget {
                     PopupMenuButton<String>(
                       color: kBlack,
                       onSelected: (String value) {
-                        // Handle the selected option
                         switch (value) {
                           case 'like':
                             // Handle 'Like' option
@@ -122,10 +121,18 @@ class SongList extends StatelessWidget {
                             // Handle 'Add to playlist' option
                             break;
                           case 'go_to_queue':
-                            Navigator.pushNamed(context, '/playingqueue'); // Navigate to '/playingqueue' route
+                            Navigator.pushNamed(context, '/playingqueue'); 
                             break;
                           case 'add_to_queue':
-                            // Handle 'Add to queue' option
+                            final song = songs[index]; // Get the selected song
+                            songHandler.addToQueue(MediaItem(
+                              id: song.id,
+                              title: song.name,
+                              artist: song.artist,
+                              artUri: Uri.parse(song.imageSource),
+                              // Provide the audio source URL in the extras field
+                              extras: {'url': song.url},
+                            ));
                             break;
                         }
                       },
@@ -144,6 +151,7 @@ class SongList extends StatelessWidget {
       },
     );
   }
+
 }
 
 PopupMenuItem<String> _buildPopupMenuItem(String text, IconData icon) {

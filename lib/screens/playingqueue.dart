@@ -1,28 +1,37 @@
+import 'package:audio_service/audio_service.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:lettersquared/audio/song_handler.dart';
 
 class AlbumQueuePage extends StatefulWidget {
-  const AlbumQueuePage({super.key});
+  final SongHandler songHandler;
+
+  const AlbumQueuePage({Key? key, required this.songHandler}) : super(key: key);
 
   @override
   State<AlbumQueuePage> createState() => _AlbumQueuePageState();
 }
 
 class _AlbumQueuePageState extends State<AlbumQueuePage> {
-  final List<bool> _isSelected = List.generate(10, (index) => false);
+  late List<bool> _isSelected;
+
+  @override
+  void initState() {
+    super.initState();
+    // Initialize _isSelected list with the same length as the queue
+    _isSelected = List.generate(widget.songHandler.queue.value.length, (index) => false);
+  }
+
   @override
   Widget build(BuildContext context) {
-    // Get the dimensions of the screen
     final Size screenSize = MediaQuery.of(context).size;
 
     return Scaffold(
       body: SingleChildScrollView(
         child: Container(
-          // Set width and height to screen dimensions
           width: screenSize.width,
           height: screenSize.height,
           color: const Color(0xFF121212),
-
           child: Padding(
             padding: const EdgeInsets.fromLTRB(20, 50, 20, 0),
             child: Column(
@@ -35,7 +44,7 @@ class _AlbumQueuePageState extends State<AlbumQueuePage> {
                 const Spacer(),
                 nextQueue(),
                 const Spacer(),
-                queueList(context),
+                queueList(context, widget.songHandler.queue.value),
                 const Spacer(),
                 songControls(),
                 const Spacer(),
@@ -48,23 +57,65 @@ class _AlbumQueuePageState extends State<AlbumQueuePage> {
     );
   }
 
-  SizedBox queueList(BuildContext context) {
+  Widget queueList(BuildContext context, List<MediaItem> queue) {
     return SizedBox(
-                width: 400,
-                height: 500,
-                child: ReorderableListView(
-                  padding: const EdgeInsets.all(8.0),
-                  children: [
-                    for (int i = 0; i < 10; i++)
-                      _buildSongTile(context, i),
-                  ],
-                  
-                  onReorder: (oldIndex, newIndex) {
-                    // Callback when an item is reordered
-                    // Implement logic to update the order of songs in the queue
-                  },
-                ),
-              );
+      width: 400,
+      height: 500,
+      child: ReorderableListView(
+        padding: const EdgeInsets.all(8.0),
+        children: [
+          for (int i = 0; i < queue.length; i++)
+            _buildSongTile(context, queue[i], i),
+        ],
+        onReorder: (oldIndex, newIndex) {
+          // Callback when an item is reordered
+          // Implement logic to update the order of songs in the queue
+        },
+      ),
+    );
+  }
+
+  Widget _buildSongTile(BuildContext context, MediaItem song, int index) {
+    return ListTile(
+      key: Key('$index'),
+      leading: Checkbox(
+        value: _isSelected[index],
+        onChanged: (bool? value) {
+          setState(() {
+            _isSelected[index] = value ?? false;
+          });
+        },
+        shape: const CircleBorder(),
+        checkColor: const Color(0xFF1ED760),
+        fillColor: MaterialStateProperty.all(const Color(0xFF1B1818)),
+        side: const BorderSide(
+          color: Color(0xFFB3B3B3),
+          width: 1.5,
+        ),
+      ),
+      title: Text(
+        song.title ?? 'Unknown Title',
+        style: GoogleFonts.sen(
+          fontWeight: FontWeight.w500,
+          fontSize: 15,
+          color: Colors.white,
+        ),
+      ),
+      subtitle: Text(
+        song.artist ?? 'Unknown Artist',
+        style: GoogleFonts.sen(
+          fontWeight: FontWeight.w400,
+          fontSize: 12,
+          color: Colors.grey,
+        ),
+      ),
+      tileColor: Colors.grey,
+      onTap: () {
+        setState(() {
+          _isSelected[index] = !_isSelected[index];
+        });
+      },
+    );
   }
 
   SizedBox songControls() {
@@ -137,19 +188,36 @@ class _AlbumQueuePageState extends State<AlbumQueuePage> {
               );
   }
 
-  Align nextQueue() {
-    return Align(
-                alignment: Alignment.centerLeft,
-                child: Text(
-                          'Next From: From Me to You - Mono / Remastered',
-                          style: GoogleFonts.sen(
-                            fontWeight: FontWeight.w700,
-                            fontSize: 15,
-                            color: Colors.white
-                          )                  
-                        ),
-              );
-  }
+Row nextQueue() {
+  return Row(
+    children: [
+      Align(
+        alignment: Alignment.centerLeft,
+        child: Text(
+          'Next on music queue:',
+          style: GoogleFonts.sen(
+            fontWeight: FontWeight.w700,
+            fontSize: 15,
+            color: Colors.white,
+          ),
+        ),
+      ),
+      Spacer(), // Add space to push delete icon to the right
+      IconButton(
+        icon: Icon(Icons.delete),
+        onPressed: () {
+          setState(() {
+            widget.songHandler.clearQueue();
+            _isSelected = List.filled(widget.songHandler.queue.value.length, false);
+          });
+        },
+        color: Colors.white,
+      ),
+
+    ],
+  );
+}
+
 
   SizedBox currentSong() {
     return SizedBox(
@@ -211,23 +279,24 @@ class _AlbumQueuePageState extends State<AlbumQueuePage> {
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
+                    const SizedBox(width: 20),
                     Container(
                       width: 32,
                       height: 32,
                       decoration: const BoxDecoration(
                         shape: BoxShape.circle,
-                        color: Colors.blue, // Change color as needed
                       ),
                       child: const CircleAvatar(
+                        backgroundColor: Colors.transparent,
                         radius: 16,
-                        backgroundImage: AssetImage('assets/images/genreImages/electronic.jpg'), // Replace with your image asset
+                        backgroundImage: AssetImage('assets/images/icons/logo.png'), // Replace with your image asset
                       ),
                     ),
                     const Spacer(),
                     SizedBox(
-                      width: 230,
+                      width: 200,
                       child: Text(
-                        'Album radio based on From Me to You - Mono / Remastered',
+                        'Spotify Quick Picks',
                         style: GoogleFonts.sen(
                           fontWeight: FontWeight.w600,
                           fontSize: 14,
@@ -242,43 +311,5 @@ class _AlbumQueuePageState extends State<AlbumQueuePage> {
                 )
               );
   }
-  
-  Widget _buildSongTile(BuildContext context, int index) {
-    return ListTile(
-      key: Key('$index'),
-      leading: Checkbox(
-        value: _isSelected[index], 
-        onChanged: (bool? value) {
-          setState(() {
-            _isSelected[index] = value ?? false; 
-          });
-        },
-        shape: const CircleBorder(), 
-        checkColor: const Color(0xFF1ED760),
-        fillColor: MaterialStateProperty.all(const Color(0xFF1B1818)), 
-        side: const BorderSide(
-          color: Color(0xFFB3B3B3), 
-          width: 1.5, 
-        ),
-      ),
-      title: Text(
-                        'Song $index',
-                        style: GoogleFonts.sen(
-                          fontWeight: FontWeight.w500,
-                          fontSize: 15,
-                          color: Colors.white
-        ),
-      ),
-      subtitle: const Text('Artist name'),
-      tileColor: Colors.grey,
-      onTap: () {
-        setState(() {
-          _isSelected[index] = !_isSelected[index]; 
-        });
-      },
-    );
-  }
-
-
 
 }
