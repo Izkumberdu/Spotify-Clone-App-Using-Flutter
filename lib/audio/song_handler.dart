@@ -72,8 +72,9 @@ class SongHandler extends BaseAudioHandler with QueueHandler, SeekHandler {
   Future<void> initSongs(List<MediaItem> songs) async {
     audioPlayer.playbackEventStream.listen(_broadCastState);
     final audioSource = songs.map(_createAudioSource).toList();
-    await audioPlayer
-        .setAudioSource(ConcatenatingAudioSource(children: audioSource));
+    await audioPlayer.setAudioSource(
+        ConcatenatingAudioSource(children: audioSource),
+        preload: false); // Preload but don't play
     queue.value.clear();
     queue.value.addAll(songs);
     queue.add(queue.value);
