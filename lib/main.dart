@@ -27,11 +27,11 @@ void main() async {
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
   @override
- Widget build(BuildContext context) {
+  Widget build(BuildContext context) {
     return MaterialApp(
-      home: const Library(), //test run library
+      home: const StartScreen(), // test run library
       routes: {
-        '/': (context) => const StartScreen(),
+        // Remove the root route '/'
         '/onboarding': (context) => const StartScreen(),
         '/homepage': (context) => const Homepage(),
         '/library': (context) => const Library(),
