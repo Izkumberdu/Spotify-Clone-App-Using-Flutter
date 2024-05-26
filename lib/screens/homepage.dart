@@ -1,15 +1,33 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:lettersquared/components/bottomNavbar.dart';
 import 'package:lettersquared/components/cards.dart';
 import 'package:lettersquared/components/recently_played_item.dart';
 import 'package:lettersquared/styles/app_styles.dart';
-import 'package:lettersquared/provider/providers.dart';
+import 'package:lettersquared/provider/navbarProvider.dart';
+import 'package:lettersquared/provider/song_provider.dart';
+import 'package:provider/provider.dart';
 
-class Homepage extends ConsumerWidget {
+class Homepage extends StatefulWidget {
   const Homepage({super.key});
+
+  @override
+  _HomepageState createState() => _HomepageState();
+}
+
+class _HomepageState extends State<Homepage> {
+  late Future<List<Map<String, dynamic>>> _recentlyPlayedFuture;
+  late Future<List<Map<String, dynamic>>> _favoriteArtistsFuture;
+  late Future<List<Map<String, dynamic>>> _popularArtistsFuture;
+
+  @override
+  void initState() {
+    super.initState();
+    _recentlyPlayedFuture = _fetchRecentlyPlayed();
+    _favoriteArtistsFuture = _fetchFavoriteArtists();
+    _popularArtistsFuture = _fetchPopularArtists();
+  }
 
   Future<List<Map<String, dynamic>>> _fetchRecentlyPlayed() async {
     User? user = FirebaseAuth.instance.currentUser;
@@ -70,11 +88,11 @@ class Homepage extends ConsumerWidget {
   }
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final navbarIndex = ref.watch(navbarIndexProvider);
+  Widget build(BuildContext context) {
+    int _navbarIndex = 0;
 
     return FutureBuilder<List<Map<String, dynamic>>>(
-      future: _fetchRecentlyPlayed(),
+      future: _recentlyPlayedFuture,
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return const Scaffold(
@@ -236,7 +254,7 @@ class Homepage extends ConsumerWidget {
                         ),
                   const SizedBox(height: 12),
                   FutureBuilder<List<Map<String, dynamic>>>(
-                    future: _fetchFavoriteArtists(),
+                    future: _favoriteArtistsFuture,
                     builder: (context, favSnapshot) {
                       if (favSnapshot.connectionState ==
                           ConnectionState.waiting) {
@@ -296,24 +314,23 @@ class Homepage extends ConsumerWidget {
                   ),
                   const SizedBox(height: 16),
                   FutureBuilder<List<Map<String, dynamic>>>(
-                    future: _fetchPopularArtists(),
-                    builder: (context, popularSnapshot) {
-                      if (popularSnapshot.connectionState ==
+                    future: _popularArtistsFuture,
+                    builder: (context, popSnapshot) {
+                      if (popSnapshot.connectionState ==
                           ConnectionState.waiting) {
                         return const Center(child: CircularProgressIndicator());
                       }
-                      if (popularSnapshot.hasError) {
+                      if (popSnapshot.hasError) {
                         return Center(
-                            child: Text('Error: ${popularSnapshot.error}'));
+                            child: Text('Error: ${popSnapshot.error}'));
                       }
-                      if (!popularSnapshot.hasData ||
-                          popularSnapshot.data!.isEmpty) {
+                      if (!popSnapshot.hasData || popSnapshot.data!.isEmpty) {
                         return const Center(
                             child: Text('No popular artists found'));
                       }
 
                       List<Map<String, dynamic>> popularArtists =
-                          popularSnapshot.data!;
+                          popSnapshot.data!;
 
                       return Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
@@ -360,18 +377,22 @@ class Homepage extends ConsumerWidget {
             ),
           ),
           bottomNavigationBar: BotNavBar(
-            currentIndex: navbarIndex,
+            currentIndex: _navbarIndex,
             onTap: (index) {
-              ref.read(navbarIndexProvider.notifier).state = index;
+              setState(() {
+                context
+                    .read<NavbarProvider>()
+                    .changeIndex(newIndex: _navbarIndex);
+              });
               switch (index) {
                 case 0:
                   Navigator.pushNamed(context, '/homepage');
                   break;
                 case 1:
-                  Navigator.pushNamed(context, '/search');
+                  Navigator.pushNamed(context, '/searchMenu');
                   break;
                 case 2:
-                  Navigator.pushNamed(context, '/library');
+                  Navigator.pushNamed(context, '/playingqueue');
                   break;
               }
             },
