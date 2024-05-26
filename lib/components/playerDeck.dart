@@ -19,14 +19,21 @@ class PlayerDeck extends StatefulWidget {
 class _PlayerDeckState extends State<PlayerDeck> {
   @override
   Widget build(BuildContext context) {
-    return StreamBuilder<MediaItem?>(
-      stream: widget.songHandler.mediaItem.stream,
+    return StreamBuilder<bool>(
+      stream: widget.songHandler.isDismissedStream,
       builder: (context, snapshot) {
-        MediaItem? playingSong = snapshot.data;
-        final isPlaying = playingSong != null;
-        return playingSong == null || isPlaying == false
-            ? const SizedBox.shrink()
-            : buildCard(context, playingSong);
+        final isDismissed = snapshot.data ?? false;
+        if (isDismissed) return const SizedBox.shrink();
+
+        return StreamBuilder<MediaItem?>(
+          stream: widget.songHandler.mediaItem.stream,
+          builder: (context, snapshot) {
+            MediaItem? playingSong = snapshot.data;
+            return playingSong == null
+                ? const SizedBox.shrink()
+                : buildCard(context, playingSong);
+          },
+        );
       },
     );
   }
@@ -40,6 +47,7 @@ class _PlayerDeckState extends State<PlayerDeck> {
       onDismissed: (direction) {
         widget.songHandler.pause();
         widget.songHandler.stop();
+        widget.songHandler.dismiss();
       },
       child: GestureDetector(
         onTap: () {

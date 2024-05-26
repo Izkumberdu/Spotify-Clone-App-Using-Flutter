@@ -21,60 +21,53 @@ class _LibraryState extends State<Library> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: kBlack,
-      body: Stack(
-        children: [
-          SingleChildScrollView(
-            child: SafeArea(
-              child: Padding(
-                padding: const EdgeInsets.fromLTRB(15, 30, 15, 15),
-                child: Column(
-                  children: [
-                    topRow(context),
-                    const SizedBox(height: 20),
-                    categories(selectedTile),
-                    const SizedBox(height: 20),
-                    filters(),
-                    const SizedBox(height: 10),
-                    Visibility(
-                      visible: selectedTile == 'Playlists',
-                      child: likedSongs(),
-                    ),
-                    Visibility(
-                      visible: selectedTile == 'Playlists',
-                      child: playlistList(context),
-                    ),
-                    Visibility(
-                      visible: selectedTile == 'Artists',
-                      child: artistList(context),
-                    ),
-                    Visibility(
-                      visible: selectedTile == 'Albums',
-                      child: albumList(context),
-                    ),
-                    Visibility(
-                      visible: selectedTile == 'Podcasts & Shows',
-                      child: newEpisodes(),
-                    ),
-                    Visibility(
-                      visible: selectedTile == 'Podcasts & Shows',
-                      child: podcastList(context),
-                    ),
-                    Expanded(
-                      child: Positioned(
-                        bottom: 0,
-                        left: 0,
-                        right: 0,
-                        child: PlayerDeck(
-                          songHandler: widget.songHandler,
-                        ),
+      body: SafeArea(
+        child: Column(
+          children: [
+            Expanded(
+              child: SingleChildScrollView(
+                child: Padding(
+                  padding: const EdgeInsets.fromLTRB(15, 30, 15, 15),
+                  child: Column(
+                    children: [
+                      topRow(context),
+                      const SizedBox(height: 20),
+                      categories(selectedTile),
+                      const SizedBox(height: 20),
+                      filters(),
+                      const SizedBox(height: 10),
+                      Visibility(
+                        visible: selectedTile == 'Playlists',
+                        child: likedSongs(),
                       ),
-                    )
-                  ],
+                      Visibility(
+                        visible: selectedTile == 'Playlists',
+                        child: playlistList(context),
+                      ),
+                      Visibility(
+                        visible: selectedTile == 'Artists',
+                        child: artistList(context),
+                      ),
+                      Visibility(
+                        visible: selectedTile == 'Albums',
+                        child: albumList(context),
+                      ),
+                      Visibility(
+                        visible: selectedTile == 'Podcasts & Shows',
+                        child: newEpisodes(),
+                      ),
+                      Visibility(
+                        visible: selectedTile == 'Podcasts & Shows',
+                        child: podcastList(context),
+                      ),
+                    ],
+                  ),
                 ),
               ),
             ),
-          ),
-        ],
+            PlayerDeck(songHandler: widget.songHandler),
+          ],
+        ),
       ),
       bottomNavigationBar: BotNavBar(
         currentIndex: navbarIndex,
@@ -179,10 +172,10 @@ class _LibraryState extends State<Library> {
             leading: Container(
               width: 60,
               height: 60,
-              decoration: const BoxDecoration( //replace with actual stuff from the songs
-                color: Colors.amber,
-                shape: BoxShape.circle
-              ),
+              decoration: const BoxDecoration(
+                  //replace with actual stuff from the songs
+                  color: Colors.amber,
+                  shape: BoxShape.circle),
             ),
             title: Text('Artist ${index + 1}',
                 style: GoogleFonts.sen(

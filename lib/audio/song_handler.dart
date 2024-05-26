@@ -8,6 +8,10 @@ class SongHandler extends BaseAudioHandler with QueueHandler, SeekHandler {
       BehaviorSubject<bool>.seeded(false);
   final BehaviorSubject<bool> _loopModeSubject =
       BehaviorSubject<bool>.seeded(false);
+  final BehaviorSubject<bool> _isPlayingSubject =
+      BehaviorSubject<bool>.seeded(false);
+  final BehaviorSubject<bool> _isDismissedSubject =
+      BehaviorSubject<bool>.seeded(false);
 
   UriAudioSource _createAudioSource(MediaItem item) {
     final url = item.extras!['url'] as String;
@@ -18,9 +22,12 @@ class SongHandler extends BaseAudioHandler with QueueHandler, SeekHandler {
     audioPlayer.currentIndexStream.listen((index) {
       final playlist = queue.value;
       if (index == null || playlist.isEmpty) {
-        return;
+        mediaItem.add(null);
+        _isPlayingSubject.add(false);
+      } else {
+        mediaItem.add(playlist[index]);
+        _isPlayingSubject.add(audioPlayer.playing);
       }
-      mediaItem.add(playlist[index]);
     });
   }
 
@@ -59,6 +66,7 @@ class SongHandler extends BaseAudioHandler with QueueHandler, SeekHandler {
     ));
     _shuffleModeSubject.add(audioPlayer.shuffleModeEnabled);
     _loopModeSubject.add(audioPlayer.loopMode == LoopMode.one);
+    _isPlayingSubject.add(audioPlayer.playing);
   }
 
   Future<void> initSongs(List<MediaItem> songs) async {
@@ -109,11 +117,22 @@ class SongHandler extends BaseAudioHandler with QueueHandler, SeekHandler {
 
   Stream<bool> get loopModeStream => _loopModeSubject.stream;
 
-  @override
-  Future<void> play() => audioPlayer.play();
+  Stream<bool> get isPlayingStream => _isPlayingSubject.stream;
+
+  Stream<bool> get isDismissedStream => _isDismissedSubject.stream;
 
   @override
-  Future<void> pause() => audioPlayer.pause();
+  Future<void> play() {
+    _isPlayingSubject.add(true);
+    _isDismissedSubject.add(false);
+    return audioPlayer.play();
+  }
+
+  @override
+  Future<void> pause() {
+    _isPlayingSubject.add(false);
+    return audioPlayer.pause();
+  }
 
   @override
   Future<void> seek(Duration position) => audioPlayer.seek(position);
@@ -146,5 +165,9 @@ class SongHandler extends BaseAudioHandler with QueueHandler, SeekHandler {
       await audioPlayer.seekToPrevious();
     }
     play();
+  }
+
+  Future<void> dismiss() async {
+    _isDismissedSubject.add(true);
   }
 }
