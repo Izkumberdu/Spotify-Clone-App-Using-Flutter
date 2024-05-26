@@ -109,7 +109,33 @@ class SongList extends StatelessWidget {
                 const SizedBox(width: 15),
                 Image.asset('assets/images/icons/Heart_Solid.png'),
                 const SizedBox(width: 10),
-                Image.asset('assets/images/icons/more.png'),
+                    PopupMenuButton<String>(
+                      color: kBlack,
+                      onSelected: (String value) {
+                        // Handle the selected option
+                        switch (value) {
+                          case 'like':
+                            // Handle 'Like' option
+                            break;
+                          case 'add_to_playlist':
+                            // Handle 'Add to playlist' option
+                            break;
+                          case 'go_to_queue':
+                            Navigator.pushNamed(context, '/playingqueue'); // Navigate to '/playingqueue' route
+                            break;
+                          case 'add_to_queue':
+                            // Handle 'Add to queue' option
+                            break;
+                        }
+                      },
+                      itemBuilder: (BuildContext context) => <PopupMenuEntry<String>>[
+                        _buildPopupMenuItem('Like', Icons.favorite),
+                        _buildPopupMenuItem('Add to playlist', Icons.add),
+                        _buildPopupMenuItem('Add to queue', Icons.playlist_add),
+                        _buildPopupMenuItem('Go to queue', Icons.queue_play_next),
+                      ],
+                      child: Image.asset('assets/images/icons/more.png'),
+                    )
               ],
             ),
           ),
@@ -117,4 +143,24 @@ class SongList extends StatelessWidget {
       },
     );
   }
+}
+
+PopupMenuItem<String> _buildPopupMenuItem(String text, IconData icon) {
+  return PopupMenuItem<String>(
+    value: text.toLowerCase().replaceAll(' ', '_'), 
+    child: SizedBox(
+      width: 105, 
+      height: 30, 
+      child: Row(
+        children: [
+          Icon(icon, color: Colors.white, size: 20), 
+          SizedBox(width: 10),
+          Text(
+            text,
+            style: TextStyle(color: Colors.white, fontSize: 11), 
+          ),
+        ],
+      ),
+    ),
+  );
 }

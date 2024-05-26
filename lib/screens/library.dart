@@ -179,10 +179,10 @@ class _LibraryState extends State<Library> {
             leading: Container(
               width: 60,
               height: 60,
-              decoration: BoxDecoration(
-                  //replace with actual stuff from the songs
-                  color: Colors.amber,
-                  shape: BoxShape.circle),
+              decoration: const BoxDecoration( //replace with actual stuff from the songs
+                color: Colors.amber,
+                shape: BoxShape.circle
+              ),
             ),
             title: Text('Artist ${index + 1}',
                 style: GoogleFonts.sen(
