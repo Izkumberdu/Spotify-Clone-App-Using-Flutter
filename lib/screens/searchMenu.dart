@@ -92,7 +92,7 @@ class _SearchMenuState extends State<SearchMenu> {
                             Image.asset('assets/images/icons/Shuffle.png'),
                           ],
                         ),
-                        const SizedBox(height: 15),
+                        const SizedBox(height: 5),
                         Expanded(
                           child: SongList(
                             songHandler: widget.songHandler,
