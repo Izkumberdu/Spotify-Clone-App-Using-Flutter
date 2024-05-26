@@ -49,7 +49,6 @@ class GetSongs {
 Future<List<MediaItem>> getSongs() async {
   await requestSongsPermission();
 
-  // Initialize Just Audio player
   final player = AudioPlayer();
 
   GetSongs getSongs = GetSongs();

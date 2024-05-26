@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:lettersquared/provider/navbarProvider.dart';
 import 'package:lettersquared/styles/app_styles.dart';
+import 'package:provider/provider.dart';
 
 class BotNavBar extends StatefulWidget {
-  const BotNavBar({super.key, required this.currentIndex, required this.onTap});
+  const BotNavBar({Key? key, required this.currentIndex, required this.onTap})
+      : super(key: key);
 
   final int currentIndex;
   final Function(int) onTap;
@@ -14,6 +17,7 @@ class BotNavBar extends StatefulWidget {
 class _BotNavBarState extends State<BotNavBar> {
   @override
   Widget build(BuildContext context) {
+    context.watch<NavbarProvider>().currentIndex;
     return BottomNavigationBar(
       elevation: 0,
       backgroundColor: kBlack,
@@ -33,8 +37,8 @@ class _BotNavBarState extends State<BotNavBar> {
         ),
         BottomNavigationBarItem(
           icon: widget.currentIndex == 2
-              ? Image.asset('assets/images/navbar/Library_active.png')
-              : Image.asset('assets/images/navbar/Library_inactive.png'),
+              ? Image.asset('assets/images/navbar/library_active.png')
+              : Image.asset('assets/images/navbar/library_inactive.png'),
           label: 'Your Library',
         ),
       ],
