@@ -59,7 +59,7 @@ class MyApp extends StatelessWidget {
               songHandler: _songHandler,
             ),
         '/homepage': (context) => Homepage(songHandler: _songHandler),
-        '/library': (context) => const Library(),
+        '/library': (context) => Library(songHandler: _songHandler),
         '/search': (context) => SearchScreen(songHandler: _songHandler),
         '/searchMenu': (context) => SearchMenu(songHandler: _songHandler),
         '/playingqueue': (context) => const AlbumQueuePage(),

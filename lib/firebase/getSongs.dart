@@ -1,7 +1,6 @@
 import 'package:audio_service/audio_service.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:just_audio/just_audio.dart';
-import 'package:lettersquared/audio/permissions.dart';
 
 class Song {
   final String id;
@@ -55,8 +54,6 @@ class GetSongs {
 }
 
 Future<List<MediaItem>> getSongs() async {
-  await requestSongsPermission();
-
   final player = AudioPlayer();
 
   GetSongs getSongs = GetSongs();

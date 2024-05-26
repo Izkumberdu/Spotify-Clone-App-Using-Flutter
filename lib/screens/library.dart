@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:lettersquared/audio/song_handler.dart';
 import 'package:lettersquared/components/bottomNavbar.dart';
+import 'package:lettersquared/components/playerDeck.dart';
 import 'package:lettersquared/styles/app_styles.dart';
 
 class Library extends StatefulWidget {
-  const Library({Key? key}) : super(key: key);
+  SongHandler songHandler;
+  Library({Key? key, required this.songHandler}) : super(key: key);
 
   @override
   _LibraryState createState() => _LibraryState();
@@ -18,46 +21,60 @@ class _LibraryState extends State<Library> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: kBlack,
-      body: SingleChildScrollView(
-        child: SafeArea(
-          child: Padding(
-            padding: const EdgeInsets.fromLTRB(15, 30, 15, 15),
-            child: Column(
-              children: [
-                topRow(context),
-                const SizedBox(height: 20),
-                categories(selectedTile),
-                const SizedBox(height: 20),
-                filters(),
-                const SizedBox(height: 10),
-                Visibility(
-                  visible: selectedTile == 'Playlists',
-                  child: likedSongs(),
+      body: Stack(
+        children: [
+          SingleChildScrollView(
+            child: SafeArea(
+              child: Padding(
+                padding: const EdgeInsets.fromLTRB(15, 30, 15, 15),
+                child: Column(
+                  children: [
+                    topRow(context),
+                    const SizedBox(height: 20),
+                    categories(selectedTile),
+                    const SizedBox(height: 20),
+                    filters(),
+                    const SizedBox(height: 10),
+                    Visibility(
+                      visible: selectedTile == 'Playlists',
+                      child: likedSongs(),
+                    ),
+                    Visibility(
+                      visible: selectedTile == 'Playlists',
+                      child: playlistList(context),
+                    ),
+                    Visibility(
+                      visible: selectedTile == 'Artists',
+                      child: artistList(context),
+                    ),
+                    Visibility(
+                      visible: selectedTile == 'Albums',
+                      child: albumList(context),
+                    ),
+                    Visibility(
+                      visible: selectedTile == 'Podcasts & Shows',
+                      child: newEpisodes(),
+                    ),
+                    Visibility(
+                      visible: selectedTile == 'Podcasts & Shows',
+                      child: podcastList(context),
+                    ),
+                    Expanded(
+                      child: Positioned(
+                        bottom: 0,
+                        left: 0,
+                        right: 0,
+                        child: PlayerDeck(
+                          songHandler: widget.songHandler,
+                        ),
+                      ),
+                    )
+                  ],
                 ),
-                Visibility(
-                  visible: selectedTile == 'Playlists',
-                  child: playlistList(context),
-                ),
-                Visibility(
-                  visible: selectedTile == 'Artists',
-                  child: artistList(context),
-                ),
-                Visibility(
-                  visible: selectedTile == 'Albums',
-                  child: albumList(context),
-                ),
-                Visibility(
-                  visible: selectedTile == 'Podcasts & Shows',
-                  child: newEpisodes(),
-                ),
-                Visibility(
-                  visible: selectedTile == 'Podcasts & Shows',
-                  child: podcastList(context),
-                ),
-              ],
+              ),
             ),
           ),
-        ),
+        ],
       ),
       bottomNavigationBar: BotNavBar(
         currentIndex: navbarIndex,
@@ -92,14 +109,23 @@ class _LibraryState extends State<Library> {
         itemBuilder: (context, index) {
           return ListTile(
             leading: Container(
-              width: 50, 
+              width: 50,
               height: 50,
-              decoration: BoxDecoration( //replace with actual stuff from the songs
+              decoration: BoxDecoration(
+                //replace with actual stuff from the songs
                 color: Colors.amber,
               ),
             ),
-            title: Text('Playlist ${index + 1}', style: GoogleFonts.sen(color: Colors.white, fontSize: 16, fontWeight: FontWeight.w500)),
-            subtitle: Text('Playlist ${index + 1}', style: GoogleFonts.sen(color: const Color(0xFFB3B3B3), fontSize: 13, fontWeight: FontWeight.w600)),
+            title: Text('Playlist ${index + 1}',
+                style: GoogleFonts.sen(
+                    color: Colors.white,
+                    fontSize: 16,
+                    fontWeight: FontWeight.w500)),
+            subtitle: Text('Playlist ${index + 1}',
+                style: GoogleFonts.sen(
+                    color: const Color(0xFFB3B3B3),
+                    fontSize: 13,
+                    fontWeight: FontWeight.w600)),
           );
         },
       ),
@@ -117,20 +143,28 @@ class _LibraryState extends State<Library> {
         itemBuilder: (context, index) {
           return ListTile(
             leading: Container(
-              width: 50, 
+              width: 50,
               height: 50,
-              decoration: BoxDecoration( //replace with actual stuff from the songs
+              decoration: BoxDecoration(
+                //replace with actual stuff from the songs
                 color: Colors.amber,
               ),
             ),
-            title: Text('Album ${index + 1}', style: GoogleFonts.sen(color: Colors.white, fontSize: 16, fontWeight: FontWeight.w500)),
-            subtitle: Text('Album ${index + 1}', style: GoogleFonts.sen(color: const Color(0xFFB3B3B3), fontSize: 13, fontWeight: FontWeight.w600)),
+            title: Text('Album ${index + 1}',
+                style: GoogleFonts.sen(
+                    color: Colors.white,
+                    fontSize: 16,
+                    fontWeight: FontWeight.w500)),
+            subtitle: Text('Album ${index + 1}',
+                style: GoogleFonts.sen(
+                    color: const Color(0xFFB3B3B3),
+                    fontSize: 13,
+                    fontWeight: FontWeight.w600)),
           );
         },
       ),
     );
   }
-
 
   SizedBox artistList(BuildContext context) {
     return SizedBox(
@@ -143,15 +177,23 @@ class _LibraryState extends State<Library> {
         itemBuilder: (context, index) {
           return ListTile(
             leading: Container(
-              width: 60, 
+              width: 60,
               height: 60,
-              decoration: BoxDecoration( //replace with actual stuff from the songs
-                color: Colors.amber,
-                shape: BoxShape.circle
-              ),
+              decoration: BoxDecoration(
+                  //replace with actual stuff from the songs
+                  color: Colors.amber,
+                  shape: BoxShape.circle),
             ),
-            title: Text('Artist ${index + 1}', style: GoogleFonts.sen(color: Colors.white, fontSize: 16, fontWeight: FontWeight.w500)),
-            subtitle: Text('Artist', style: GoogleFonts.sen(color: const Color(0xFFB3B3B3), fontSize: 13, fontWeight: FontWeight.w600)),
+            title: Text('Artist ${index + 1}',
+                style: GoogleFonts.sen(
+                    color: Colors.white,
+                    fontSize: 16,
+                    fontWeight: FontWeight.w500)),
+            subtitle: Text('Artist',
+                style: GoogleFonts.sen(
+                    color: const Color(0xFFB3B3B3),
+                    fontSize: 13,
+                    fontWeight: FontWeight.w600)),
           );
         },
       ),
@@ -169,14 +211,23 @@ class _LibraryState extends State<Library> {
         itemBuilder: (context, index) {
           return ListTile(
             leading: Container(
-              width: 50, 
+              width: 50,
               height: 50,
-              decoration: BoxDecoration( //replace with actual stuff from the songs
+              decoration: BoxDecoration(
+                //replace with actual stuff from the songs
                 color: Colors.amber,
               ),
             ),
-            title: Text('Playlist ${index + 1}', style: GoogleFonts.sen(color: Colors.white, fontSize: 16, fontWeight: FontWeight.w500)),
-            subtitle: Text('Playlist ${index + 1}', style: GoogleFonts.sen(color: const Color(0xFFB3B3B3), fontSize: 13, fontWeight: FontWeight.w600)),
+            title: Text('Playlist ${index + 1}',
+                style: GoogleFonts.sen(
+                    color: Colors.white,
+                    fontSize: 16,
+                    fontWeight: FontWeight.w500)),
+            subtitle: Text('Playlist ${index + 1}',
+                style: GoogleFonts.sen(
+                    color: const Color(0xFFB3B3B3),
+                    fontSize: 13,
+                    fontWeight: FontWeight.w600)),
           );
         },
       ),
@@ -187,7 +238,7 @@ class _LibraryState extends State<Library> {
     return Row(
       children: [
         const Icon(Icons.swap_vert, color: Colors.white, size: 20),
-        const SizedBox(width: 5),        
+        const SizedBox(width: 5),
         const Expanded(
           child: DropdownFilter(),
         ),
@@ -205,52 +256,62 @@ class _LibraryState extends State<Library> {
       ],
     );
   }
-  
-  Widget likedSongs() {
-                      return ListTile(
-                      leading: Container(
-                          width: 50,
-                          height: 50,
-                          decoration: BoxDecoration(
-                            image: DecorationImage(
-                              image: AssetImage('assets/images/icons/likedsongs.jpg'),
-                              fit: BoxFit.cover,
-                            ),
-                          ),
-                        ),
-                        title: Text('Liked Songs', style: GoogleFonts.sen(color: Colors.white, fontSize: 16, fontWeight: FontWeight.w500)),
-                        subtitle: Row(
-                          children: [
-                            Image.asset('assets/images/icons/pin.png', width: 15, height: 15),
-                            Text('Playlist • 10 songs', style: GoogleFonts.sen(color: const Color(0xFFB3B3B3), fontSize: 13, fontWeight: FontWeight.w600)),                            
-                          ],
-                        ),
 
-                      );
+  Widget likedSongs() {
+    return ListTile(
+      leading: Container(
+        width: 50,
+        height: 50,
+        decoration: BoxDecoration(
+          image: DecorationImage(
+            image: AssetImage('assets/images/icons/likedsongs.jpg'),
+            fit: BoxFit.cover,
+          ),
+        ),
+      ),
+      title: Text('Liked Songs',
+          style: GoogleFonts.sen(
+              color: Colors.white, fontSize: 16, fontWeight: FontWeight.w500)),
+      subtitle: Row(
+        children: [
+          Image.asset('assets/images/icons/pin.png', width: 15, height: 15),
+          Text('Playlist • 10 songs',
+              style: GoogleFonts.sen(
+                  color: const Color(0xFFB3B3B3),
+                  fontSize: 13,
+                  fontWeight: FontWeight.w600)),
+        ],
+      ),
+    );
   }
 
   Widget newEpisodes() {
-                      return ListTile(
-                      leading: Container(
-                          width: 50,
-                          height: 50,
-                          decoration: BoxDecoration(
-                            image: DecorationImage(
-                              image: AssetImage('assets/images/icons/episode.jpg'),
-                              fit: BoxFit.cover,
-                            ),
-                          ),
-                        ),
-                        title: Text('New Episodes', style: GoogleFonts.sen(color: Colors.white, fontSize: 16, fontWeight: FontWeight.w500)),
-                        subtitle: Row(
-                          children: [
-                            Image.asset('assets/images/icons/pin.png', width: 15, height: 15),
-                            Text('Updated __ days ago', style: GoogleFonts.sen(color: const Color(0xFFB3B3B3), fontSize: 13, fontWeight: FontWeight.w600)),                            
-                          ],
-                        ),
-
-                      );
-  }  
+    return ListTile(
+      leading: Container(
+        width: 50,
+        height: 50,
+        decoration: BoxDecoration(
+          image: DecorationImage(
+            image: AssetImage('assets/images/icons/episode.jpg'),
+            fit: BoxFit.cover,
+          ),
+        ),
+      ),
+      title: Text('New Episodes',
+          style: GoogleFonts.sen(
+              color: Colors.white, fontSize: 16, fontWeight: FontWeight.w500)),
+      subtitle: Row(
+        children: [
+          Image.asset('assets/images/icons/pin.png', width: 15, height: 15),
+          Text('Updated __ days ago',
+              style: GoogleFonts.sen(
+                  color: const Color(0xFFB3B3B3),
+                  fontSize: 13,
+                  fontWeight: FontWeight.w600)),
+        ],
+      ),
+    );
+  }
 
   Widget categories(String selectedCategory) {
     return SizedBox(
@@ -273,7 +334,7 @@ class _LibraryState extends State<Library> {
       children: [
         GestureDetector(
           onTap: () {
-            Navigator.pushNamed(context, '/userLibrary'); 
+            Navigator.pushNamed(context, '/userLibrary');
           },
           child: Container(
             width: 45,
@@ -281,13 +342,13 @@ class _LibraryState extends State<Library> {
             decoration: const BoxDecoration(
               shape: BoxShape.circle,
               image: DecorationImage(
-                image: AssetImage('assets/images/profilepic.png'), // change with actual profile pic of user
-                fit: BoxFit.cover, 
+                image: AssetImage(
+                    'assets/images/profilepic.png'), // change with actual profile pic of user
+                fit: BoxFit.cover,
               ),
             ),
           ),
         ),
-
         const SizedBox(width: 10),
         Text(
           'Your Library',
@@ -300,8 +361,8 @@ class _LibraryState extends State<Library> {
           height: 26,
           decoration: const BoxDecoration(
             image: DecorationImage(
-              image: AssetImage('assets/images/icons/add.png'), 
-              fit: BoxFit.cover, 
+              image: AssetImage('assets/images/icons/add.png'),
+              fit: BoxFit.cover,
             ),
           ),
         ),
@@ -343,62 +404,59 @@ class _LibraryState extends State<Library> {
       ),
     );
   }
-
 }
 
-  class DropdownFilter extends StatefulWidget {
-    const DropdownFilter({super.key});
+class DropdownFilter extends StatefulWidget {
+  const DropdownFilter({super.key});
 
-    @override
-    _DropdownFilterState createState() => _DropdownFilterState();
-  }
+  @override
+  _DropdownFilterState createState() => _DropdownFilterState();
+}
 
-  class _DropdownFilterState extends State<DropdownFilter> {
-    String _selectedFilter = 'Recently Played';
+class _DropdownFilterState extends State<DropdownFilter> {
+  String _selectedFilter = 'Recently Played';
 
-    final List<String> _filterOptions = [
-      'Recently Played',
-      'Most Played',
-      'Recently Added',
-      'Alphabetically',
-    ];
+  final List<String> _filterOptions = [
+    'Recently Played',
+    'Most Played',
+    'Recently Added',
+    'Alphabetically',
+  ];
 
-    @override
-    Widget build(BuildContext context) {
-      return DropdownButton<String>(
-        value: _selectedFilter,
-        dropdownColor: Colors.black,
-        icon: const Icon(Icons.arrow_drop_down, color: kBlack),
-        isExpanded: true,
-        underline: Container(),
-        style: GoogleFonts.sen(
-          color: Colors.white,
-          fontSize: 12,
-          fontWeight: FontWeight.w600,
-        ),
-        onChanged: (String? newValue) {
-          setState(() {
-            _selectedFilter = newValue!;
-          });
-        },
-        items: _filterOptions.map<DropdownMenuItem<String>>((String value) {
-          return DropdownMenuItem<String>(
-            value: value,
-            child: Padding(
-              padding: EdgeInsetsDirectional.zero,
-              child: Text(
-                value,
-                style: GoogleFonts.sen(
-                  color: Colors.white,
-                  fontSize: 12,
-                  fontWeight: FontWeight.w600,
-                ),
+  @override
+  Widget build(BuildContext context) {
+    return DropdownButton<String>(
+      value: _selectedFilter,
+      dropdownColor: Colors.black,
+      icon: const Icon(Icons.arrow_drop_down, color: kBlack),
+      isExpanded: true,
+      underline: Container(),
+      style: GoogleFonts.sen(
+        color: Colors.white,
+        fontSize: 12,
+        fontWeight: FontWeight.w600,
+      ),
+      onChanged: (String? newValue) {
+        setState(() {
+          _selectedFilter = newValue!;
+        });
+      },
+      items: _filterOptions.map<DropdownMenuItem<String>>((String value) {
+        return DropdownMenuItem<String>(
+          value: value,
+          child: Padding(
+            padding: EdgeInsetsDirectional.zero,
+            child: Text(
+              value,
+              style: GoogleFonts.sen(
+                color: Colors.white,
+                fontSize: 12,
+                fontWeight: FontWeight.w600,
               ),
             ),
-          );
-        }).toList(),
-      );
-    }
+          ),
+        );
+      }).toList(),
+    );
   }
-
-
+}
