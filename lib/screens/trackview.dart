@@ -1,97 +1,34 @@
+import 'package:audio_service/audio_service.dart';
+import 'package:audio_video_progress_bar/audio_video_progress_bar.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:just_audio/just_audio.dart';
+import 'package:lettersquared/audio/song_handler.dart';
+import 'package:lettersquared/components/play_pause_button.dart';
+import 'package:lettersquared/components/progressBar.dart';
 import 'package:lettersquared/constants/size_config.dart';
-import 'package:lettersquared/firebase/getSongs.dart';
 import 'package:lettersquared/styles/app_styles.dart';
-import 'package:lettersquared/provider/providers.dart';
 
-class Trackview extends ConsumerStatefulWidget {
-  const Trackview({
-    super.key,
-    required this.song,
-    required this.index,
-    required this.songs,
-  });
+class TrackView extends StatelessWidget {
+  final SongHandler songHandler;
 
-  final Song song;
-  final int index;
-  final List<Song> songs;
-
-  @override
-  ConsumerState<Trackview> createState() => _TrackviewState();
-}
-
-class _TrackviewState extends ConsumerState<Trackview> {
-  final audioPlayer = AudioPlayer();
-  bool isPlaying = false;
-  Duration duration = Duration.zero;
-  Duration position = Duration.zero;
-  late int currentIndex;
-
-  @override
-  void initState() {
-    super.initState();
-    currentIndex = widget.index;
-    WidgetsBinding.instance.addPostFrameCallback((_) async {
-      ref.read(songListProvider.notifier).state = widget.songs;
-      ref.read(currentSongIndexProvider.notifier).state = widget.index;
-
-      if (ref.watch(musicTrackerIsPlaying) == false) {
-        ref.read(trackViewIsPlaying.notifier).state = true;
-        setAudio();
-      } else {
-        audioPlayer.pause();
-      }
-    });
-
-    setAudio();
-    audioPlayer.playerStateStream.listen((state) {
-      setState(() {
-        isPlaying = state.playing;
-      });
-    });
-    audioPlayer.durationStream.listen((newDuration) {
-      setState(() {
-        duration = newDuration ?? Duration.zero;
-      });
-    });
-    audioPlayer.positionStream.listen((newPosition) {
-      setState(() {
-        position = newPosition;
-      });
-    });
-  }
-
-  Future<void> setAudio() async {
-    await audioPlayer.setAudioSource(
-        AudioSource.uri(Uri.parse(widget.songs[currentIndex].url)));
-  }
-
-  void updateSong(int newIndex) {
-    setState(() {
-      currentIndex = newIndex;
-      if (currentIndex < 0) {
-        currentIndex = widget.songs.length - 1;
-      } else if (currentIndex >= widget.songs.length) {
-        currentIndex = 0;
-      }
-      setAudio();
-    });
-  }
-
-  @override
-  void dispose() {
-    audioPlayer.dispose();
-    super.dispose();
-  }
+  const TrackView({super.key, required this.songHandler});
 
   @override
   Widget build(BuildContext context) {
-    SizeConfig sizeConfig = SizeConfig();
+    return StreamBuilder<MediaItem?>(
+      stream: songHandler.mediaItem.stream,
+      builder: (context, snapshot) {
+        MediaItem? playingSong = snapshot.data;
+        return playingSong == null
+            ? const SizedBox.shrink()
+            : _buildTrackView(context, playingSong);
+      },
+    );
+  }
 
+  Scaffold _buildTrackView(BuildContext context, MediaItem playingSong) {
+    SizeConfig sizeConfig = SizeConfig();
     sizeConfig.init(context);
-    String color = widget.songs[currentIndex].color;
+    String color = playingSong.extras?['color'];
     final int colorValue = int.parse('0xff$color');
     return Scaffold(
       backgroundColor: kBlack,
@@ -111,7 +48,7 @@ class _TrackviewState extends ConsumerState<Trackview> {
                     Color(colorValue).withOpacity(0.2),
                     kBlack,
                   ],
-                  stops: const [0.4, 1],
+                  stops: [0.4, 1],
                 ),
               ),
             ),
@@ -120,38 +57,24 @@ class _TrackviewState extends ConsumerState<Trackview> {
             padding: const EdgeInsets.symmetric(horizontal: 20),
             child: Column(
               children: [
-                const SizedBox(
-                  height: 24,
-                ),
+                const SizedBox(height: 24),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     GestureDetector(
                       onTap: () {
-                        ref.read(trackViewIsPlaying.notifier).state = false;
-                        ref.read(musicTrackerIsPlaying.notifier).state = true;
-                        ref.read(lastDurationProvider.notifier).state =
-                            duration;
-                        ref.read(lastPositionProvider.notifier).state =
-                            position;
-                        audioPlayer.dispose();
                         Navigator.pop(context);
                       },
                       child: Image.asset('assets/images/icons/arrow-down.png'),
                     ),
                     Text(
-                      '$currentIndex',
-                      style: SenSemiBold.copyWith(
-                        fontSize: 14,
-                        color: kWhite,
-                      ),
+                      'Album Title',
+                      style: SenSemiBold.copyWith(fontSize: 14, color: kWhite),
                     ),
                     Image.asset('assets/images/icons/more-horizontal.png')
                   ],
                 ),
-                SizedBox(
-                  height: SizeConfig.blockSizeVertical! * 10,
-                ),
+                SizedBox(height: SizeConfig.blockSizeVertical! * 10),
                 Container(
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(10),
@@ -162,101 +85,56 @@ class _TrackviewState extends ConsumerState<Trackview> {
                   child: ClipRRect(
                     borderRadius: BorderRadius.circular(10),
                     child: Image.network(
-                      widget.songs[currentIndex].imageSource,
+                      playingSong.artUri.toString(),
                       fit: BoxFit.cover,
                     ),
                   ),
                 ),
-                SizedBox(
-                  height: SizeConfig.blockSizeVertical! * 10,
+                SizedBox(height: SizeConfig.blockSizeVertical! * 10),
+                songInformation(playingSong),
+                SizedBox(height: SizeConfig.blockSizeVertical! * 0.5),
+                SongProgress(
+                  totalDuration: playingSong.duration!,
+                  songHandler: songHandler,
+                  timeLabelLocation: TimeLabelLocation.below,
                 ),
-                songInformation(),
-                SizedBox(
-                  height: SizeConfig.blockSizeVertical! * 0.5,
-                ),
-                Slider(
-                  min: 0,
-                  max: duration.inSeconds.toDouble(),
-                  value: position.inSeconds.toDouble(),
-                  onChanged: (value) async {
-                    final newPosition = Duration(seconds: value.toInt());
-                    await audioPlayer.seek(newPosition);
-                    if (!isPlaying) {
-                      await audioPlayer.play();
-                    }
-                  },
-                ),
+                SizedBox(height: SizeConfig.blockSizeVertical! * 0.5),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Text(
-                      formatTime(position),
-                      style: SenMedium.copyWith(
-                        fontSize: 10,
-                        color: kLightGrey,
-                      ),
-                    ),
-                    Text(
-                      formatTime(duration - position),
-                      style: SenMedium.copyWith(
-                        fontSize: 10,
-                        color: kLightGrey,
-                      ),
-                    ),
-                  ],
-                ),
-                SizedBox(
-                  height: SizeConfig.blockSizeVertical! * 0.5,
-                ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Image.asset(
-                      'assets/images/icons/Shuffle.png',
-                      height: 22,
-                      width: 22,
-                    ),
+                    Image.asset('assets/images/icons/Shuffle.png',
+                        height: 22, width: 22),
                     GestureDetector(
                       onTap: () {
-                        updateSong(currentIndex - 1);
+                        SizedBox(
+                          height: 50,
+                          width: 50,
+                          child: IconButton(
+                            icon: Icon(Icons.skip_previous, color: kWhite),
+                            onPressed: () {
+                              songHandler.skipToPrevious();
+                              songHandler.play();
+                            },
+                          ),
+                        );
                       },
-                      child: Image.asset(
-                        'assets/images/icons/Back.png',
-                        height: 36,
-                        width: 36,
-                      ),
+                      child: Image.asset('assets/images/icons/Back.png',
+                          height: 36, width: 36),
                     ),
-                    CircleAvatar(
-                      radius: 35,
-                      backgroundColor: kWhite,
+                    PlayPauseButton(songHandler: songHandler, size: 50),
+                    SizedBox(
+                      height: 50,
+                      width: 50,
                       child: IconButton(
-                        icon: Icon(isPlaying ? Icons.pause : Icons.play_arrow),
-                        iconSize: 50,
-                        color: kBlack,
-                        onPressed: () async {
-                          if (isPlaying) {
-                            await audioPlayer.pause();
-                          } else {
-                            await audioPlayer.play();
-                          }
+                        icon: Icon(Icons.skip_next, color: kWhite),
+                        onPressed: () {
+                          songHandler.skipToNext();
+                          songHandler.play();
                         },
                       ),
                     ),
-                    GestureDetector(
-                      onTap: () {
-                        updateSong(currentIndex + 1);
-                      },
-                      child: Image.asset(
-                        'assets/images/icons/Forward.png',
-                        height: 36,
-                        width: 36,
-                      ),
-                    ),
-                    Image.asset(
-                      'assets/images/icons/Repeat-Inactive.png',
-                      height: 22,
-                      width: 22,
-                    ),
+                    Image.asset('assets/images/icons/Repeat-Inactive.png',
+                        height: 22, width: 22),
                   ],
                 ),
               ],
@@ -267,31 +145,27 @@ class _TrackviewState extends ConsumerState<Trackview> {
     );
   }
 
-  Widget songInformation() {
-    return Container(
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            widget.songs[currentIndex].name,
-            textAlign: TextAlign.left,
-            style: SenSemiBold.copyWith(fontSize: 22, color: kWhite),
-          ),
-          SizedBox(
-            height: SizeConfig.blockSizeVertical! * 0.5,
-          ),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Text(
-                widget.songs[currentIndex].artist,
-                style: SenMedium.copyWith(color: kLightGrey, fontSize: 16),
-              ),
-              Image.asset('assets/images/icons/heart-outline.png'),
-            ],
-          ),
-        ],
-      ),
+  Widget songInformation(MediaItem playingSong) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          playingSong.title,
+          textAlign: TextAlign.left,
+          style: SenSemiBold.copyWith(fontSize: 22, color: kWhite),
+        ),
+        SizedBox(height: SizeConfig.blockSizeVertical! * 0.5),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Text(
+              playingSong.artist ?? 'Unknown Artist',
+              style: SenMedium.copyWith(color: kLightGrey, fontSize: 16),
+            ),
+            Image.asset('assets/images/icons/heart-outline.png'),
+          ],
+        ),
+      ],
     );
   }
 

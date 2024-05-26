@@ -1,4 +1,7 @@
+import 'package:audio_service/audio_service.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:just_audio/just_audio.dart';
+import 'package:lettersquared/audio/permissions.dart';
 
 class Song {
   final String id;
@@ -41,4 +44,42 @@ class GetSongs {
 
     return songs;
   }
+}
+
+Future<List<MediaItem>> getSongs() async {
+  await requestSongsPermission();
+
+  // Initialize Just Audio player
+  final player = AudioPlayer();
+
+  GetSongs getSongs = GetSongs();
+  List<Song> songsList = await getSongs.fetchSongs();
+
+  List<MediaItem> songs = [];
+
+  for (var song in songsList) {
+    await player.setUrl(song.url);
+
+    final duration = player.duration;
+
+    songs.add(
+      MediaItem(
+        id: song.id,
+        album: "", // Add album information if available
+        title: song.name,
+        artist: song.artist,
+        genre: "", // Add genre information if available
+        duration: duration,
+        artUri: Uri.parse(song.imageSource),
+        extras: {
+          'url': song.url,
+          'color': song.color,
+        },
+      ),
+    );
+  }
+
+  await player.dispose();
+
+  return songs;
 }
