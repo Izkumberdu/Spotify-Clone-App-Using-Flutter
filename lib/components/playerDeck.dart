@@ -30,88 +30,102 @@ class _PlayerDeckState extends State<PlayerDeck> {
     );
   }
 
-  GestureDetector buildCard(BuildContext context, MediaItem playingSong) {
+  Dismissible buildCard(BuildContext context, MediaItem playingSong) {
     String color = playingSong.extras?['color'];
     final int colorValue = int.parse('0xff$color');
-    return GestureDetector(
-      onTap: () {
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (context) => TrackView(songHandler: widget.songHandler),
-          ),
-        );
+    return Dismissible(
+      key: Key(playingSong.id),
+      direction: DismissDirection.startToEnd,
+      onDismissed: (direction) {
+        widget.songHandler.pause();
+        widget.songHandler.stop();
       },
-      child: Card(
-        margin: const EdgeInsets.all(10.0),
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(15.0),
-        ),
-        color: Color(colorValue).withOpacity(0.4),
-        child: Padding(
-          padding: const EdgeInsets.all(10.0),
-          child: Column(
-            children: [
-              ProgressSlider(playingSong.duration!),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Image.network(
-                    playingSong.artUri.toString(),
-                    height: 50,
-                    width: 50,
-                  ),
-                  const SizedBox(width: 10),
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        playingSong.title,
-                        style:
-                            SenSemiBold.copyWith(fontSize: 14, color: kWhite),
-                      ),
-                      const SizedBox(height: 5),
-                      Text(
-                        playingSong.artist ?? '',
-                        style: SenSemiBold.copyWith(fontSize: 12, color: kGrey),
-                      ),
-                    ],
-                  ),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      SizedBox(
-                        height: 50,
-                        width: 50,
-                        child: IconButton(
-                          icon: const Icon(Icons.skip_previous, color: kWhite),
-                          onPressed: () {
-                            widget.songHandler.play();
-                            widget.songHandler.skipToPrevious();
-                          },
+      child: GestureDetector(
+        onTap: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => TrackView(songHandler: widget.songHandler),
+            ),
+          );
+        },
+        child: Card(
+          margin: const EdgeInsets.all(10.0),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(15.0),
+          ),
+          color: Color(colorValue).withOpacity(0.4),
+          child: Padding(
+            padding: const EdgeInsets.all(10.0),
+            child: Column(
+              children: [
+                ProgressSlider(playingSong.duration!),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Row(
+                      children: [
+                        Image.network(
+                          playingSong.artUri.toString(),
+                          height: 50,
+                          width: 50,
                         ),
-                      ),
-                      PlayPauseButton(
-                          songHandler: widget.songHandler, size: 30),
-                      SizedBox(
-                        height: 50,
-                        width: 50,
-                        child: IconButton(
-                          icon: const Icon(Icons.skip_next, color: kWhite),
-                          onPressed: () {
-                            widget.songHandler.play();
-                            widget.songHandler.skipToNext();
-                          },
+                        const SizedBox(width: 10),
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              playingSong.title,
+                              style: SenSemiBold.copyWith(
+                                  fontSize: 14, color: kWhite),
+                            ),
+                            const SizedBox(height: 5),
+                            Text(
+                              playingSong.artist ?? '',
+                              style: SenSemiBold.copyWith(
+                                  fontSize: 12, color: kGrey),
+                            ),
+                          ],
                         ),
-                      ),
-                    ],
-                  )
-                ],
-              ),
-              // SizedBox(
-              //   height: 10,
-              // ),
-            ],
+                      ],
+                    ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        SizedBox(
+                          height: 50,
+                          width: 50,
+                          child: IconButton(
+                            icon:
+                                const Icon(Icons.skip_previous, color: kWhite),
+                            onPressed: () {
+                              widget.songHandler.play();
+                              widget.songHandler.skipToPrevious();
+                            },
+                          ),
+                        ),
+                        PlayPauseButton(
+                            songHandler: widget.songHandler, size: 30),
+                        SizedBox(
+                          height: 50,
+                          width: 50,
+                          child: IconButton(
+                            icon: const Icon(Icons.skip_next, color: kWhite),
+                            onPressed: () {
+                              widget.songHandler.skipToNext();
+                              widget.songHandler.play();
+                            },
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+                SizedBox(
+                  height: 10,
+                ),
+              ],
+            ),
           ),
         ),
       ),

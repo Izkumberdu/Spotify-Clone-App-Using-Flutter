@@ -93,6 +93,7 @@ class SongHandler extends BaseAudioHandler with QueueHandler, SeekHandler {
   }
 
   @override
+  @override
   Future<void> skipToPrevious() async {
     final currentIndex = audioPlayer.currentIndex;
     if (currentIndex == 0) {
