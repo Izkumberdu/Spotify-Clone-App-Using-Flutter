@@ -1,8 +1,13 @@
 import 'package:audio_service/audio_service.dart';
 import 'package:just_audio/just_audio.dart';
+import 'package:rxdart/rxdart.dart';
 
 class SongHandler extends BaseAudioHandler with QueueHandler, SeekHandler {
   final AudioPlayer audioPlayer = AudioPlayer();
+  final BehaviorSubject<bool> _shuffleModeSubject =
+      BehaviorSubject<bool>.seeded(false);
+  final BehaviorSubject<bool> _loopModeSubject =
+      BehaviorSubject<bool>.seeded(false);
 
   UriAudioSource _createAudioSource(MediaItem item) {
     final url = item.extras!['url'] as String;
@@ -30,6 +35,8 @@ class SongHandler extends BaseAudioHandler with QueueHandler, SeekHandler {
         MediaAction.seek,
         MediaAction.seekForward,
         MediaAction.seekBackward,
+        MediaAction.setShuffleMode,
+        MediaAction.setRepeatMode,
       },
       processingState: const {
         ProcessingState.idle: AudioProcessingState.idle,
@@ -43,7 +50,15 @@ class SongHandler extends BaseAudioHandler with QueueHandler, SeekHandler {
       bufferedPosition: audioPlayer.bufferedPosition,
       speed: audioPlayer.speed,
       queueIndex: event.currentIndex,
+      shuffleMode: audioPlayer.shuffleModeEnabled
+          ? AudioServiceShuffleMode.all
+          : AudioServiceShuffleMode.none,
+      repeatMode: audioPlayer.loopMode == LoopMode.one
+          ? AudioServiceRepeatMode.one
+          : AudioServiceRepeatMode.none,
     ));
+    _shuffleModeSubject.add(audioPlayer.shuffleModeEnabled);
+    _loopModeSubject.add(audioPlayer.loopMode == LoopMode.one);
   }
 
   Future<void> initSongs(List<MediaItem> songs) async {
@@ -56,14 +71,43 @@ class SongHandler extends BaseAudioHandler with QueueHandler, SeekHandler {
     queue.add(queue.value);
     _listenForCurrentSongIndexChanges();
 
-    audioPlayer.processingStateStream.listen(
-      (state) {
-        if (state == ProcessingState.completed) {
+    audioPlayer.processingStateStream.listen((state) {
+      if (state == ProcessingState.completed) {
+        if (audioPlayer.loopMode == LoopMode.one) {
+          audioPlayer.seek(Duration.zero);
+          play();
+        } else {
           skipToNext();
         }
-      },
-    );
+      }
+    });
   }
+
+  Future<void> toggleShuffle() async {
+    final isShuffling = audioPlayer.shuffleModeEnabled;
+    if (isShuffling) {
+      await audioPlayer.setShuffleModeEnabled(false);
+    } else {
+      await audioPlayer.setShuffleModeEnabled(true);
+      await audioPlayer.shuffle();
+    }
+    _broadCastState(audioPlayer.playbackEvent);
+  }
+
+  Future<void> toggleLoop() async {
+    final isLooping = audioPlayer.loopMode == LoopMode.one;
+    if (isLooping) {
+      await audioPlayer.setLoopMode(LoopMode.off);
+    } else {
+      await audioPlayer.setLoopMode(LoopMode.one);
+    }
+    _loopModeSubject.add(audioPlayer.loopMode == LoopMode.one);
+    _broadCastState(audioPlayer.playbackEvent);
+  }
+
+  Stream<bool> get shuffleModeStream => _shuffleModeSubject.stream;
+
+  Stream<bool> get loopModeStream => _loopModeSubject.stream;
 
   @override
   Future<void> play() => audioPlayer.play();

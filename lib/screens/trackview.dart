@@ -1,5 +1,6 @@
 import 'package:audio_service/audio_service.dart';
 import 'package:audio_video_progress_bar/audio_video_progress_bar.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:lettersquared/audio/song_handler.dart';
 import 'package:lettersquared/components/play_pause_button.dart';
@@ -28,10 +29,10 @@ class TrackView extends StatelessWidget {
   Scaffold _buildTrackView(BuildContext context, MediaItem playingSong) {
     SizeConfig sizeConfig = SizeConfig();
     sizeConfig.init(context);
-    String color = playingSong.extras?['color'];
-    final int colorValue = int.parse('0xff$color');
+    String color = playingSong.extras?['color'] ?? '';
+    final int colorValue = int.tryParse('0xff$color') ?? 0x000000;
     return Scaffold(
-      backgroundColor: kBlack,
+      backgroundColor: Colors.black,
       body: Stack(
         children: [
           Positioned(
@@ -46,7 +47,7 @@ class TrackView extends StatelessWidget {
                   end: Alignment.bottomCenter,
                   colors: [
                     Color(colorValue).withOpacity(0.2),
-                    kBlack,
+                    Colors.black,
                   ],
                   stops: [0.4, 1],
                 ),
@@ -69,7 +70,8 @@ class TrackView extends StatelessWidget {
                     ),
                     Text(
                       'Album Title',
-                      style: SenSemiBold.copyWith(fontSize: 14, color: kWhite),
+                      style: SenSemiBold.copyWith(
+                          fontSize: 14, color: Colors.white),
                     ),
                     Image.asset('assets/images/icons/more-horizontal.png')
                   ],
@@ -99,48 +101,66 @@ class TrackView extends StatelessWidget {
                   timeLabelLocation: TimeLabelLocation.below,
                 ),
                 SizedBox(height: SizeConfig.blockSizeVertical! * 0.5),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    GestureDetector(
-                      onTap: () {
-                        // songHandler.shuffleList();
-                      },
-                      child: Image.asset('assets/images/icons/Shuffle.png',
-                          height: 22, width: 22),
-                    ),
-                    GestureDetector(
-                      onTap: () {
-                        SizedBox(
-                          height: 50,
-                          width: 50,
-                          child: IconButton(
-                            icon: Icon(Icons.skip_previous, color: kWhite),
-                            onPressed: () {
-                              songHandler.skipToPrevious();
-                              songHandler.play();
-                            },
-                          ),
+                StreamBuilder<bool>(
+                  stream: songHandler.shuffleModeStream,
+                  builder: (context, shuffleSnapshot) {
+                    final isShuffling = shuffleSnapshot.data ?? false;
+                    return StreamBuilder<bool>(
+                      stream: songHandler.loopModeStream,
+                      builder: (context, loopSnapshot) {
+                        final isLooping = loopSnapshot.data ?? false;
+                        return Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            GestureDetector(
+                              onTap: () {
+                                songHandler.toggleShuffle();
+                              },
+                              child: Icon(
+                                CupertinoIcons.shuffle,
+                                size: 22,
+                                color:
+                                    isShuffling ? Colors.green : Colors.white,
+                              ),
+                            ),
+                            GestureDetector(
+                              onTap: () {
+                                songHandler.skipToPrevious();
+                                songHandler.play();
+                              },
+                              child: Image.asset(
+                                'assets/images/icons/Back.png',
+                                height: 36,
+                                width: 36,
+                              ),
+                            ),
+                            PlayPauseButton(songHandler: songHandler, size: 50),
+                            GestureDetector(
+                              onTap: () {
+                                songHandler.skipToNext();
+                                songHandler.play();
+                              },
+                              child: Image.asset(
+                                'assets/images/icons/Forward.png',
+                                height: 36,
+                                width: 36,
+                              ),
+                            ),
+                            GestureDetector(
+                              onTap: () {
+                                songHandler.toggleLoop();
+                              },
+                              child: Icon(
+                                Icons.loop_sharp,
+                                color: isLooping ? Colors.green : Colors.white,
+                                size: 22,
+                              ),
+                            ),
+                          ],
                         );
                       },
-                      child: Image.asset('assets/images/icons/Back.png',
-                          height: 36, width: 36),
-                    ),
-                    PlayPauseButton(songHandler: songHandler, size: 50),
-                    SizedBox(
-                      height: 50,
-                      width: 50,
-                      child: IconButton(
-                        icon: Icon(Icons.skip_next, color: kWhite),
-                        onPressed: () {
-                          songHandler.skipToNext();
-                          songHandler.play();
-                        },
-                      ),
-                    ),
-                    Image.asset('assets/images/icons/Repeat-Inactive.png',
-                        height: 22, width: 22),
-                  ],
+                    );
+                  },
                 ),
               ],
             ),
@@ -150,39 +170,25 @@ class TrackView extends StatelessWidget {
     );
   }
 
-  Widget songInformation(MediaItem playingSong) {
+  Column songInformation(MediaItem playingSong) {
     return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
           playingSong.title,
-          textAlign: TextAlign.left,
-          style: SenSemiBold.copyWith(fontSize: 22, color: kWhite),
+          style: SenBold.copyWith(fontSize: 24, color: Colors.white),
+          maxLines: 1,
+          overflow: TextOverflow.ellipsis,
+          textAlign: TextAlign.center,
         ),
-        SizedBox(height: SizeConfig.blockSizeVertical! * 0.5),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Text(
-              playingSong.artist ?? 'Unknown Artist',
-              style: SenMedium.copyWith(color: kLightGrey, fontSize: 16),
-            ),
-            Image.asset('assets/images/icons/heart-outline.png'),
-          ],
+        const SizedBox(height: 5),
+        Text(
+          playingSong.artist ?? '',
+          style: SenMedium.copyWith(fontSize: 14, color: Colors.white),
+          maxLines: 1,
+          overflow: TextOverflow.ellipsis,
+          textAlign: TextAlign.center,
         ),
       ],
     );
-  }
-
-  String formatTime(Duration duration) {
-    String twoDigits(int n) => n.toString().padLeft(2, '0');
-    final hours = twoDigits(duration.inHours);
-    final minutes = twoDigits(duration.inMinutes.remainder(60));
-    final seconds = twoDigits(duration.inSeconds.remainder(60));
-    return [
-      if (duration.inHours > 0) hours,
-      minutes,
-      seconds,
-    ].join(':');
   }
 }
