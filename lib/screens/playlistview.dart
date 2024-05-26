@@ -41,7 +41,7 @@ class PlaylistViewPage extends ConsumerWidget {
                   padding: const EdgeInsets.fromLTRB(20, 50, 20, 0),
                   child: Column(
                     children: [
-                      backChevron(),
+                      backChevron(context),
                       const SizedBox(height: 30),
                       searchBar(),
                       const SizedBox(height: 35),
@@ -92,8 +92,8 @@ class PlaylistViewPage extends ConsumerWidget {
                   height: 250,
                   child: ListView.builder(
                     padding: EdgeInsets.zero,
-                    itemCount: 10, // replace with actual playlist song count
-                    itemBuilder: (context, index) {
+                    itemCount: 5, // replace with actual playlist song count
+                    itemBuilder: (context, index) { 
                       return ListTile(
                       leading: Container(
                         width: 50, 
@@ -260,14 +260,20 @@ class PlaylistViewPage extends ConsumerWidget {
                 );
   }
 
-  Align backChevron() {
-    return const Align(
-                  alignment: Alignment.centerLeft,
-                  child: Icon(
-                    Icons.arrow_back_ios,
-                    size: 20.0,
-                    color: Colors.white,
-                  ),
-                );
-  }
+Widget backChevron(BuildContext context) {
+  return GestureDetector(
+    onTap: () {
+      Navigator.pop(context); // Go back to the previous screen
+    },
+    child: const Align(
+      alignment: Alignment.centerLeft,
+      child: Icon(
+        Icons.arrow_back_ios,
+        size: 20.0,
+        color: Colors.white,
+      ),
+    ),
+  );
+}
+
 }
