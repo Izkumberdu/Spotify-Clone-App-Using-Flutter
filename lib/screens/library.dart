@@ -5,6 +5,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:lettersquared/audio/song_handler.dart';
 import 'package:lettersquared/components/bottomNavbar.dart';
 import 'package:lettersquared/components/playerDeck.dart';
+import 'package:lettersquared/screens/liked_songs.dart';
 import 'package:lettersquared/styles/app_styles.dart';
 
 class Library extends StatefulWidget {
@@ -266,29 +267,39 @@ SizedBox playlistList(BuildContext context) {
   }
 
   Widget likedSongs() {
-    return ListTile(
-      leading: Container(
-        width: 50,
-        height: 50,
-        decoration: const BoxDecoration(
-          image: DecorationImage(
-            image: AssetImage('assets/images/icons/likedsongs.jpg'),
-            fit: BoxFit.cover,
+    return GestureDetector(
+      onTap: () {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: ((context) => LikedSongs())
+          )
+        );
+      },
+      child: ListTile(
+        leading: Container(
+          width: 50,
+          height: 50,
+          decoration: const BoxDecoration(
+            image: DecorationImage(
+              image: AssetImage('assets/images/icons/likedsongs.jpg'),
+              fit: BoxFit.cover,
+            ),
           ),
         ),
-      ),
-      title: Text('Liked Songs',
-          style: GoogleFonts.sen(
-              color: Colors.white, fontSize: 16, fontWeight: FontWeight.w500)),
-      subtitle: Row(
-        children: [
-          Image.asset('assets/images/icons/pin.png', width: 15, height: 15),
-          Text('Playlist • 10 songs',
-              style: GoogleFonts.sen(
-                  color: const Color(0xFFB3B3B3),
-                  fontSize: 13,
-                  fontWeight: FontWeight.w600)),
-        ],
+        title: Text('Liked Songs',
+            style: GoogleFonts.sen(
+                color: Colors.white, fontSize: 16, fontWeight: FontWeight.w500)),
+        subtitle: Row(
+          children: [
+            Image.asset('assets/images/icons/pin.png', width: 15, height: 15),
+            Text('Playlist • 10 songs',
+                style: GoogleFonts.sen(
+                    color: const Color(0xFFB3B3B3),
+                    fontSize: 13,
+                    fontWeight: FontWeight.w600)),
+          ],
+        ),
       ),
     );
   }
