@@ -2,6 +2,7 @@ import 'package:audio_service/audio_service.dart';
 import 'package:audio_video_progress_bar/audio_video_progress_bar.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:lettersquared/audio/song_handler.dart';
 import 'package:lettersquared/components/play_pause_button.dart';
 import 'package:lettersquared/components/progressBar.dart';
@@ -230,10 +231,10 @@ PopupMenuItem<String> _buildPopupMenuItem(String text, IconData icon) {
       child: Row(
         children: [
           Icon(icon, color: Colors.white, size: 20), 
-          SizedBox(width: 10),
+          const SizedBox(width: 10),
           Text(
             text,
-            style: TextStyle(color: Colors.white, fontSize: 11), 
+            style: GoogleFonts.sen(color: Colors.white, fontSize: 10), 
           ),
         ],
       ),

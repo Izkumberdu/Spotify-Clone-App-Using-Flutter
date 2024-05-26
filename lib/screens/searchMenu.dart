@@ -3,7 +3,6 @@ import 'package:lettersquared/audio/song_handler.dart';
 import 'package:lettersquared/components/bottomNavbar.dart';
 import 'package:lettersquared/components/playerDeck.dart';
 import 'package:lettersquared/components/songList.dart';
-import 'package:lettersquared/firebase/getSongs.dart';
 import 'package:lettersquared/models/genre.dart';
 import 'package:lettersquared/provider/navbarProvider.dart';
 import 'package:lettersquared/provider/song_provider.dart';

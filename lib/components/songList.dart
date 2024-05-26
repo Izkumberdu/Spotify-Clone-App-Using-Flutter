@@ -1,5 +1,6 @@
 import 'package:audio_service/audio_service.dart';
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:lettersquared/audio/song_handler.dart';
 import 'package:lettersquared/firebase/getSongs.dart';
 import 'package:lettersquared/styles/app_styles.dart';
@@ -88,12 +89,12 @@ class SongList extends StatelessWidget {
                 const Spacer(),
                 IconButton(
                   icon: isPlaying
-                      ? Icon(
+                      ? const Icon(
                           Icons.pause_rounded,
                           size: 24,
                           color: kWhite,
                         )
-                      : Icon(
+                      : const Icon(
                           Icons.play_arrow_rounded,
                           size: 24,
                           color: kWhite,
@@ -154,10 +155,10 @@ PopupMenuItem<String> _buildPopupMenuItem(String text, IconData icon) {
       child: Row(
         children: [
           Icon(icon, color: Colors.white, size: 20), 
-          SizedBox(width: 10),
+          const SizedBox(width: 10),
           Text(
             text,
-            style: TextStyle(color: Colors.white, fontSize: 11), 
+            style: GoogleFonts.sen(color: Colors.white, fontSize: 10), 
           ),
         ],
       ),
