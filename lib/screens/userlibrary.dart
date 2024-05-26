@@ -1,40 +1,27 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:lettersquared/components/bottomNavbar.dart';
-import 'package:lettersquared/provider/providers.dart';
 import 'package:lettersquared/styles/app_styles.dart';
 
-class UserLibraryPage extends ConsumerWidget {
-  const UserLibraryPage({super.key});
+class UserLibraryPage extends StatefulWidget {
+  const UserLibraryPage({Key? key}) : super(key: key);
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final navbarIndex = ref.watch(navbarIndexProvider);
+  _UserLibraryPageState createState() => _UserLibraryPageState();
+}
+
+class _UserLibraryPageState extends State<UserLibraryPage> {
+  int navbarIndex = 2; // Initially setting it to the library index
+
+  @override
+  Widget build(BuildContext context) {
     final Size screenSize = MediaQuery.of(context).size;
 
     return Scaffold(
       backgroundColor: kBlack,
       body: Stack(
         children: [
-          Container(
-            width: screenSize.width,
-            height: screenSize.height,
-            decoration: BoxDecoration(
-              gradient: LinearGradient(
-                begin: Alignment.topCenter,
-                end: Alignment.bottomCenter,
-                colors: [
-                  Color.fromARGB(255, 62, 103, 165),
-                  Color.fromARGB(255, 62, 103, 165),
-                  kBlack.withOpacity(0.7),
-                  const Color(0xFF121212),
-                ],
-                stops: const [0.0, 0.4, 0.5, 0.7],
-              ),
-            ),
-          ),
+          gradient(screenSize),
           Column(
             children: [
               Padding(
@@ -63,63 +50,90 @@ class UserLibraryPage extends ConsumerWidget {
                 padding: const EdgeInsets.fromLTRB(10, 0, 10, 0),
                 child: Column(
                   children: [
-                    Container(
-                      width: screenSize.width,
-                      height: 250,
-                      child: ListView.builder(
-                        physics: NeverScrollableScrollPhysics(), // Set physics to NeverScrollableScrollPhysics
-                        itemCount: 3, 
-                        itemBuilder: (context, index) {
-                          // Replace the arguments with actual data from your list
-                          return playlistTile(
-                            'assets/images/genreImages/electronic.jpg',
-                            'Playlist 1',
-                            '1 likes',
-                          );
-                        },
-                      ),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.fromLTRB(20, 5, 25, 0),
-                      child: Row(
-                        children: [
-                          Text(
-                            'See all playlists',
-                            style: GoogleFonts.sen(color: Colors.white, fontSize: 16, fontWeight: FontWeight.w500),
-                          ),
-                          const Spacer(),
-                          Icon(Icons.chevron_right_sharp, color: Colors.white, size: 30),
-                        ],
-                      ),
-                    ),
-
+                    playlistsDown(screenSize),
+                    seeAll(),
                   ],
                 ),
               )
-          
             ],
           )
- 
         ],
       ),
       bottomNavigationBar: BotNavBar(
         currentIndex: navbarIndex,
         onTap: (index) {
-          ref.read(navbarIndexProvider.notifier).state = index;
-          switch (index) {
-            case 0:
-              Navigator.pushNamed(context, '/homepage');
-              break;
-            case 1:
-              Navigator.pushNamed(context, '/searchMenu');
-              break;
-            case 2:
-              Navigator.pushNamed(context, '/library');
-              break;
-          }
+          setState(() {
+            navbarIndex = index;
+            switch (index) {
+              case 0:
+                Navigator.pushNamed(context, '/homepage');
+                break;
+              case 1:
+                Navigator.pushNamed(context, '/searchMenu');
+                break;
+              case 2:
+                Navigator.pushNamed(context, '/library');
+                break;
+            }
+          });
         },
       ),
     );
+  }
+
+  Padding seeAll() {
+    return Padding(
+                    padding: const EdgeInsets.fromLTRB(20, 5, 25, 0),
+                    child: Row(
+                      children: [
+                        Text(
+                          'See all playlists',
+                          style: GoogleFonts.sen(color: Colors.white, fontSize: 16, fontWeight: FontWeight.w500),
+                        ),
+                        const Spacer(),
+                        Icon(Icons.chevron_right_sharp, color: Colors.white, size: 30),
+                      ],
+                    ),
+                  );
+  }
+
+  Container playlistsDown(Size screenSize) {
+    return Container(
+                    width: screenSize.width,
+                    height: 250,
+                    child: ListView.builder(
+                      physics: NeverScrollableScrollPhysics(), // Set physics to NeverScrollableScrollPhysics
+                      itemCount: 3, 
+                      itemBuilder: (context, index) {
+                        // Replace the arguments with actual data from your list
+                        return playlistTile(
+                          'assets/images/genreImages/electronic.jpg',
+                          'Playlist 1',
+                          '1 likes',
+                        );
+                      },
+                    ),
+                  );
+  }
+
+  Container gradient(Size screenSize) {
+    return Container(
+          width: screenSize.width,
+          height: screenSize.height,
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+              begin: Alignment.topCenter,
+              end: Alignment.bottomCenter,
+              colors: [
+                Color.fromARGB(255, 62, 103, 165),
+                Color.fromARGB(255, 62, 103, 165),
+                kBlack.withOpacity(0.7),
+                const Color(0xFF121212),
+              ],
+              stops: const [0.0, 0.4, 0.5, 0.7],
+            ),
+          ),
+        );
   }
 
   Align playlistText() {

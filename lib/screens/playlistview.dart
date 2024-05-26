@@ -1,39 +1,27 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:lettersquared/components/bottomNavbar.dart';
-import 'package:lettersquared/provider/providers.dart';
 import 'package:lettersquared/styles/app_styles.dart';
 
-class PlaylistViewPage extends ConsumerWidget {
-  const PlaylistViewPage({super.key});
+class PlaylistViewPage extends StatefulWidget {
+  const PlaylistViewPage({Key? key}) : super(key: key);
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final navbarIndex = ref.watch(navbarIndexProvider);
+  _PlaylistViewPageState createState() => _PlaylistViewPageState();
+}
+
+class _PlaylistViewPageState extends State<PlaylistViewPage> {
+  int navbarIndex = 2; // Initially setting it to the library index
+
+  @override
+  Widget build(BuildContext context) {
     final Size screenSize = MediaQuery.of(context).size;
 
     return Scaffold(
       backgroundColor: kBlack,
       body: Stack(
         children: [
-          Container(
-            width: screenSize.width,
-            height: screenSize.height,
-            decoration: BoxDecoration(
-              gradient: LinearGradient(
-                begin: Alignment.topCenter,
-                end: Alignment.bottomCenter,
-                colors: [
-                  const Color(0xFF78644C),
-                  const Color(0xFF78644C),
-                  kBlack.withOpacity(0.7),
-                  const Color(0xFF121212),
-                ],
-                stops: const [0.0, 0.4, 0.65, 0.8],
-              ),
-            ),
-          ),
+          gradient(screenSize),
           SingleChildScrollView(
             child: Column(
               children: [
@@ -63,27 +51,48 @@ class PlaylistViewPage extends ConsumerWidget {
               ],
             ),
           )
- 
         ],
       ),
       bottomNavigationBar: BotNavBar(
         currentIndex: navbarIndex,
         onTap: (index) {
-          ref.read(navbarIndexProvider.notifier).state = index;
-          switch (index) {
-            case 0:
-              Navigator.pushNamed(context, '/homepage');
-              break;
-            case 1:
-              Navigator.pushNamed(context, '/searchMenu');
-              break;
-            case 2:
-              Navigator.pushNamed(context, '/library');
-              break;
-          }
+          setState(() {
+            navbarIndex = index;
+            switch (index) {
+              case 0:
+                Navigator.pushNamed(context, '/homepage');
+                break;
+              case 1:
+                Navigator.pushNamed(context, '/searchMenu');
+                break;
+              case 2:
+                Navigator.pushNamed(context, '/library');
+                break;
+            }
+          });
         },
       ),
     );
+  }
+
+  Container gradient(Size screenSize) {
+    return Container(
+          width: screenSize.width,
+          height: screenSize.height,
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+              begin: Alignment.topCenter,
+              end: Alignment.bottomCenter,
+              colors: [
+                const Color(0xFF78644C),
+                const Color(0xFF78644C),
+                kBlack.withOpacity(0.7),
+                const Color(0xFF121212),
+              ],
+              stops: const [0.0, 0.4, 0.65, 0.8],
+            ),
+          ),
+        );
   }
 
   SizedBox songList(Size screenSize) {
