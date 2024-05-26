@@ -2,8 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:lettersquared/styles/app_styles.dart';
 
 class BotNavBar extends StatefulWidget {
-  const BotNavBar({Key? key, required this.currentIndex, required this.onTap})
-      : super(key: key);
+  const BotNavBar({super.key, required this.currentIndex, required this.onTap});
 
   final int currentIndex;
   final Function(int) onTap;

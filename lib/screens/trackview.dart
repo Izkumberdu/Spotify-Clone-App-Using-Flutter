@@ -8,11 +8,11 @@ import 'package:lettersquared/provider/providers.dart';
 
 class Trackview extends ConsumerStatefulWidget {
   const Trackview({
-    Key? key,
+    super.key,
     required this.song,
     required this.index,
     required this.songs,
-  }) : super(key: key);
+  });
 
   final Song song;
   final int index;
@@ -111,7 +111,7 @@ class _TrackviewState extends ConsumerState<Trackview> {
                     Color(colorValue).withOpacity(0.2),
                     kBlack,
                   ],
-                  stops: [0.4, 1],
+                  stops: const [0.4, 1],
                 ),
               ),
             ),
@@ -140,7 +140,7 @@ class _TrackviewState extends ConsumerState<Trackview> {
                       child: Image.asset('assets/images/icons/arrow-down.png'),
                     ),
                     Text(
-                      '${currentIndex}',
+                      '$currentIndex',
                       style: SenSemiBold.copyWith(
                         fontSize: 14,
                         color: kWhite,

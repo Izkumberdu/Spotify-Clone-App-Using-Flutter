@@ -1,18 +1,15 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:lettersquared/screens/homepage.dart';
 import 'package:lettersquared/screens/library.dart';
-import 'package:lettersquared/screens/onboarding.dart';
 import 'package:lettersquared/screens/playingqueue.dart';
 import 'package:lettersquared/screens/playlistview.dart';
 import 'package:lettersquared/screens/qr.dart';
 import 'package:lettersquared/screens/search.dart';
-import 'package:lettersquared/screens/searchMenu.dart';
 import 'package:lettersquared/screens/settings.dart';
-import 'package:lettersquared/screens/trackview.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:lettersquared/screens/userlibrary.dart';
+import 'package:lettersquared/screens/start.dart';
 import 'firebase_options.dart';
 
 void main() async {
@@ -29,22 +26,21 @@ void main() async {
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
-//new vscode
   @override
-  Widget build(BuildContext context) {
+ Widget build(BuildContext context) {
     return MaterialApp(
-      home: Library(), //for viewing purposes only
+      home: const StartScreen(), //for viewing purposes only
       routes: {
-        '/onboarding': (context) => const Onboarding(),
-        '/searchMenu': (context) => const SearchMenu(),
+        // '/': (context) => const StartScreen(),
+        // '/onboarding': (context) => const StartScreen(),
         '/homepage': (context) => const Homepage(),
-        '/library': (context) => const Library(),
+        // '/library': (context) => const Library(),
         '/search': (context) => const Search(),
-        '/playingQueue': (context) => const AlbumQueuePage(),
-        '/playlistView': (context) => const PlaylistViewPage(),
-        '/userLibrary': (context) => const UserLibraryPage(),
-        '/settings': (context) => const SettingsPage(),
-        '/photo': (context) => const PhotoPage(),
+        '/playingqueue': (context) => const AlbumQueuePage(),
+        // '/playlistView': (context) => const PlaylistViewPage(),
+        // '/userLibrary': (context) => const UserLibraryPage(),
+        // '/settings': (context) => const SettingsPage(),
+        // '/photo': (context) => const PhotoPage(),
       },
     );
   }

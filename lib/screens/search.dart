@@ -38,17 +38,17 @@ class _SearchState extends State<Search> {
     return Scaffold(
       backgroundColor: kBlack,
       body: Padding(
-        padding: EdgeInsets.symmetric(horizontal: 12),
+        padding: const EdgeInsets.symmetric(horizontal: 12),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            SizedBox(
+            const SizedBox(
               height: 27,
             ),
             Row(
               children: [
                 searchBar(),
-                SizedBox(
+                const SizedBox(
                   width: 15,
                 ),
                 GestureDetector(
@@ -62,7 +62,7 @@ class _SearchState extends State<Search> {
                 ),
               ],
             ),
-            SizedBox(
+            const SizedBox(
               height: 30,
             ),
             Text(
@@ -87,11 +87,11 @@ Widget searchBar() {
       borderRadius: BorderRadius.circular(10),
     ),
     child: Padding(
-      padding: EdgeInsets.only(left: 15),
+      padding: const EdgeInsets.only(left: 15),
       child: Row(
         children: [
           Image.asset('assets/images/icons/search_white.png'),
-          SizedBox(width: 10),
+          const SizedBox(width: 10),
           Expanded(
             child: TextField(
               decoration: InputDecoration(

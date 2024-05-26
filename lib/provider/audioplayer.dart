@@ -1,6 +1,5 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:just_audio/just_audio.dart';
-import 'package:lettersquared/provider/providers.dart';
 
 class AudioHandler {
   late final AudioPlayer _audioPlayer;

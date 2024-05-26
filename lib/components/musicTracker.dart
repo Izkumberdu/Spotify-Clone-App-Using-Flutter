@@ -3,10 +3,9 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:lettersquared/constants/size_config.dart';
 import 'package:lettersquared/provider/audioplayer.dart'; // Import the AudioHandler class
 import 'package:lettersquared/provider/providers.dart';
-import 'package:lettersquared/styles/app_styles.dart';
 
 class MusicTracker extends ConsumerWidget {
-  const MusicTracker({Key? key}) : super(key: key);
+  const MusicTracker({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -22,10 +21,10 @@ class MusicTracker extends ConsumerWidget {
     final audioHandler = AudioHandler(ref);
 
     if (currentSong == null) {
-      return SizedBox.shrink();
+      return const SizedBox.shrink();
     }
 
-    WidgetsBinding.instance!.addPostFrameCallback((_) async {
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
       if (musicTrackIsPlaying) {
         await audioHandler.setAudioSource(currentSong.url);
         await audioHandler.play(ref);
@@ -37,10 +36,10 @@ class MusicTracker extends ConsumerWidget {
     return Container(
       height: SizeConfig.blockSizeVertical! * 10,
       width: SizeConfig.blockSizeHorizontal! * 100,
-      padding: EdgeInsets.all(8.0),
+      padding: const EdgeInsets.all(8.0),
       decoration: BoxDecoration(
         color: Colors.blueGrey.withOpacity(0.4),
-        borderRadius: BorderRadius.only(
+        borderRadius: const BorderRadius.only(
           topLeft: Radius.circular(10),
           topRight: Radius.circular(10),
         ),
@@ -70,7 +69,7 @@ class MusicTracker extends ConsumerWidget {
               },
             ),
           ),
-          SizedBox(
+          const SizedBox(
             height: 8,
           ),
           Row(
@@ -83,7 +82,7 @@ class MusicTracker extends ConsumerWidget {
                 height: 50,
                 fit: BoxFit.cover,
               ),
-              SizedBox(
+              const SizedBox(
                 width: 10,
               ),
               Expanded(
@@ -93,19 +92,19 @@ class MusicTracker extends ConsumerWidget {
                   children: [
                     Text(
                       currentSong.name,
-                      style: TextStyle(color: Colors.white, fontSize: 16),
+                      style: const TextStyle(color: Colors.white, fontSize: 16),
                       overflow: TextOverflow.ellipsis,
                     ),
                     Text(
                       currentSong.artist,
-                      style: TextStyle(color: Colors.white70, fontSize: 14),
+                      style: const TextStyle(color: Colors.white70, fontSize: 14),
                       overflow: TextOverflow.ellipsis,
                     ),
                   ],
                 ),
               ),
               IconButton(
-                icon: Icon(Icons.skip_previous, color: Colors.white),
+                icon: const Icon(Icons.skip_previous, color: Colors.white),
                 onPressed: () {
                   audioHandler.audioPlayer.stop();
                   int newIndex = currentIndex - 1;
@@ -129,7 +128,7 @@ class MusicTracker extends ConsumerWidget {
                 },
               ),
               IconButton(
-                icon: Icon(Icons.skip_next, color: Colors.white),
+                icon: const Icon(Icons.skip_next, color: Colors.white),
                 onPressed: () {
                   audioHandler.audioPlayer.stop();
                   int newIndex = currentIndex + 1;

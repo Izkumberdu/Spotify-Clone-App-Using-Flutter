@@ -9,7 +9,7 @@ import 'package:lettersquared/styles/app_styles.dart';
 import 'package:lettersquared/screens/trackview.dart';
 
 class SearchMenu extends ConsumerWidget {
-  const SearchMenu({Key? key});
+  const SearchMenu({super.key, Key? keys});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -57,7 +57,7 @@ class SearchMenu extends ConsumerWidget {
                   ),
                 ),
                 const SizedBox(height: 19),
-                Container(
+                SizedBox(
                   height: 138,
                   child: ListView.builder(
                     scrollDirection: Axis.horizontal,
@@ -106,7 +106,7 @@ class SearchMenu extends ConsumerWidget {
               ],
             ),
           ),
-          Positioned(
+          const Positioned(
             bottom: 0,
             left: 0,
             right: 0,
