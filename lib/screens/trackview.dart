@@ -102,8 +102,13 @@ class TrackView extends StatelessWidget {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Image.asset('assets/images/icons/Shuffle.png',
-                        height: 22, width: 22),
+                    GestureDetector(
+                      onTap: () {
+                        // songHandler.shuffleList();
+                      },
+                      child: Image.asset('assets/images/icons/Shuffle.png',
+                          height: 22, width: 22),
+                    ),
                     GestureDetector(
                       onTap: () {
                         SizedBox(
