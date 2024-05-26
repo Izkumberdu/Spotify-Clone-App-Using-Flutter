@@ -57,23 +57,33 @@ class _AlbumQueuePageState extends State<AlbumQueuePage> {
     );
   }
 
-  Widget queueList(BuildContext context, List<MediaItem> queue) {
-    return SizedBox(
-      width: 400,
-      height: 500,
-      child: ReorderableListView(
-        padding: const EdgeInsets.all(8.0),
-        children: [
-          for (int i = 0; i < queue.length; i++)
-            _buildSongTile(context, queue[i], i),
-        ],
-        onReorder: (oldIndex, newIndex) {
-          // Callback when an item is reordered
-          // Implement logic to update the order of songs in the queue
-        },
-      ),
-    );
-  }
+Widget queueList(BuildContext context, List<MediaItem> queue) {
+  return SizedBox(
+    width: 400,
+    height: 500,
+    child: ReorderableListView(
+      padding: const EdgeInsets.all(8.0),
+      children: [
+        for (int i = 0; i < queue.length; i++)
+          _buildSongTile(context, queue[i], i),
+      ],
+      onReorder: (oldIndex, newIndex) {
+        setState(() {
+          if (oldIndex < newIndex) {
+            newIndex -= 1;
+          }
+          final item = widget.songHandler.queue.value.removeAt(oldIndex);
+          widget.songHandler.queue.value.insert(newIndex, item);
+
+          // Reorder the selection state as well
+          final isSelectedItem = _isSelected.removeAt(oldIndex);
+          _isSelected.insert(newIndex, isSelectedItem);
+        });
+      },
+    ),
+  );
+}
+
 
   Widget _buildSongTile(BuildContext context, MediaItem song, int index) {
     return ListTile(
@@ -202,63 +212,90 @@ Row nextQueue() {
           ),
         ),
       ),
-      Spacer(), // Add space to push delete icon to the right
-      IconButton(
-        icon: Icon(Icons.delete),
-        onPressed: () {
-          setState(() {
-            widget.songHandler.clearQueue();
-            _isSelected = List.filled(widget.songHandler.queue.value.length, false);
-          });
-        },
-        color: Colors.white,
-      ),
+      const Spacer(), // Add space to push delete icon to the right
+GestureDetector(
+  onLongPress: () {
+    setState(() {
+      widget.songHandler.clearQueue();
+      _isSelected = List.filled(widget.songHandler.queue.value.length, false);
+    });
+  },
+  child: IconButton(
+    icon: Icon(Icons.delete),
+    onPressed: () {
+      // Your onPressed logic here
+      setState(() {
+        for (int i = _isSelected.length - 1; i >= 0; i--) {
+          if (_isSelected[i]) {
+            widget.songHandler.queue.value.removeAt(i);
+            _isSelected.removeAt(i);
+          }
+        }
+      });
+    },
+    color: _isSelected.contains(true) ? Colors.green : Colors.white,
+  ),
+),
+
+
+
+
 
     ],
   );
 }
 
+SizedBox currentSong() {
+  return SizedBox(
+    child: StreamBuilder<MediaItem?>(
+      stream: widget.songHandler.mediaItem,
+      builder: (context, snapshot) {
+        final playingSong = snapshot.data;
+        if (playingSong == null) {
+          return const SizedBox.shrink(); // Hide the widget if no song is playing
+        } else {
+          return Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Container(
+                width: 46,
+                height: 46,
+                decoration: BoxDecoration(
+                  color: const Color.fromARGB(255, 44, 54, 41), // Change color as needed
+                  borderRadius: BorderRadius.circular(4)
+                ),
+              ),
+              const SizedBox(width: 20),
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    playingSong.title ?? 'Unknown Title',
+                    style: GoogleFonts.sen(
+                      fontWeight: FontWeight.w600,
+                      fontSize: 13,
+                      color: const Color(0xFF1ED760)
+                    ),                   
+                  ),
+                  Text(
+                    playingSong.artist ?? 'Unknown Artist',
+                    style: GoogleFonts.sen(
+                      fontWeight: FontWeight.w500,
+                      fontSize: 13,
+                      color: const Color(0xFFB3B3B3)
+                    ),                   
+                  ),
+                ],
+              ),
+              const Spacer()
+            ],
+          );
+        }
+      },
+    ),
+  );
+}
 
-  SizedBox currentSong() {
-    return SizedBox(
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Container(
-                      width: 46,
-                      height: 46,
-                      decoration: BoxDecoration(
-                        color: Colors.orange, // Change color as needed
-                        borderRadius: BorderRadius.circular(4)
-                      ),
-                    ),
-                    const SizedBox(width: 20),
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                      Text(
-                        'From Me to You - Mono / Remastered',
-                        style: GoogleFonts.sen(
-                          fontWeight: FontWeight.w600,
-                          fontSize: 13,
-                          color: const Color(0xFF1ED760)
-                        ),                   
-                      ),
-                      Text(
-                        'Washed Out',
-                        style: GoogleFonts.sen(
-                          fontWeight: FontWeight.w500,
-                          fontSize: 13,
-                          color: const Color(0xFFB3B3B3)
-                        ),                   
-                      ),
-                      ],
-                    ),
-                    const Spacer()
-                  ],
-                )
-              );
-  }
 
   Align nowPlayingText() {
     return Align(
