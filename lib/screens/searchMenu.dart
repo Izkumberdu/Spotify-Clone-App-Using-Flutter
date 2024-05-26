@@ -5,6 +5,7 @@ import 'package:lettersquared/components/playerDeck.dart';
 import 'package:lettersquared/components/songList.dart';
 import 'package:lettersquared/firebase/getSongs.dart';
 import 'package:lettersquared/models/genre.dart';
+import 'package:lettersquared/provider/navbarProvider.dart';
 import 'package:lettersquared/provider/song_provider.dart';
 import 'package:lettersquared/styles/app_styles.dart';
 import 'package:provider/provider.dart';
@@ -114,7 +115,9 @@ class _SearchMenuState extends State<SearchMenu> {
           currentIndex: _navbarIndex,
           onTap: (index) {
             setState(() {
-              _navbarIndex = index;
+              context
+                  .read<NavbarProvider>()
+                  .changeIndex(newIndex: _navbarIndex);
             });
             switch (index) {
               case 0:

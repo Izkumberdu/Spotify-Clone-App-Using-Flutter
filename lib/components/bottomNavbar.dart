@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:lettersquared/provider/navbarProvider.dart';
 import 'package:lettersquared/styles/app_styles.dart';
+import 'package:provider/provider.dart';
 
 class BotNavBar extends StatefulWidget {
   const BotNavBar({Key? key, required this.currentIndex, required this.onTap})
@@ -15,6 +17,7 @@ class BotNavBar extends StatefulWidget {
 class _BotNavBarState extends State<BotNavBar> {
   @override
   Widget build(BuildContext context) {
+    context.watch<NavbarProvider>().currentIndex;
     return BottomNavigationBar(
       elevation: 0,
       backgroundColor: kBlack,

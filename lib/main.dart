@@ -1,6 +1,7 @@
 import 'package:audio_service/audio_service.dart';
 import 'package:flutter/material.dart';
 import 'package:lettersquared/audio/song_handler.dart';
+import 'package:lettersquared/provider/navbarProvider.dart';
 import 'package:lettersquared/provider/song_provider.dart';
 import 'package:lettersquared/screens/homepage.dart';
 import 'package:lettersquared/screens/library.dart';
@@ -33,7 +34,8 @@ Future<void> main() async {
     MultiProvider(
       providers: [
         ChangeNotifierProvider(
-            create: (context) => SongProvider()..loadSongs(_songHandler))
+            create: (context) => SongProvider()..loadSongs(_songHandler)),
+        ChangeNotifierProvider(create: (context) => NavbarProvider())
       ],
       child: MyApp(),
     ),
