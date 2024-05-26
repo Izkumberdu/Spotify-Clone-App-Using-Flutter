@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:lettersquared/audio/song_handler.dart';
 import 'package:lettersquared/models/artist.dart';
 import 'package:lettersquared/screens/homepage.dart';
 import 'package:lettersquared/services/firebase_auth.dart';
@@ -10,12 +11,14 @@ class SignUpArtist extends StatelessWidget {
   final String email;
   final String password;
   final String name;
+  SongHandler songHandler;
 
-  const SignUpArtist({
+  SignUpArtist({
     required this.email,
     required this.password,
     required this.name,
     super.key,
+    required this.songHandler,
   });
 
   Future<List<Artist>> _fetchArtists() async {
@@ -50,6 +53,7 @@ class SignUpArtist extends StatelessWidget {
           password: password,
           name: name,
           artists: artistSnapshot.data!,
+          songHandler: songHandler,
         );
       },
     );
@@ -61,13 +65,14 @@ class _SignUpArtistPage extends StatefulWidget {
   final String password;
   final String name;
   final List<Artist> artists;
+  SongHandler songHandler;
 
-  const _SignUpArtistPage({
-    required this.email,
-    required this.password,
-    required this.name,
-    required this.artists,
-  });
+  _SignUpArtistPage(
+      {required this.email,
+      required this.password,
+      required this.name,
+      required this.artists,
+      required this.songHandler});
 
   @override
   State<_SignUpArtistPage> createState() => _SignUpArtistPageState();
@@ -78,22 +83,25 @@ class _SignUpArtistPageState extends State<_SignUpArtistPage> {
   final FirebaseAuthService _firebaseAuthService = FirebaseAuthService();
 
   void _submit() async {
-  User? user = await _firebaseAuthService.getCurrentUser();
-  if (user != null) {
-    await FirebaseFirestore.instance
-        .collection('users')
-        .doc(user.uid)
-        .update({
-      'favorite_artists':
-          _selectedArtists.map((artist) => artist.id).toList(),
-    });
-    Navigator.pushReplacement(
-        context, MaterialPageRoute(builder: (context) => const Homepage()));
-  } else {
-    // nofin
+    User? user = await _firebaseAuthService.getCurrentUser();
+    if (user != null) {
+      await FirebaseFirestore.instance
+          .collection('users')
+          .doc(user.uid)
+          .update({
+        'favorite_artists':
+            _selectedArtists.map((artist) => artist.id).toList(),
+      });
+      Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(
+              builder: (context) => Homepage(
+                    songHandler: widget.songHandler,
+                  )));
+    } else {
+      // nofin
+    }
   }
-}
-
 
   @override
   Widget build(BuildContext context) {

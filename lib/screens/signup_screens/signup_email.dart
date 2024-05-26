@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:lettersquared/audio/song_handler.dart';
 import 'package:lettersquared/components/button.dart';
 import 'package:lettersquared/screens/signup_screens/signup_password.dart';
 import 'package:lettersquared/screens/start.dart';
 import 'package:lettersquared/styles/app_styles.dart';
 
 class SignUpEmail extends StatelessWidget {
-  SignUpEmail({super.key});
+  SongHandler songHandler;
+  SignUpEmail({super.key, required this.songHandler});
 
   final TextEditingController emailController = TextEditingController();
 
@@ -24,11 +26,11 @@ class SignUpEmail extends StatelessWidget {
         leading: GestureDetector(
           onTap: () {
             Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: ((context) => const StartScreen())
-              )
-            );
+                context,
+                MaterialPageRoute(
+                    builder: ((context) => StartScreen(
+                          songHandler: songHandler,
+                        ))));
           },
           child: Container(
             margin: const EdgeInsets.all(10),
@@ -67,22 +69,26 @@ class SignUpEmail extends StatelessWidget {
                 ),
               ),
             ),
-            const SizedBox(height: 8,),
+            const SizedBox(
+              height: 8,
+            ),
             Text(
               "You'll need to confirm this email later.",
               style: SenBold.copyWith(fontSize: 8, color: kWhite),
             ),
-            const SizedBox(height: 43,),
+            const SizedBox(
+              height: 43,
+            ),
             Center(
               child: GestureDetector(
                 onTap: () {
                   Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: ((context) =>  SignUpPassword(email: emailController.text))
-                    )
-                  );
-                }, 
+                      context,
+                      MaterialPageRoute(
+                          builder: ((context) => SignUpPassword(
+                              email: emailController.text,
+                              songHandler: songHandler))));
+                },
                 child: Button(
                   key: const ValueKey("su1_next"),
                   text: "Next",

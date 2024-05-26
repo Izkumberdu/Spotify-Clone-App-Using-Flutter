@@ -1,12 +1,13 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:lettersquared/audio/song_handler.dart';
 import 'package:lettersquared/screens/homepage.dart';
 import 'package:lettersquared/styles/app_styles.dart';
 import 'package:lettersquared/components/button.dart';
 
-
 class Login extends StatefulWidget {
-  const Login({super.key});
+  SongHandler songHandler;
+  Login({super.key, required this.songHandler});
 
   @override
   State<Login> createState() => _LoginState();
@@ -25,7 +26,10 @@ class _LoginState extends State<Login> {
       );
       Navigator.pushReplacement(
         context,
-        MaterialPageRoute(builder: (context) => const Homepage()),
+        MaterialPageRoute(
+            builder: (context) => Homepage(
+                  songHandler: widget.songHandler,
+                )),
       );
     } on FirebaseAuthException catch (e) {
       print(e.message);
