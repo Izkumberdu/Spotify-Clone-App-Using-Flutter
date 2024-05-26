@@ -6,6 +6,7 @@ import 'package:lettersquared/screens/playingqueue.dart';
 import 'package:lettersquared/screens/playlistview.dart';
 import 'package:lettersquared/screens/qr.dart';
 import 'package:lettersquared/screens/search.dart';
+import 'package:lettersquared/screens/searchMenu.dart';
 import 'package:lettersquared/screens/settings.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:lettersquared/screens/userlibrary.dart';
@@ -31,7 +32,7 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       home: const StartScreen(), // test run library
       routes: {
-        // Remove the root route '/'
+        '/searchMenu': (context) => const SearchMenu(),
         '/onboarding': (context) => const StartScreen(),
         '/homepage': (context) => const Homepage(),
         '/library': (context) => const Library(),
