@@ -1,9 +1,9 @@
+// ignore_for_file: must_be_immutable
+
 import 'package:audio_service/audio_service.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:lettersquared/audio/song_handler.dart';
 import 'package:lettersquared/components/playerDeck.dart';
-import 'package:lettersquared/components/songContainer.dart';
 import 'package:lettersquared/firebase/getSongs.dart';
 import 'package:lettersquared/provider/song_provider.dart';
 import 'package:lettersquared/styles/app_styles.dart';
@@ -11,7 +11,7 @@ import 'package:provider/provider.dart';
 
 class SearchScreen extends StatefulWidget {
   SongHandler songHandler;
-  SearchScreen({Key? key, required this.songHandler}) : super(key: key);
+  SearchScreen({super.key, required this.songHandler});
 
   @override
   State<SearchScreen> createState() => _SearchScreenState();
@@ -93,7 +93,7 @@ class _SearchScreenState extends State<SearchScreen> {
                           id: mediaItem.id,
                           url: mediaItem.extras?['url'],
                           color: mediaItem.extras?['color'],
-                          name: mediaItem.title ?? '',
+                          name: mediaItem.title,
                           artist: mediaItem.artist ?? '',
                           imageSource: mediaItem.artUri?.toString() ?? '',
                           index: mediaItem.extras?['index'],
@@ -162,12 +162,12 @@ class _SearchScreenState extends State<SearchScreen> {
                     currentSong != null && currentSong.id == song.id;
                 return IconButton(
                   icon: isPlaying
-                      ? Icon(
+                      ? const Icon(
                           Icons.pause_rounded,
                           size: 24,
                           color: kWhite,
                         )
-                      : Icon(
+                      : const Icon(
                           Icons.play_arrow_rounded,
                           size: 24,
                           color: kWhite,

@@ -1,3 +1,5 @@
+// ignore_for_file: no_leading_underscores_for_local_identifiers, library_private_types_in_public_api, must_be_immutable
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -8,7 +10,6 @@ import 'package:lettersquared/components/playerDeck.dart';
 import 'package:lettersquared/components/recently_played_item.dart';
 import 'package:lettersquared/styles/app_styles.dart';
 import 'package:lettersquared/provider/navbarProvider.dart';
-import 'package:lettersquared/provider/song_provider.dart';
 import 'package:provider/provider.dart';
 
 class Homepage extends StatefulWidget {

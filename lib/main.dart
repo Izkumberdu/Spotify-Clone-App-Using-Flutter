@@ -5,7 +5,6 @@ import 'package:lettersquared/provider/navbarProvider.dart';
 import 'package:lettersquared/provider/song_provider.dart';
 import 'package:lettersquared/screens/homepage.dart';
 import 'package:lettersquared/screens/library.dart';
-import 'package:lettersquared/screens/onboarding.dart';
 import 'package:lettersquared/screens/playingqueue.dart';
 import 'package:lettersquared/screens/playlistview.dart';
 import 'package:lettersquared/screens/qr.dart';
@@ -13,7 +12,6 @@ import 'package:lettersquared/screens/search.dart';
 import 'package:lettersquared/screens/searchMenu.dart';
 import 'package:lettersquared/screens/settings.dart';
 import 'package:lettersquared/screens/start.dart';
-import 'package:lettersquared/screens/trackview.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:lettersquared/screens/userlibrary.dart';
 import 'package:provider/provider.dart';
@@ -43,7 +41,7 @@ Future<void> main() async {
             create: (context) => SongProvider()..loadSongs(_songHandler)),
         ChangeNotifierProvider(create: (context) => NavbarProvider())
       ],
-      child: MyApp(),
+      child: const MyApp(),
     ),
   );
 }

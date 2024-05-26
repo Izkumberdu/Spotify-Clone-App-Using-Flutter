@@ -1,3 +1,5 @@
+// ignore_for_file: library_private_types_in_public_api, must_be_immutable
+
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:lettersquared/audio/song_handler.dart';
@@ -104,7 +106,7 @@ class _LibraryState extends State<Library> {
             leading: Container(
               width: 50,
               height: 50,
-              decoration: BoxDecoration(
+              decoration: const BoxDecoration(
                 //replace with actual stuff from the songs
                 color: Colors.amber,
               ),
@@ -138,7 +140,7 @@ class _LibraryState extends State<Library> {
             leading: Container(
               width: 50,
               height: 50,
-              decoration: BoxDecoration(
+              decoration: const BoxDecoration(
                 //replace with actual stuff from the songs
                 color: Colors.amber,
               ),
@@ -174,7 +176,7 @@ class _LibraryState extends State<Library> {
               leading: Container(
                 width: 60,
                 height: 60,
-                decoration: BoxDecoration(
+                decoration: const BoxDecoration(
                   color: Colors.amber,
                   shape: BoxShape.circle,
                 ),
@@ -212,7 +214,7 @@ SizedBox playlistList(BuildContext context) {
             leading: Container(
               width: 50,
               height: 50,
-              decoration: BoxDecoration(
+              decoration: const BoxDecoration(
                 color: Colors.amber, // Replace with actual stuff from the songs
               ),
             ),
@@ -268,7 +270,7 @@ SizedBox playlistList(BuildContext context) {
       leading: Container(
         width: 50,
         height: 50,
-        decoration: BoxDecoration(
+        decoration: const BoxDecoration(
           image: DecorationImage(
             image: AssetImage('assets/images/icons/likedsongs.jpg'),
             fit: BoxFit.cover,
@@ -296,7 +298,7 @@ SizedBox playlistList(BuildContext context) {
       leading: Container(
         width: 50,
         height: 50,
-        decoration: BoxDecoration(
+        decoration: const BoxDecoration(
           image: DecorationImage(
             image: AssetImage('assets/images/icons/episode.jpg'),
             fit: BoxFit.cover,
