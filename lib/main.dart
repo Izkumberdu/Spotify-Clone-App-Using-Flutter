@@ -29,18 +29,18 @@ class MyApp extends StatelessWidget {
   @override
  Widget build(BuildContext context) {
     return MaterialApp(
-      home: const StartScreen(), //for viewing purposes only
+      home: const Library(), //test run library
       routes: {
-        // '/': (context) => const StartScreen(),
-        // '/onboarding': (context) => const StartScreen(),
+        '/': (context) => const StartScreen(),
+        '/onboarding': (context) => const StartScreen(),
         '/homepage': (context) => const Homepage(),
-        // '/library': (context) => const Library(),
+        '/library': (context) => const Library(),
         '/search': (context) => const Search(),
         '/playingqueue': (context) => const AlbumQueuePage(),
-        // '/playlistView': (context) => const PlaylistViewPage(),
-        // '/userLibrary': (context) => const UserLibraryPage(),
-        // '/settings': (context) => const SettingsPage(),
-        // '/photo': (context) => const PhotoPage(),
+        '/playlistView': (context) => const PlaylistViewPage(),
+        '/userLibrary': (context) => const UserLibraryPage(),
+        '/settings': (context) => const SettingsPage(),
+        '/photo': (context) => const PhotoPage(),
       },
     );
   }
