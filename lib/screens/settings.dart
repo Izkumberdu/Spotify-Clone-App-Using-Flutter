@@ -98,14 +98,20 @@ class _SettingsPageState extends State<SettingsPage> {
         padding: EdgeInsets.fromLTRB(45, 20, 45, 0),
         child: Row(
           children: [
-            const Align(
-              alignment: Alignment.centerLeft,
-              child: Icon(
-                Icons.arrow_back_ios,
-                size: 20.0,
-                color: Colors.white,
+            GestureDetector(
+              onTap: () {
+                Navigator.pop(context);
+              },
+              child: const Align(
+                alignment: Alignment.centerLeft,
+                child: Icon(
+                  Icons.arrow_back_ios,
+                  size: 20.0,
+                  color: Colors.white,
+                ),
               ),
             ),
+
             const Spacer(),
             Text('Settings', style: GoogleFonts.sen(color: Colors.white, fontSize: 16, fontWeight: FontWeight.w700)),
             const Spacer(),

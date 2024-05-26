@@ -118,16 +118,19 @@ class _HomepageState extends State<Homepage> {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Container(
-                        width: 30,
-                        height: 30,
-                        decoration: const BoxDecoration(
-                            shape: BoxShape.circle, color: kGreen),
-                        child: Center(
-                          child: Text(
-                            "T",
-                            style:
-                                SenMedium.copyWith(fontSize: 20, color: kWhite),
+                      GestureDetector(
+                        onTap: () {
+                          Navigator.pushNamed(context, '/userLibrary'); 
+                        },
+                        child: Container(
+                          width: 30,
+                          height: 30,
+                          decoration: const BoxDecoration(
+                            shape: BoxShape.circle,
+                            image: DecorationImage(
+                              image: AssetImage('assets/images/profilepic.png'), // change with actual profile pic of user
+                              fit: BoxFit.cover, 
+                            ),
                           ),
                         ),
                       ),
@@ -147,12 +150,17 @@ class _HomepageState extends State<Homepage> {
                                 "assets/images/icons/orientation lock.png"),
                           ),
                           const SizedBox(width: 22),
-                          SizedBox(
-                            width: 24,
-                            height: 24,
-                            child:
-                                Image.asset("assets/images/icons/Settings.png"),
+                          GestureDetector(
+                            onTap: () {
+                              Navigator.pushNamed(context, '/settings');
+                            },
+                            child: SizedBox(
+                              width: 24,
+                              height: 24,
+                              child: Image.asset("assets/images/icons/Settings.png"),
+                            ),
                           ),
+
                         ],
                       ),
                     ],
@@ -392,7 +400,7 @@ class _HomepageState extends State<Homepage> {
                   Navigator.pushNamed(context, '/searchMenu');
                   break;
                 case 2:
-                  Navigator.pushNamed(context, '/playingqueue');
+                  Navigator.pushNamed(context, '/library');
                   break;
               }
             },

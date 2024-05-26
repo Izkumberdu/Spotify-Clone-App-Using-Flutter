@@ -335,15 +335,21 @@ class _UserLibraryPageState extends State<UserLibraryPage> {
                 );
   }
 
-  Align backChevron() {
-    return const Align(
-                  alignment: Alignment.centerLeft,
-                  child: Icon(
-                    Icons.arrow_back_ios,
-                    size: 20.0,
-                    color: Colors.white,
-                  ),
-                );
+  Widget backChevron() {
+    return GestureDetector(
+          onTap: () {
+            Navigator.pop(context);
+          },
+          child: const Align(
+            alignment: Alignment.centerLeft,
+            child: Icon(
+              Icons.arrow_back_ios,
+              size: 20.0,
+              color: Colors.white,
+            ),
+          ),
+        );
+
   }
 
 Widget moreDots(BuildContext context) {
