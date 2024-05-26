@@ -1,21 +1,21 @@
-// ignore_for_file: library_private_types_in_public_api
-
 import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:lettersquared/components/bottomNavbar.dart';
-import 'package:lettersquared/provider/providers.dart';
 import 'package:lettersquared/styles/app_styles.dart';
 
-class Library extends ConsumerWidget {
-  const Library({super.key});
+class Library extends StatefulWidget {
+  const Library({Key? key}) : super(key: key);
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final navbarIndex = ref.watch(navbarIndexProvider);
-    final Size screenSize = MediaQuery.of(context).size;
-    final selectedTile = ref.watch(selectedCategoryProvider);
+  _LibraryState createState() => _LibraryState();
+}
 
+class _LibraryState extends State<Library> {
+  int navbarIndex = 2; // Initially setting it to the library index
+  String selectedTile = 'Playlists'; // Initially setting it to Playlists
+
+  @override
+  Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: kBlack,
       body: SingleChildScrollView(
@@ -26,14 +26,14 @@ class Library extends ConsumerWidget {
               children: [
                 topRow(context),
                 const SizedBox(height: 20),
-                categories(context, ref),
+                categories(selectedTile),
                 const SizedBox(height: 20),
                 filters(),
                 const SizedBox(height: 10),
                 Visibility(
                   visible: selectedTile == 'Playlists',
                   child: likedSongs(),
-                ),                
+                ),
                 Visibility(
                   visible: selectedTile == 'Playlists',
                   child: playlistList(context),
@@ -49,12 +49,11 @@ class Library extends ConsumerWidget {
                 Visibility(
                   visible: selectedTile == 'Podcasts & Shows',
                   child: newEpisodes(),
-                ),                  
+                ),
                 Visibility(
                   visible: selectedTile == 'Podcasts & Shows',
                   child: podcastList(context),
-                ),                                
-        
+                ),
               ],
             ),
           ),
@@ -63,18 +62,20 @@ class Library extends ConsumerWidget {
       bottomNavigationBar: BotNavBar(
         currentIndex: navbarIndex,
         onTap: (index) {
-          ref.read(navbarIndexProvider.notifier).state = index;
-          switch (index) {
-            case 0:
-              Navigator.pushNamed(context, '/homepage');
-              break;
-            case 1:
-              Navigator.pushNamed(context, '/searchMenu');
-              break;
-            case 2:
-              Navigator.pushNamed(context, '/library');
-              break;
-          }
+          setState(() {
+            navbarIndex = index;
+            switch (index) {
+              case 0:
+                Navigator.pushNamed(context, '/homepage');
+                break;
+              case 1:
+                Navigator.pushNamed(context, '/searchMenu');
+                break;
+              case 2:
+                Navigator.pushNamed(context, '/library');
+                break;
+            }
+          });
         },
       ),
     );
@@ -87,7 +88,7 @@ class Library extends ConsumerWidget {
         physics: const NeverScrollableScrollPhysics(),
         shrinkWrap: true, // Adjusts the size of the ListView to its contents
         padding: EdgeInsets.zero,
-        itemCount: 10, // replace with actual playlist song count
+        itemCount: 3, // replace with actual playlist song count
         itemBuilder: (context, index) {
           return ListTile(
             leading: Container(
@@ -112,7 +113,7 @@ class Library extends ConsumerWidget {
         physics: const NeverScrollableScrollPhysics(),
         shrinkWrap: true, // Adjusts the size of the ListView to its contents
         padding: EdgeInsets.zero,
-        itemCount: 10, // replace with actual playlist song count
+        itemCount: 3, // replace with actual playlist song count
         itemBuilder: (context, index) {
           return ListTile(
             leading: Container(
@@ -138,7 +139,7 @@ class Library extends ConsumerWidget {
         physics: const NeverScrollableScrollPhysics(),
         shrinkWrap: true, // Adjusts the size of the ListView to its contents
         padding: EdgeInsets.zero,
-        itemCount: 10, // replace with actual playlist song count
+        itemCount: 3, // replace with actual playlist song count
         itemBuilder: (context, index) {
           return ListTile(
             leading: Container(
@@ -164,7 +165,7 @@ class Library extends ConsumerWidget {
         physics: const NeverScrollableScrollPhysics(),
         shrinkWrap: true, // Adjusts the size of the ListView to its contents
         padding: EdgeInsets.zero,
-        itemCount: 10, // replace with actual playlist song count
+        itemCount: 3, // replace with actual playlist song count
         itemBuilder: (context, index) {
           return ListTile(
             leading: Container(
@@ -251,17 +252,17 @@ class Library extends ConsumerWidget {
                       );
   }  
 
-  SizedBox categories(BuildContext context, WidgetRef ref) {
+  Widget categories(String selectedCategory) {
     return SizedBox(
       width: MediaQuery.of(context).size.width,
       height: 50,
       child: ListView(
         scrollDirection: Axis.horizontal,
         children: <Widget>[
-          buildTile(context, ref, 'Playlists'),
-          buildTile(context, ref, 'Artists'),
-          buildTile(context, ref, 'Albums'),
-          buildTile(context, ref, 'Podcasts & Shows'),
+          buildTile('Playlists', selectedCategory),
+          buildTile('Artists', selectedCategory),
+          buildTile('Albums', selectedCategory),
+          buildTile('Podcasts & Shows', selectedCategory),
         ],
       ),
     );
@@ -277,7 +278,7 @@ class Library extends ConsumerWidget {
           child: Container(
             width: 45,
             height: 45,
-            decoration: BoxDecoration(
+            decoration: const BoxDecoration(
               shape: BoxShape.circle,
               image: DecorationImage(
                 image: AssetImage('assets/images/profilepic.png'), // change with actual profile pic of user
@@ -308,13 +309,14 @@ class Library extends ConsumerWidget {
     );
   }
 
-  Widget buildTile(BuildContext context, WidgetRef ref, String tileText) {
-    final selectedTile = ref.watch(selectedCategoryProvider);
-    final isSelected = selectedTile == tileText;
+  Widget buildTile(String tileText, String selectedCategory) {
+    final isSelected = selectedCategory == tileText;
 
     return GestureDetector(
       onTap: () {
-        ref.read(selectedCategoryProvider.notifier).state = tileText;
+        setState(() {
+          selectedTile = tileText;
+        });
       },
       child: Container(
         margin: const EdgeInsets.all(6.0),
@@ -332,7 +334,9 @@ class Library extends ConsumerWidget {
             child: Text(
               tileText,
               style: GoogleFonts.sen(
-                  color: Colors.white, fontSize: 12, fontWeight: FontWeight.w500),
+                  color: Colors.white,
+                  fontSize: 12,
+                  fontWeight: FontWeight.w500),
             ),
           ),
         ),
