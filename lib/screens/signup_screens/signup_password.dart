@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:lettersquared/audio/song_handler.dart';
 import 'package:lettersquared/screens/signup_screens/signup_email.dart';
 import 'package:lettersquared/screens/signup_screens/signup_username.dart';
 import 'package:lettersquared/styles/app_styles.dart';
@@ -7,8 +8,9 @@ import 'package:lettersquared/components/button.dart';
 class SignUpPassword extends StatelessWidget {
   final String email;
   final TextEditingController passwordController = TextEditingController();
+  SongHandler songHandler;
 
-  SignUpPassword({required this.email, super.key});
+  SignUpPassword({required this.email, super.key, required this.songHandler});
 
   @override
   Widget build(BuildContext context) {
@@ -25,7 +27,11 @@ class SignUpPassword extends StatelessWidget {
         leading: GestureDetector(
           onTap: () {
             Navigator.push(
-                context, MaterialPageRoute(builder: ((context) => SignUpEmail())));
+                context,
+                MaterialPageRoute(
+                    builder: ((context) => SignUpEmail(
+                          songHandler: songHandler,
+                        ))));
           },
           child: Container(
             margin: const EdgeInsets.all(10),
@@ -77,13 +83,14 @@ class SignUpPassword extends StatelessWidget {
             ),
             Center(
               child: GestureDetector(
-                onTap:() => {
+                onTap: () => {
                   Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: ((context) => SignUpUsername(email: email, password: passwordController.text))
-                    )
-                  )
+                      context,
+                      MaterialPageRoute(
+                          builder: ((context) => SignUpUsername(
+                              email: email,
+                              password: passwordController.text,
+                              songHandler: songHandler))))
                 },
                 child: Button(
                   key: const ValueKey("su2_next"),

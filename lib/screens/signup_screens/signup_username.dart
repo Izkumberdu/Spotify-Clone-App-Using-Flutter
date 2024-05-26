@@ -1,6 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:lettersquared/audio/song_handler.dart';
 import 'package:lettersquared/screens/signup_screens/signup_artist.dart';
 import 'package:lettersquared/screens/signup_screens/signup_password.dart';
 import 'package:lettersquared/services/firebase_auth.dart';
@@ -13,11 +14,13 @@ class SignUpUsername extends StatelessWidget {
   final TextEditingController nameController = TextEditingController();
 
   final FirebaseAuthService _firebaseAuthService = FirebaseAuthService();
+  SongHandler songHandler;
 
   SignUpUsername({
     required this.email,
     required this.password,
     super.key,
+    required this.songHandler,
   });
 
   void _next(BuildContext context) async {
@@ -38,7 +41,8 @@ class SignUpUsername extends StatelessWidget {
               builder: (context) => SignUpArtist(
                   email: email,
                   password: password,
-                  name: nameController.text)));
+                  name: nameController.text,
+                  songHandler: songHandler)));
     }
   }
 
@@ -59,7 +63,10 @@ class SignUpUsername extends StatelessWidget {
             Navigator.push(
                 context,
                 MaterialPageRoute(
-                    builder: (context) => SignUpPassword(email: email)));
+                    builder: (context) => SignUpPassword(
+                          email: email,
+                          songHandler: songHandler,
+                        )));
           },
           child: Container(
             margin: const EdgeInsets.all(10),

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:lettersquared/audio/song_handler.dart';
 import 'package:lettersquared/components/button.dart';
 import 'package:lettersquared/screens/homepage.dart';
 import 'package:lettersquared/screens/login.dart';
@@ -6,7 +7,8 @@ import 'package:lettersquared/screens/signup_screens/signup_email.dart';
 import 'package:lettersquared/styles/app_styles.dart';
 
 class StartScreen extends StatelessWidget {
-  const StartScreen({super.key});
+  SongHandler songHandler;
+  StartScreen({super.key, required this.songHandler});
 
   @override
   Widget build(BuildContext context) {
@@ -32,8 +34,11 @@ class StartScreen extends StatelessWidget {
               children: [
                 GestureDetector(
                   onTap: () {
-                    Navigator.push(context,
-                        MaterialPageRoute(builder: ((context) => SignUpEmail())));
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: ((context) =>
+                                SignUpEmail(songHandler: songHandler))));
                   },
                   child: Button(
                     key: const ValueKey("start_signup"),
@@ -88,8 +93,9 @@ class StartScreen extends StatelessWidget {
                     Navigator.push(
                         context,
                         MaterialPageRoute(
-                            builder: ((context) =>
-                                const Homepage()) //change to login!!!!!
+                            builder: ((context) => Homepage(
+                                  songHandler: songHandler,
+                                )) //change to login!!!!!
                             ));
                   },
                   child: GestureDetector(
@@ -97,7 +103,8 @@ class StartScreen extends StatelessWidget {
                       Navigator.push(
                           context,
                           MaterialPageRoute(
-                              builder: ((context) => const Login())));
+                              builder: ((context) =>
+                                  Login(songHandler: songHandler))));
                     },
                     child: Button(
                       key: const ValueKey("start_login"),

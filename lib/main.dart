@@ -52,11 +52,13 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      home: StartScreen(), // test run library
+      home: StartScreen(songHandler: _songHandler), // test run library
       routes: {
         // Remove the root route'/'
-        '/onboarding': (context) => const StartScreen(),
-        '/homepage': (context) => const Homepage(),
+        '/onboarding': (context) => StartScreen(
+              songHandler: _songHandler,
+            ),
+        '/homepage': (context) => Homepage(songHandler: _songHandler),
         '/library': (context) => const Library(),
         '/search': (context) => const Search(),
         '/searchMenu': (context) => SearchMenu(songHandler: _songHandler),

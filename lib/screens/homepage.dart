@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:lettersquared/audio/song_handler.dart';
 import 'package:lettersquared/components/bottomNavbar.dart';
 import 'package:lettersquared/components/cards.dart';
 import 'package:lettersquared/components/recently_played_item.dart';
@@ -10,7 +11,8 @@ import 'package:lettersquared/provider/song_provider.dart';
 import 'package:provider/provider.dart';
 
 class Homepage extends StatefulWidget {
-  const Homepage({super.key});
+  SongHandler songHandler;
+  Homepage({super.key, required this.songHandler});
 
   @override
   _HomepageState createState() => _HomepageState();
