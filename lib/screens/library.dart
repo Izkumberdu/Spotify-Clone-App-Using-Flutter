@@ -109,12 +109,12 @@ class _LibraryState extends State<Library> {
                 color: Colors.amber,
               ),
             ),
-            title: Text('Playlist ${index + 1}',
+            title: Text('Podcast ${index + 1}',
                 style: GoogleFonts.sen(
                     color: Colors.white,
                     fontSize: 16,
                     fontWeight: FontWeight.w500)),
-            subtitle: Text('Playlist ${index + 1}',
+            subtitle: Text('Speaker ${index + 1}',
                 style: GoogleFonts.sen(
                     color: const Color(0xFFB3B3B3),
                     fontSize: 13,
@@ -148,7 +148,7 @@ class _LibraryState extends State<Library> {
                     color: Colors.white,
                     fontSize: 16,
                     fontWeight: FontWeight.w500)),
-            subtitle: Text('Album ${index + 1}',
+            subtitle: Text('Artist ${index + 1}',
                 style: GoogleFonts.sen(
                     color: const Color(0xFFB3B3B3),
                     fontSize: 13,
@@ -168,26 +168,28 @@ class _LibraryState extends State<Library> {
         padding: EdgeInsets.zero,
         itemCount: 3, // replace with actual playlist song count
         itemBuilder: (context, index) {
-          return ListTile(
-            leading: Container(
-              width: 60,
-              height: 60,
-              decoration: const BoxDecoration(
-                  //replace with actual stuff from the songs
+          return Padding(
+            padding: const EdgeInsets.symmetric(vertical: 5.0), // Add vertical padding between tiles
+            child: ListTile(
+              leading: Container(
+                width: 60,
+                height: 60,
+                decoration: BoxDecoration(
                   color: Colors.amber,
-                  shape: BoxShape.circle),
+                  shape: BoxShape.circle,
+                ),
+              ),
+              title: Text(
+                'Artist ${index + 1}',
+                style: GoogleFonts.sen(
+                  color: Colors.white,
+                  fontSize: 20,
+                  fontWeight: FontWeight.w500,
+                ),
+              ),
             ),
-            title: Text('Artist ${index + 1}',
-                style: GoogleFonts.sen(
-                    color: Colors.white,
-                    fontSize: 16,
-                    fontWeight: FontWeight.w500)),
-            subtitle: Text('Artist',
-                style: GoogleFonts.sen(
-                    color: const Color(0xFFB3B3B3),
-                    fontSize: 13,
-                    fontWeight: FontWeight.w600)),
           );
+
         },
       ),
     );
