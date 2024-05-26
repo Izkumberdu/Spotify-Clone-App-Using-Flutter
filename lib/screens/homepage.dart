@@ -3,11 +3,13 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:lettersquared/audio/song_handler.dart';
 import 'package:lettersquared/components/bottomNavbar.dart';
 import 'package:lettersquared/components/cards.dart';
 import 'package:lettersquared/components/playerDeck.dart';
 import 'package:lettersquared/components/recently_played_item.dart';
+import 'package:lettersquared/screens/liked_songs.dart';
 import 'package:lettersquared/styles/app_styles.dart';
 import 'package:lettersquared/provider/navbarProvider.dart';
 import 'package:provider/provider.dart';
@@ -172,14 +174,24 @@ class _HomepageState extends State<Homepage> {
                       ],
                     ),
                     const SizedBox(height: 16),
-                    const Column(
+                    Column(
                       children: [
                         Row(
                           children: [
-                            CustomContainer(
-                              imagePath: "assets/images/rnqa7yhv4il71.webp",
-                              text: "Liked Songs",
-                              isLikedSongs: true,
+                            GestureDetector(
+                              onTap: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: ((context) => LikedSongs())
+                                  )
+                                );
+                              },
+                              child: CustomContainer(
+                                imagePath: "assets/images/rnqa7yhv4il71.webp",
+                                text: "Liked Songs",
+                                isLikedSongs: true,
+                              ),
                             ),
                             SizedBox(width: 12),
                             CustomContainer(
