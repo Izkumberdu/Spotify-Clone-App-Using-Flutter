@@ -89,12 +89,12 @@ class SongList extends StatelessWidget {
                 const Spacer(),
                 IconButton(
                   icon: isPlaying
-                      ? Icon(
+                      ? const Icon(
                           Icons.pause_rounded,
                           size: 24,
                           color: kWhite,
                         )
-                      : Icon(
+                      : const Icon(
                           Icons.play_arrow_rounded,
                           size: 24,
                           color: kWhite,

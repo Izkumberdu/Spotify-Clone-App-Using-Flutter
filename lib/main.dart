@@ -35,6 +35,7 @@ Future<void> main() async {
         androidNotificationOngoing: true,
         androidShowNotificationBadge: true,
       ));
+
   runApp(
     MultiProvider(
       providers: [
