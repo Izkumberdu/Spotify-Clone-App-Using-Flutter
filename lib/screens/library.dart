@@ -195,39 +195,50 @@ class _LibraryState extends State<Library> {
     );
   }
 
-  SizedBox playlistList(BuildContext context) {
-    return SizedBox(
-      width: MediaQuery.of(context).size.width,
-      child: ListView.builder(
-        physics: const NeverScrollableScrollPhysics(),
-        shrinkWrap: true, // Adjusts the size of the ListView to its contents
-        padding: EdgeInsets.zero,
-        itemCount: 3, // replace with actual playlist song count
-        itemBuilder: (context, index) {
-          return ListTile(
+SizedBox playlistList(BuildContext context) {
+  return SizedBox(
+    width: MediaQuery.of(context).size.width,
+    child: ListView.builder(
+      physics: const NeverScrollableScrollPhysics(),
+      shrinkWrap: true,
+      padding: EdgeInsets.zero,
+      itemCount: 3, // replace with actual playlist song count
+      itemBuilder: (context, index) {
+        return GestureDetector(
+          onTap: () {
+            Navigator.pushNamed(context, '/playlistView'); // Navigate to PlaylistViewPage
+          },
+          child: ListTile(
             leading: Container(
               width: 50,
               height: 50,
               decoration: BoxDecoration(
-                //replace with actual stuff from the songs
-                color: Colors.amber,
+                color: Colors.amber, // Replace with actual stuff from the songs
               ),
             ),
-            title: Text('Playlist ${index + 1}',
-                style: GoogleFonts.sen(
-                    color: Colors.white,
-                    fontSize: 16,
-                    fontWeight: FontWeight.w500)),
-            subtitle: Text('Playlist ${index + 1}',
-                style: GoogleFonts.sen(
-                    color: const Color(0xFFB3B3B3),
-                    fontSize: 13,
-                    fontWeight: FontWeight.w600)),
-          );
-        },
-      ),
-    );
-  }
+            title: Text(
+              'Playlist ${index + 1}',
+              style: GoogleFonts.sen(
+                color: Colors.white,
+                fontSize: 16,
+                fontWeight: FontWeight.w500,
+              ),
+            ),
+            subtitle: Text(
+              'Playlist ${index + 1}',
+              style: GoogleFonts.sen(
+                color: const Color(0xFFB3B3B3),
+                fontSize: 13,
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+          ),
+        );
+      },
+    ),
+  );
+}
+
 
   Row filters() {
     return Row(

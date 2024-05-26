@@ -29,7 +29,7 @@ class _PlaylistViewPageState extends State<PlaylistViewPage> {
                   padding: const EdgeInsets.fromLTRB(20, 50, 20, 0),
                   child: Column(
                     children: [
-                      backChevron(),
+                      backChevron(context),
                       const SizedBox(height: 30),
                       searchBar(),
                       const SizedBox(height: 35),
@@ -269,14 +269,20 @@ class _PlaylistViewPageState extends State<PlaylistViewPage> {
                 );
   }
 
-  Align backChevron() {
-    return const Align(
-                  alignment: Alignment.centerLeft,
-                  child: Icon(
-                    Icons.arrow_back_ios,
-                    size: 20.0,
-                    color: Colors.white,
-                  ),
-                );
+  Widget backChevron(BuildContext context) {
+    return GestureDetector(
+      onTap: () {
+        Navigator.pop(context); 
+      },
+      child: const Align(
+        alignment: Alignment.centerLeft,
+        child: Icon(
+          Icons.arrow_back_ios,
+          size: 20.0,
+          color: Colors.white,
+        ),
+      ),
+    );
   }
+
 }
