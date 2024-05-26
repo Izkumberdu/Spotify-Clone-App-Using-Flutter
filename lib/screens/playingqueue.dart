@@ -220,7 +220,7 @@ class _AlbumQueuePageState extends State<AlbumQueuePage> {
                       ),
                       child: const CircleAvatar(
                         radius: 16,
-                        backgroundImage: AssetImage('your_image_path_here.jpg'), // Replace with your image asset
+                        backgroundImage: AssetImage('assets/images/genreImages/electronic.jpg'), // Replace with your image asset
                       ),
                     ),
                     const Spacer(),
