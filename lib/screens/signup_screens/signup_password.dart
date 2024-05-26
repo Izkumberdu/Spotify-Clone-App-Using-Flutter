@@ -1,3 +1,5 @@
+// ignore_for_file: must_be_immutable
+
 import 'package:flutter/material.dart';
 import 'package:lettersquared/audio/song_handler.dart';
 import 'package:lettersquared/screens/signup_screens/signup_email.dart';
