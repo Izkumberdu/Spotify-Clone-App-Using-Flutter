@@ -92,9 +92,8 @@ class SongHandler extends BaseAudioHandler with QueueHandler, SeekHandler {
     play();
   }
 
-  @override
   Future<void> shuffleList() async {
-    audioPlayer.shuffle();
+    queue.value.shuffle();
   }
 
   @override
