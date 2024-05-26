@@ -1,22 +1,42 @@
-import 'dart:html';
-
 import 'package:flutter/material.dart';
-import 'package:lettersquared/screens/onboarding.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:lettersquared/screens/homepage.dart';
+import 'package:lettersquared/screens/library.dart';
+import 'package:lettersquared/screens/playingqueue.dart';
+import 'package:lettersquared/screens/search.dart';
+import 'package:lettersquared/screens/start.dart';
 
-void main() {
-  runApp(const MyApp());
+import 'package:firebase_core/firebase_core.dart';
+import 'firebase_options.dart';
+
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
+  runApp(
+    const ProviderScope(
+      child: MyApp(),
+    ),
+  );
 }
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
-  // This widget is the root of your application.
+  // This widget is the root of your application. test
   @override
-  Widget build(BuildContext context) {
+ Widget build(BuildContext context) {
     return MaterialApp(
-      home: const Onboarding(),
+      debugShowCheckedModeBanner: false,
+      initialRoute: '/',
       routes: {
-        '/onboarding': (context) => const Onboarding(),
+        '/': (context) => const StartScreen(),
+        '/onboarding': (context) => const StartScreen(),
+        '/homepage': (context) => const Homepage(),
+        '/library': (context) => const Library(),
+        '/search': (context) => const Search(),
+        '/playingqueue': (context) => const AlbumQueuePage(),
       },
     );
   }
