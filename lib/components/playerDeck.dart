@@ -23,7 +23,8 @@ class _PlayerDeckState extends State<PlayerDeck> {
       stream: widget.songHandler.mediaItem.stream,
       builder: (context, snapshot) {
         MediaItem? playingSong = snapshot.data;
-        return playingSong == null
+        final isPlaying = playingSong != null;
+        return playingSong == null || isPlaying == false
             ? const SizedBox.shrink()
             : buildCard(context, playingSong);
       },

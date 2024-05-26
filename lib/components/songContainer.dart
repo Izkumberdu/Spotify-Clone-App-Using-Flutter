@@ -16,20 +16,7 @@ class SongContainer extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: () {
-        // Navigator.push(
-        //   context,
-        //   MaterialPageRoute(
-        //     builder: (context) => Trackview(
-        //       song: song,
-        //       songs: songs,
-        //       index: index,
-        //       duration: Duration.zero,
-        //       position: Duration.zero,
-        //     ),
-        //   ),
-        // );
-      },
+      onTap: () {},
       child: Container(
         width: 393,
         height: 50,

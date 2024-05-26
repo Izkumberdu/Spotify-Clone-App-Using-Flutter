@@ -1,7 +1,6 @@
 import 'package:audio_service/audio_service.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:just_audio/just_audio.dart';
-import 'package:lettersquared/audio/permissions.dart';
 
 class Song {
   final String id;
@@ -10,17 +9,20 @@ class Song {
   final String artist;
   final String imageSource;
   final String color;
+  final int index;
+  final bool isPlaying;
 
-  Song({
-    required this.id,
-    required this.name,
-    required this.url,
-    required this.color,
-    required this.artist,
-    required this.imageSource,
-  });
+  Song(
+      {required this.id,
+      required this.name,
+      required this.url,
+      required this.color,
+      required this.artist,
+      required this.imageSource,
+      required this.index,
+      required this.isPlaying});
 
-  factory Song.fromFirestore(DocumentSnapshot doc) {
+  factory Song.fromFirestore(DocumentSnapshot doc, int index) {
     Map<String, dynamic> data = doc.data() as Map<String, dynamic>;
     return Song(
       id: doc.id,
@@ -29,6 +31,8 @@ class Song {
       color: data['Color'] ?? '',
       artist: data['Artist'] ?? '',
       imageSource: data['imageUrl'] ?? '',
+      index: index,
+      isPlaying: false,
     );
   }
 }
@@ -39,16 +43,17 @@ class GetSongs {
   Future<List<Song>> fetchSongs() async {
     final QuerySnapshot result = await _firestore.collection('Songs').get();
 
-    final List<Song> songs =
-        result.docs.map((doc) => Song.fromFirestore(doc)).toList();
+    final List<Song> songs = result.docs.asMap().entries.map((entry) {
+      int index = entry.key;
+      DocumentSnapshot doc = entry.value;
+      return Song.fromFirestore(doc, index);
+    }).toList();
 
     return songs;
   }
 }
 
 Future<List<MediaItem>> getSongs() async {
-  await requestSongsPermission();
-
   final player = AudioPlayer();
 
   GetSongs getSongs = GetSongs();
@@ -73,6 +78,8 @@ Future<List<MediaItem>> getSongs() async {
         extras: {
           'url': song.url,
           'color': song.color,
+          'index': song.index,
+          'isPlaying': song.isPlaying
         },
       ),
     );

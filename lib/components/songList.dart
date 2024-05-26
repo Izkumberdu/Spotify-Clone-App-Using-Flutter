@@ -19,11 +19,21 @@ class SongList extends StatelessWidget {
           return Text('Error: ${snapshot.error}');
         } else if (snapshot.hasData) {
           final songs = snapshot.data!;
-          return ListView.builder(
-            itemCount: songs.length,
-            itemBuilder: (context, index) {
-              final song = songs[index];
-              return _buildSongContainer(context, song, index, songs);
+          final totalPages = (songs.length / 4).ceil();
+          return PageView.builder(
+            itemCount: totalPages,
+            itemBuilder: (context, pageIndex) {
+              final startIndex = pageIndex * 4;
+              final endIndex = (startIndex + 4).clamp(0, songs.length);
+              final pageSongs = songs.sublist(startIndex, endIndex);
+              return ListView.builder(
+                itemCount: pageSongs.length,
+                itemBuilder: (context, index) {
+                  final song = pageSongs[index];
+                  return _buildSongContainer(
+                      context, song, startIndex + index, songs);
+                },
+              );
             },
           );
         } else {
