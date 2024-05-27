@@ -92,28 +92,43 @@ class _UserLibraryPageState extends State<UserLibraryPage> {
                 color: Colors.white, fontSize: 16, fontWeight: FontWeight.w500),
           ),
           const Spacer(),
-          Icon(Icons.chevron_right_sharp, color: Colors.white, size: 30),
+          GestureDetector(
+            onTap: () {
+              Navigator.pushNamed(context, '/library');
+            },
+            child: Icon(
+              Icons.chevron_right_sharp,
+              color: Colors.white,
+              size: 30,
+            ),
+          )
+
         ],
       ),
     );
   }
 
-  Container playlistsDown(Size screenSize) {
-    return Container(
-      width: screenSize.width,
-      height: 250,
-      child: ListView.builder(
-        physics:
-            NeverScrollableScrollPhysics(), // Set physics to NeverScrollableScrollPhysics
-        itemCount: 3,
-        itemBuilder: (context, index) {
-          // Replace the arguments with actual data from your list
-          return playlistTile(
-            'assets/images/genreImages/electronic.jpg',
-            'Playlist 1',
-            '1 likes',
-          );
-        },
+  Widget playlistsDown(Size screenSize) {
+    return GestureDetector(
+            onTap: () {
+              Navigator.pushNamed(context, '/playlistView');
+            },    
+      child: Container(
+        width: screenSize.width,
+        height: 250,
+        child: ListView.builder(
+          physics:
+              NeverScrollableScrollPhysics(), // Set physics to NeverScrollableScrollPhysics
+          itemCount: 1,
+          itemBuilder: (context, index) {
+            // Replace the arguments with actual data from your list
+            return playlistTile(
+              'assets/images/genreImages/indie.jpg',
+              'Playlist 1',
+              '1 likes',
+            );
+          },
+        ),
       ),
     );
   }

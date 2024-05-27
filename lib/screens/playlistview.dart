@@ -101,7 +101,7 @@ class _PlaylistViewPageState extends State<PlaylistViewPage> {
                   height: 250,
                   child: ListView.builder(
                     padding: EdgeInsets.zero,
-                    itemCount: 10, // replace with actual playlist song count
+                    itemCount: 5, 
                     itemBuilder: (context, index) {
                       return ListTile(
                       leading: Container(
