@@ -1,5 +1,7 @@
 // ignore_for_file: library_private_types_in_public_api, must_be_immutable
 
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:lettersquared/audio/song_handler.dart';
@@ -17,8 +19,19 @@ class Library extends StatefulWidget {
 }
 
 class _LibraryState extends State<Library> {
+  late FirebaseFirestore _firestore;
+  late User _user;
+  int _songCount = 0;
+
   int navbarIndex = 2; // Initially setting it to the library index
   String selectedTile = 'Playlists'; // Initially setting it to Playlists
+  
+  @override
+  void initState() {
+    super.initState();
+    _firestore = FirebaseFirestore.instance;
+    _user = FirebaseAuth.instance.currentUser!;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -172,7 +185,8 @@ class _LibraryState extends State<Library> {
         itemCount: 3, // replace with actual playlist song count
         itemBuilder: (context, index) {
           return Padding(
-            padding: const EdgeInsets.symmetric(vertical: 5.0), // Add vertical padding between tiles
+            padding: const EdgeInsets.symmetric(
+                vertical: 5.0), // Add vertical padding between tiles
             child: ListTile(
               leading: Container(
                 width: 60,
@@ -192,56 +206,56 @@ class _LibraryState extends State<Library> {
               ),
             ),
           );
-
         },
       ),
     );
   }
 
-SizedBox playlistList(BuildContext context) {
-  return SizedBox(
-    width: MediaQuery.of(context).size.width,
-    child: ListView.builder(
-      physics: const NeverScrollableScrollPhysics(),
-      shrinkWrap: true,
-      padding: EdgeInsets.zero,
-      itemCount: 3, // replace with actual playlist song count
-      itemBuilder: (context, index) {
-        return GestureDetector(
-          onTap: () {
-            Navigator.pushNamed(context, '/playlistView'); // Navigate to PlaylistViewPage
-          },
-          child: ListTile(
-            leading: Container(
-              width: 50,
-              height: 50,
-              decoration: const BoxDecoration(
-                color: Colors.amber, // Replace with actual stuff from the songs
+  SizedBox playlistList(BuildContext context) {
+    return SizedBox(
+      width: MediaQuery.of(context).size.width,
+      child: ListView.builder(
+        physics: const NeverScrollableScrollPhysics(),
+        shrinkWrap: true,
+        padding: EdgeInsets.zero,
+        itemCount: 3, // replace with actual playlist song count
+        itemBuilder: (context, index) {
+          return GestureDetector(
+            onTap: () {
+              Navigator.pushNamed(
+                  context, '/playlistView'); // Navigate to PlaylistViewPage
+            },
+            child: ListTile(
+              leading: Container(
+                width: 50,
+                height: 50,
+                decoration: const BoxDecoration(
+                  color:
+                      Colors.amber, // Replace with actual stuff from the songs
+                ),
+              ),
+              title: Text(
+                'Playlist ${index + 1}',
+                style: GoogleFonts.sen(
+                  color: Colors.white,
+                  fontSize: 16,
+                  fontWeight: FontWeight.w500,
+                ),
+              ),
+              subtitle: Text(
+                'Playlist ${index + 1}',
+                style: GoogleFonts.sen(
+                  color: const Color(0xFFB3B3B3),
+                  fontSize: 13,
+                  fontWeight: FontWeight.w600,
+                ),
               ),
             ),
-            title: Text(
-              'Playlist ${index + 1}',
-              style: GoogleFonts.sen(
-                color: Colors.white,
-                fontSize: 16,
-                fontWeight: FontWeight.w500,
-              ),
-            ),
-            subtitle: Text(
-              'Playlist ${index + 1}',
-              style: GoogleFonts.sen(
-                color: const Color(0xFFB3B3B3),
-                fontSize: 13,
-                fontWeight: FontWeight.w600,
-              ),
-            ),
-          ),
-        );
-      },
-    ),
-  );
-}
-
+          );
+        },
+      ),
+    );
+  }
 
   Row filters() {
     return Row(
@@ -267,40 +281,51 @@ SizedBox playlistList(BuildContext context) {
   }
 
   Widget likedSongs() {
-    return GestureDetector(
-      onTap: () {
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: ((context) => LikedSongs())
-          )
-        );
-      },
-      child: ListTile(
-        leading: Container(
-          width: 50,
-          height: 50,
-          decoration: const BoxDecoration(
-            image: DecorationImage(
-              image: AssetImage('assets/images/icons/likedsongs.jpg'),
-              fit: BoxFit.cover,
+    return StreamBuilder<DocumentSnapshot>(
+      stream: FirebaseFirestore.instance
+          .collection('users')
+          .doc(_user.uid)
+          .snapshots(),
+      builder: (context, snapshot) {
+        if (!snapshot.hasData) {
+          return Container(); // Placeholder widget while loading
+        }
+        List<dynamic> likedSongs = snapshot.data!.get('liked_songs') ?? [];
+        return GestureDetector(
+          onTap: () {
+            Navigator.push(context,
+                MaterialPageRoute(builder: ((context) => LikedSongs())));
+          },
+          child: ListTile(
+            leading: Container(
+              width: 50,
+              height: 50,
+              decoration: const BoxDecoration(
+                image: DecorationImage(
+                  image: AssetImage('assets/images/icons/likedsongs.jpg'),
+                  fit: BoxFit.cover,
+                ),
+              ),
+            ),
+            title: Text('Liked Songs',
+                style: GoogleFonts.sen(
+                    color: Colors.white,
+                    fontSize: 16,
+                    fontWeight: FontWeight.w500)),
+            subtitle: Row(
+              children: [
+                Image.asset('assets/images/icons/pin.png',
+                    width: 15, height: 15),
+                Text('Playlist • ${likedSongs.length} songs',
+                    style: GoogleFonts.sen(
+                        color: const Color(0xFFB3B3B3),
+                        fontSize: 13,
+                        fontWeight: FontWeight.w600)),
+              ],
             ),
           ),
-        ),
-        title: Text('Liked Songs',
-            style: GoogleFonts.sen(
-                color: Colors.white, fontSize: 16, fontWeight: FontWeight.w500)),
-        subtitle: Row(
-          children: [
-            Image.asset('assets/images/icons/pin.png', width: 15, height: 15),
-            Text('Playlist • 10 songs',
-                style: GoogleFonts.sen(
-                    color: const Color(0xFFB3B3B3),
-                    fontSize: 13,
-                    fontWeight: FontWeight.w600)),
-          ],
-        ),
-      ),
+        );
+      },
     );
   }
 
