@@ -25,7 +25,7 @@ class _LibraryState extends State<Library> {
 
   int navbarIndex = 2; // Initially setting it to the library index
   String selectedTile = 'Playlists'; // Initially setting it to Playlists
-  
+
   @override
   void initState() {
     super.initState();
@@ -280,40 +280,55 @@ SizedBox playlistList(BuildContext context) {
   }
 
   Widget likedSongs() {
-    return GestureDetector(
-      onTap: () {
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: ((context) => LikedSongs(songHandler: widget.songHandler))
-          )
-        );
-      },
-      child: ListTile(
-        leading: Container(
-          width: 50,
-          height: 50,
-          decoration: const BoxDecoration(
-            image: DecorationImage(
-              image: AssetImage('assets/images/icons/likedsongs.jpg'),
-              fit: BoxFit.cover,
+    return StreamBuilder<DocumentSnapshot>(
+      stream: FirebaseFirestore.instance
+          .collection('users')
+          .doc(_user.uid)
+          .snapshots(),
+      builder: (context, snapshot) {
+        if (!snapshot.hasData) {
+          return Container(); // Placeholder widget while loading
+        }
+        List<dynamic> likedSongs = snapshot.data!.get('liked_songs') ?? [];
+        return GestureDetector(
+          onTap: () {
+            Navigator.push(
+                context,
+                MaterialPageRoute(
+                    builder: ((context) => LikedSongs(
+                          songHandler: widget.songHandler,
+                        ))));
+          },
+          child: ListTile(
+            leading: Container(
+              width: 50,
+              height: 50,
+              decoration: const BoxDecoration(
+                image: DecorationImage(
+                  image: AssetImage('assets/images/icons/likedsongs.jpg'),
+                  fit: BoxFit.cover,
+                ),
+              ),
+            ),
+            title: Text('Liked Songs',
+                style: GoogleFonts.sen(
+                    color: Colors.white,
+                    fontSize: 16,
+                    fontWeight: FontWeight.w500)),
+            subtitle: Row(
+              children: [
+                Image.asset('assets/images/icons/pin.png',
+                    width: 15, height: 15),
+                Text('Playlist • ${likedSongs.length} songs',
+                    style: GoogleFonts.sen(
+                        color: const Color(0xFFB3B3B3),
+                        fontSize: 13,
+                        fontWeight: FontWeight.w600)),
+              ],
             ),
           ),
-        ),
-        title: Text('Liked Songs',
-            style: GoogleFonts.sen(
-                color: Colors.white, fontSize: 16, fontWeight: FontWeight.w500)),
-        subtitle: Row(
-          children: [
-            Image.asset('assets/images/icons/pin.png', width: 15, height: 15),
-            Text('Playlist • 4 songs',
-                style: GoogleFonts.sen(
-                    color: const Color(0xFFB3B3B3),
-                    fontSize: 13,
-                    fontWeight: FontWeight.w600)),
-          ],
-        ),
-      ),
+        );
+      },
     );
   }
 
