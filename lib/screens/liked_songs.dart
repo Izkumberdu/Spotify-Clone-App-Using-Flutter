@@ -1,10 +1,13 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:lettersquared/audio/song_handler.dart';
+import 'package:lettersquared/components/playerDeck.dart';
 import 'package:lettersquared/services/firebase_auth.dart';
 import 'package:lettersquared/styles/app_styles.dart';
 
 class LikedSongs extends StatefulWidget {
-  const LikedSongs({super.key});
+  SongHandler songHandler;
+  LikedSongs({super.key, required this.songHandler});
 
   @override
   State<LikedSongs> createState() => _LikedSongsState();
@@ -171,14 +174,14 @@ class _LikedSongsState extends State<LikedSongs> {
               ],
             ),
           ),
-          // Positioned(
-          //     bottom: 0,
-          //     left: 0,
-          //     right: 0,
-          //     child: PlayerDeck(
-          //       songHandler: widget.songHandler,
-          //     ),
-          //   ),
+          Positioned(
+            bottom: 0,
+            left: 0,
+            right: 0,
+            child: PlayerDeck(
+              songHandler: widget.songHandler,
+            ),
+          ),
         ],
       ),
     );
