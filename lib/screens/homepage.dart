@@ -34,19 +34,33 @@ class _HomepageState extends State<Homepage> {
   }
 
   Future<List<Map<String, dynamic>>> _fetchRecentlyPlayed() async {
-    User? user = FirebaseAuth.instance.currentUser;
-    if (user == null) {
-      throw Exception("No user logged in");
-    }
-    QuerySnapshot snapshot = await FirebaseFirestore.instance
-        .collection('users')
-        .doc(user.uid)
-        .collection('recently_played')
-        .get();
-    return snapshot.docs
-        .map((doc) => doc.data() as Map<String, dynamic>)
-        .toList();
+  User? user = FirebaseAuth.instance.currentUser;
+  if (user == null) {
+    throw Exception("No user logged in");
   }
+
+  DocumentSnapshot userDoc = await FirebaseFirestore.instance
+      .collection('users')
+      .doc(user.uid)
+      .get();
+
+  List<dynamic> recentlyPlayedIds = userDoc['recently_played'] ?? [];
+  if (recentlyPlayedIds.isEmpty) {
+    return [];
+  }
+
+  List<Map<String, dynamic>> recentlyPlayedItems = [];
+  for (String songId in recentlyPlayedIds) {
+    DocumentSnapshot songDoc = await FirebaseFirestore.instance
+        .collection('Songs')
+        .doc(songId)
+        .get();
+    recentlyPlayedItems.add(songDoc.data() as Map<String, dynamic>);
+  }
+
+  return recentlyPlayedItems;
+}
+
 
   Future<List<Map<String, dynamic>>> _fetchFavoriteArtists() async {
     User? user = FirebaseAuth.instance.currentUser;
@@ -235,52 +249,52 @@ class _HomepageState extends State<Homepage> {
                         ],
                       ),
                       const SizedBox(height: 12),
-                      // Row(
-                      //   mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      //   children: [
-                      //     Text(
-                      //       "Recently Played",
-                      //       style:
-                      //           SenBold.copyWith(fontSize: 19, color: kWhite),
-                      //     ),
-                      //   ],
-                      // ),
-                      // const SizedBox(height: 16),
-                      // recentlyPlayedItems.isEmpty
-                      //     ? Container(
-                      //         padding: const EdgeInsets.all(16),
-                      //         color: Colors.red,
-                      //         child: const Text(
-                      //           'No recently played items found',
-                      //           style: TextStyle(color: Colors.white),
-                      //         ),
-                      //       )
-                      //     : SingleChildScrollView(
-                      //         scrollDirection: Axis.horizontal,
-                      //         child: Row(
-                      //           crossAxisAlignment: CrossAxisAlignment.start,
-                      //           children: [
-                      //             for (var i = 0;
-                      //                 i < recentlyPlayedItems.length;
-                      //                 i++) ...[
-                      //               RecentlyPlayedItem(
-                      //                 height: 106,
-                      //                 width: 106,
-                      //                 imageUrl: recentlyPlayedItems[i]
-                      //                         ['imageUrl'] ??
-                      //                     '',
-                      //                 isArtist: recentlyPlayedItems[i]
-                      //                         ['artist'] ??
-                      //                     false,
-                      //                 name:
-                      //                     recentlyPlayedItems[i]['name'] ?? '',
-                      //               ),
-                      //               if (i < recentlyPlayedItems.length - 1)
-                      //                 const SizedBox(width: 20),
-                      //             ],
-                      //           ],
-                      //         ),
-                      //       ),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text(
+                            "Recently Played",
+                            style:
+                                SenBold.copyWith(fontSize: 19, color: kWhite),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 16),
+                      recentlyPlayedItems.isEmpty
+                          ? Container(
+                              padding: const EdgeInsets.all(16),
+                              color: kDarkGrey,
+                              child: const Text(
+                                'No recently played items found',
+                                style: TextStyle(color: Colors.white),
+                              ),
+                            )
+                          : SingleChildScrollView(
+                              scrollDirection: Axis.horizontal,
+                              child: Row(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  for (var i = 0;
+                                      i < recentlyPlayedItems.length;
+                                      i++) ...[
+                                    RecentlyPlayedItem(
+                                      height: 106,
+                                      width: 106,
+                                      imageUrl: recentlyPlayedItems[i]
+                                              ['imageUrl'] ??
+                                          '',
+                                      isArtist: recentlyPlayedItems[i]
+                                              ['artist'] ??
+                                          false,
+                                      name:
+                                          recentlyPlayedItems[i]['name'] ?? '',
+                                    ),
+                                    if (i < recentlyPlayedItems.length - 1)
+                                      const SizedBox(width: 20),
+                                  ],
+                                ],
+                              ),
+                            ),
                       const SizedBox(height: 12),
                       FutureBuilder<List<Map<String, dynamic>>>(
                         future: _favoriteArtistsFuture,
