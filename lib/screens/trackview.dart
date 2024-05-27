@@ -69,11 +69,6 @@ class TrackView extends StatelessWidget {
                       },
                       child: Image.asset('assets/images/icons/arrow-down.png'),
                     ),
-                    Text(
-                      'Album Title',
-                      style: SenSemiBold.copyWith(
-                          fontSize: 14, color: Colors.white),
-                    ),
                     PopupMenuButton<String>(
                       color: kBlack,
                       onSelected: (String value) {
@@ -86,20 +81,24 @@ class TrackView extends StatelessWidget {
                             // Handle 'Add to playlist' option
                             break;
                           case 'go_to_queue':
-                            Navigator.pushNamed(context, '/playingqueue'); // Navigate to '/playingqueue' route
+                            Navigator.pushNamed(context,
+                                '/playingqueue'); // Navigate to '/playingqueue' route
                             break;
                           case 'add_to_queue':
                             // Handle 'Add to queue' option
                             break;
                         }
                       },
-                      itemBuilder: (BuildContext context) => <PopupMenuEntry<String>>[
+                      itemBuilder: (BuildContext context) =>
+                          <PopupMenuEntry<String>>[
                         _buildPopupMenuItem('Like', Icons.favorite),
                         _buildPopupMenuItem('Add to playlist', Icons.add),
                         _buildPopupMenuItem('Add to queue', Icons.playlist_add),
-                        _buildPopupMenuItem('Go to queue', Icons.queue_play_next),
+                        _buildPopupMenuItem(
+                            'Go to queue', Icons.queue_play_next),
                       ],
-                      child: Image.asset('assets/images/icons/more-horizontal.png'),
+                      child: Image.asset(
+                          'assets/images/icons/more-horizontal.png'),
                     )
                   ],
                 ),
@@ -119,9 +118,7 @@ class TrackView extends StatelessWidget {
                     ),
                   ),
                 ),
-
                 SizedBox(height: SizeConfig.blockSizeVertical! * 10),
-
                 songInformation(playingSong),
                 SizedBox(height: SizeConfig.blockSizeVertical! * 0.5),
                 SongProgress(
@@ -224,17 +221,17 @@ class TrackView extends StatelessWidget {
 
 PopupMenuItem<String> _buildPopupMenuItem(String text, IconData icon) {
   return PopupMenuItem<String>(
-    value: text.toLowerCase().replaceAll(' ', '_'), 
+    value: text.toLowerCase().replaceAll(' ', '_'),
     child: SizedBox(
-      width: 105, 
-      height: 30, 
+      width: 105,
+      height: 30,
       child: Row(
         children: [
-          Icon(icon, color: Colors.white, size: 20), 
+          Icon(icon, color: Colors.white, size: 20),
           const SizedBox(width: 10),
           Text(
             text,
-            style: GoogleFonts.sen(color: Colors.white, fontSize: 10), 
+            style: GoogleFonts.sen(color: Colors.white, fontSize: 10),
           ),
         ],
       ),

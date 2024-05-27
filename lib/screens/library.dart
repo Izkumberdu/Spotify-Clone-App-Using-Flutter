@@ -1,5 +1,7 @@
 // ignore_for_file: library_private_types_in_public_api, must_be_immutable
 
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:lettersquared/audio/song_handler.dart';
@@ -17,8 +19,19 @@ class Library extends StatefulWidget {
 }
 
 class _LibraryState extends State<Library> {
+  late FirebaseFirestore _firestore;
+  late User _user;
+  int _songCount = 0;
+
   int navbarIndex = 2; // Initially setting it to the library index
   String selectedTile = 'Playlists'; // Initially setting it to Playlists
+  
+  @override
+  void initState() {
+    super.initState();
+    _firestore = FirebaseFirestore.instance;
+    _user = FirebaseAuth.instance.currentUser!;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -172,7 +185,8 @@ class _LibraryState extends State<Library> {
         itemCount: 3, // replace with actual playlist song count
         itemBuilder: (context, index) {
           return Padding(
-            padding: const EdgeInsets.symmetric(vertical: 5.0), // Add vertical padding between tiles
+            padding: const EdgeInsets.symmetric(
+                vertical: 5.0), // Add vertical padding between tiles
             child: ListTile(
               leading: Container(
                 width: 60,
@@ -192,7 +206,6 @@ class _LibraryState extends State<Library> {
               ),
             ),
           );
-
         },
       ),
     );
@@ -205,7 +218,7 @@ SizedBox playlistList(BuildContext context) {
       physics: const NeverScrollableScrollPhysics(),
       shrinkWrap: true,
       padding: EdgeInsets.zero,
-      itemCount: 1, // replace with actual playlist song count
+      itemCount: 3, // replace with actual playlist song count
       itemBuilder: (context, index) {
         return GestureDetector(
           onTap: () {
@@ -215,11 +228,8 @@ SizedBox playlistList(BuildContext context) {
             leading: Container(
               width: 50,
               height: 50,
-              decoration: BoxDecoration(
-                image: DecorationImage(
-                  image: AssetImage('assets/images/genreImages/indie.jpg'),
-                  fit: BoxFit.cover,
-                ),
+              decoration: const BoxDecoration(
+                color: Colors.amber, // Replace with actual stuff from the songs
               ),
             ),
             title: Text(
@@ -275,7 +285,7 @@ SizedBox playlistList(BuildContext context) {
         Navigator.push(
           context,
           MaterialPageRoute(
-            builder: ((context) => LikedSongs())
+            builder: ((context) => LikedSongs(songHandler: widget.songHandler))
           )
         );
       },
@@ -296,7 +306,7 @@ SizedBox playlistList(BuildContext context) {
         subtitle: Row(
           children: [
             Image.asset('assets/images/icons/pin.png', width: 15, height: 15),
-            Text('Playlist • Liked Songs',
+            Text('Playlist • 4 songs',
                 style: GoogleFonts.sen(
                     color: const Color(0xFFB3B3B3),
                     fontSize: 13,
