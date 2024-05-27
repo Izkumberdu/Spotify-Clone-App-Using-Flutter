@@ -5,9 +5,24 @@ import 'package:lettersquared/audio/song_handler.dart';
 import 'package:lettersquared/firebase/getSongs.dart';
 import 'package:lettersquared/styles/app_styles.dart';
 
-class SongList extends StatelessWidget {
+class SongList extends StatefulWidget {
   final SongHandler songHandler;
-  const SongList({Key? key, required this.songHandler});
+  final Function(String) addToLikedSongs;
+  final Function(String) removeFromLikedSongs;
+
+  const SongList({
+    Key? key,
+    required this.songHandler,
+    required this.addToLikedSongs,
+    required this.removeFromLikedSongs,
+  }) : super(key: key);
+
+  @override
+  _SongListState createState() => _SongListState();
+}
+
+class _SongListState extends State<SongList> {
+  Set<String> likedSongs = {};
 
   @override
   Widget build(BuildContext context) {
@@ -52,13 +67,14 @@ class SongList extends StatelessWidget {
   Widget _buildSongContainer(
       BuildContext context, Song song, int index, List<Song> songs) {
     return StreamBuilder<MediaItem?>(
-      stream: songHandler.mediaItem,
+      stream: widget.songHandler.mediaItem,
       builder: (context, snapshot) {
         final currentSong = snapshot.data;
         final isPlaying = currentSong != null && currentSong.id == song.id;
+        final isLiked = likedSongs.contains(song.id);
         return GestureDetector(
           onTap: () {
-            songHandler.skipToQueueItem(index);
+            widget.songHandler.skipToQueueItem(index);
           },
           child: Container(
             width: 393,
@@ -101,49 +117,66 @@ class SongList extends StatelessWidget {
                         ),
                   onPressed: () {
                     if (isPlaying) {
-                      songHandler.pause();
+                      widget.songHandler.pause();
                     } else {
-                      songHandler.skipToQueueItem(index);
+                      widget.songHandler.skipToQueueItem(index);
                     }
                   },
                 ),
                 const SizedBox(width: 15),
-                Image.asset('assets/images/icons/Heart_Solid.png'),
+                GestureDetector(
+                  onTap: () {
+                    setState(() {
+                      if (isLiked) {
+                        likedSongs.remove(song.id);
+                        widget.removeFromLikedSongs(song.id);
+                      } else {
+                        likedSongs.add(song.id);
+                        widget.addToLikedSongs(song.id);
+                      }
+                    });
+                  },
+                  child: Image.asset(
+                    isLiked
+                        ? 'assets/images/icons/Heart_Green.png'
+                        : 'assets/images/icons/Heart_Solid.png',
+                  ),
+                ),
                 const SizedBox(width: 10),
-                    PopupMenuButton<String>(
-                      color: kBlack,
-                      onSelected: (String value) {
-                        switch (value) {
-                          case 'like':
-                            // Handle 'Like' option
-                            break;
-                          case 'add_to_playlist':
-                            // Handle 'Add to playlist' option
-                            break;
-                          case 'go_to_queue':
-                            Navigator.pushNamed(context, '/playingqueue'); 
-                            break;
-                          case 'add_to_queue':
-                            final song = songs[index]; // Get the selected song
-                            songHandler.addToQueue(MediaItem(
-                              id: song.id,
-                              title: song.name,
-                              artist: song.artist,
-                              artUri: Uri.parse(song.imageSource),
-                              // Provide the audio source URL in the extras field
-                              extras: {'url': song.url},
-                            ));
-                            break;
-                        }
-                      },
-                      itemBuilder: (BuildContext context) => <PopupMenuEntry<String>>[
-                        _buildPopupMenuItem('Like', Icons.favorite),
-                        _buildPopupMenuItem('Add to playlist', Icons.add),
-                        _buildPopupMenuItem('Add to queue', Icons.playlist_add),
-                        _buildPopupMenuItem('Go to queue', Icons.queue_play_next),
-                      ],
-                      child: Image.asset('assets/images/icons/more.png'),
-                    )
+                PopupMenuButton<String>(
+                  color: kBlack,
+                  onSelected: (String value) {
+                    switch (value) {
+                      case 'like':
+                        widget.addToLikedSongs(song.id);
+                        break;
+                      case 'add_to_playlist':
+                        // Handle 'Add to playlist' option
+                        break;
+                      case 'go_to_queue':
+                        Navigator.pushNamed(context, '/playingqueue');
+                        break;
+                      case 'add_to_queue':
+                        final song = songs[index]; // Get the selected song
+                        widget.songHandler.addToQueue(MediaItem(
+                          id: song.id,
+                          title: song.name,
+                          artist: song.artist,
+                          artUri: Uri.parse(song.imageSource),
+                          // Provide the audio source URL in the extras field
+                          extras: {'url': song.url},
+                        ));
+                        break;
+                    }
+                  },
+                  itemBuilder: (BuildContext context) => <PopupMenuEntry<String>>[
+                    _buildPopupMenuItem('Like', Icons.favorite),
+                    _buildPopupMenuItem('Add to playlist', Icons.add),
+                    _buildPopupMenuItem('Add to queue', Icons.playlist_add),
+                    _buildPopupMenuItem('Go to queue', Icons.queue_play_next),
+                  ],
+                  child: Image.asset('assets/images/icons/more.png'),
+                ),
               ],
             ),
           ),
@@ -151,22 +184,21 @@ class SongList extends StatelessWidget {
       },
     );
   }
-
 }
 
 PopupMenuItem<String> _buildPopupMenuItem(String text, IconData icon) {
   return PopupMenuItem<String>(
-    value: text.toLowerCase().replaceAll(' ', '_'), 
+    value: text.toLowerCase().replaceAll(' ', '_'),
     child: SizedBox(
-      width: 105, 
-      height: 30, 
+      width: 105,
+      height: 30,
       child: Row(
         children: [
-          Icon(icon, color: Colors.white, size: 20), 
+          Icon(icon, color: Colors.white, size: 20),
           const SizedBox(width: 10),
           Text(
             text,
-            style: GoogleFonts.sen(color: Colors.white, fontSize: 10), 
+            style: GoogleFonts.sen(color: Colors.white, fontSize: 10),
           ),
         ],
       ),

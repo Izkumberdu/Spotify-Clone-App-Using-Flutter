@@ -295,7 +295,7 @@ class _LibraryState extends State<Library> {
         subtitle: Row(
           children: [
             Image.asset('assets/images/icons/pin.png', width: 15, height: 15),
-            Text('Playlist • 10 songs',
+            Text('Playlist • 4 songs',
                 style: GoogleFonts.sen(
                     color: const Color(0xFFB3B3B3),
                     fontSize: 13,

@@ -40,14 +40,27 @@ class _HomepageState extends State<Homepage> {
     if (user == null) {
       throw Exception("No user logged in");
     }
-    QuerySnapshot snapshot = await FirebaseFirestore.instance
+
+    DocumentSnapshot userDoc = await FirebaseFirestore.instance
         .collection('users')
         .doc(user.uid)
-        .collection('recently_played')
         .get();
-    return snapshot.docs
-        .map((doc) => doc.data() as Map<String, dynamic>)
-        .toList();
+
+    List<dynamic> recentlyPlayedIds = userDoc['recently_played'] ?? [];
+    if (recentlyPlayedIds.isEmpty) {
+      return [];
+    }
+
+    List<Map<String, dynamic>> recentlyPlayedSongs = [];
+    for (String songId in recentlyPlayedIds) {
+      DocumentSnapshot songDoc = await FirebaseFirestore.instance
+          .collection('Songs')
+          .doc(songId)
+          .get();
+      recentlyPlayedSongs.add(songDoc.data() as Map<String, dynamic>);
+    }
+
+    return recentlyPlayedSongs;
   }
 
   Future<List<Map<String, dynamic>>> _fetchFavoriteArtists() async {
