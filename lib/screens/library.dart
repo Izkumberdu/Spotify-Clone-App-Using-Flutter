@@ -218,20 +218,23 @@ SizedBox playlistList(BuildContext context) {
       physics: const NeverScrollableScrollPhysics(),
       shrinkWrap: true,
       padding: EdgeInsets.zero,
-      itemCount: 3, // replace with actual playlist song count
+      itemCount: 1, // replace with actual playlist song count
       itemBuilder: (context, index) {
         return GestureDetector(
           onTap: () {
             Navigator.pushNamed(context, '/playlistView'); // Navigate to PlaylistViewPage
           },
           child: ListTile(
-            leading: Container(
-              width: 50,
-              height: 50,
-              decoration: const BoxDecoration(
-                color: Colors.amber, // Replace with actual stuff from the songs
+          leading: Container(
+            width: 50,
+            height: 50,
+            decoration: BoxDecoration(
+              image: DecorationImage(
+                image: AssetImage('assets/images/genreImages/indie.jpg'),
+                fit: BoxFit.cover,
               ),
             ),
+          ),
             title: Text(
               'Playlist ${index + 1}',
               style: GoogleFonts.sen(
