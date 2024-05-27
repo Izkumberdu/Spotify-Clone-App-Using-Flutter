@@ -12,6 +12,8 @@ import 'package:lettersquared/styles/app_styles.dart';
 import 'package:lettersquared/provider/navbarProvider.dart';
 import 'package:provider/provider.dart';
 
+//real
+
 class Homepage extends StatefulWidget {
   final SongHandler songHandler;
   Homepage({Key? key, required this.songHandler}) : super(key: key);
