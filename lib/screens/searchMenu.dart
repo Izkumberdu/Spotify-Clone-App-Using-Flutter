@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:lettersquared/audio/song_handler.dart';
 import 'package:lettersquared/components/bottomNavbar.dart';
@@ -6,6 +7,7 @@ import 'package:lettersquared/components/songList.dart';
 import 'package:lettersquared/models/genre.dart';
 import 'package:lettersquared/provider/navbarProvider.dart';
 import 'package:lettersquared/provider/song_provider.dart';
+import 'package:lettersquared/services/firebase_auth.dart'; // Import FirebaseAuthService
 import 'package:lettersquared/styles/app_styles.dart';
 import 'package:provider/provider.dart';
 
@@ -19,8 +21,55 @@ class SearchMenu extends StatefulWidget {
 
 class _SearchMenuState extends State<SearchMenu> {
   int _navbarIndex = 1;
+  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+  final FirebaseAuthService _authService = FirebaseAuthService();
 
-  @override
+  Future<void> _addToLikedSongs(String songId) async {
+    try {
+      String? userId = _authService.getCurrentUserId();
+      if (userId != null) {
+        DocumentReference userDoc = _firestore.collection('users').doc(userId);
+        await userDoc.update({
+          'liked_songs': FieldValue.arrayUnion([songId])
+        });
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Song added to liked songs')),
+        );
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('No user is currently signed in.')),
+        );
+      }
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Error adding song to liked songs: $e')),
+      );
+    }
+  }
+  
+  Future<void> _removeFromLikedSongs(String songId) async {
+    try {
+      String? userId = _authService.getCurrentUserId();
+      if (userId != null) {
+        DocumentReference userDoc = _firestore.collection('users').doc(userId);
+        await userDoc.update({
+          'liked_songs': FieldValue.arrayRemove([songId])
+        });
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Song removed from liked songs')),
+        );
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('No user is currently signed in.')),
+        );
+      }
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Error removing song from liked songs: $e')),
+      );
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Consumer<SongProvider>(builder: (context, ref, child) {
@@ -95,6 +144,8 @@ class _SearchMenuState extends State<SearchMenu> {
                         Expanded(
                           child: SongList(
                             songHandler: widget.songHandler,
+                            addToLikedSongs: _addToLikedSongs,
+                            removeFromLikedSongs: _removeFromLikedSongs,
                           ),
                         ),
                       ],

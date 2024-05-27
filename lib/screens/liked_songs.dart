@@ -26,12 +26,14 @@ class _LikedSongsState extends State<LikedSongs> {
     try {
       String? userId = _authService.getCurrentUserId();
       if (userId != null) {
-        DocumentSnapshot userDoc = await _firestore.collection('users').doc(userId).get();
-        List <dynamic> likedSongIds = userDoc['liked_songs'] ?? [];
+        DocumentSnapshot userDoc =
+            await _firestore.collection('users').doc(userId).get();
+        List<dynamic> likedSongIds = userDoc['liked_songs'] ?? [];
 
         List<Map<String, dynamic>> songs = [];
         for (String songId in likedSongIds) {
-          DocumentSnapshot songDoc = await _firestore.collection('Songs').doc(songId).get();
+          DocumentSnapshot songDoc =
+              await _firestore.collection('Songs').doc(songId).get();
           if (songDoc.exists) {
             songs.add(songDoc.data() as Map<String, dynamic>);
           } else {
@@ -90,7 +92,8 @@ class _LikedSongsState extends State<LikedSongs> {
                       ),
                       Text(
                         "${likedSongs.length} songs",
-                        style: SenMedium.copyWith(fontSize: 12, color: kLightGrey),
+                        style:
+                            SenMedium.copyWith(fontSize: 12, color: kLightGrey),
                       ),
                     ],
                   ),
@@ -110,15 +113,13 @@ class _LikedSongsState extends State<LikedSongs> {
                         SizedBox(
                           width: 20,
                           height: 20,
-                          child: Image.asset(
-                              "assets/images/icons/Shuffle.png"),
+                          child: Image.asset("assets/images/icons/Shuffle.png"),
                         ),
                         const SizedBox(width: 12),
                         SizedBox(
                           width: 20,
                           height: 20,
-                          child: Image.asset(
-                              "assets/images/icons/pause.png"),
+                          child: Image.asset("assets/images/icons/pause.png"),
                         ),
                       ],
                     )
@@ -133,7 +134,8 @@ class _LikedSongsState extends State<LikedSongs> {
                           itemBuilder: (context, index) {
                             final song = likedSongs[index];
                             return Padding(
-                              padding: const EdgeInsets.symmetric(vertical: 8.0),
+                              padding:
+                                  const EdgeInsets.symmetric(vertical: 8.0),
                               child: Row(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
@@ -144,16 +146,19 @@ class _LikedSongsState extends State<LikedSongs> {
                                   ),
                                   const SizedBox(width: 12),
                                   Column(
-                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
                                     children: [
                                       Text(
                                         song['Title'],
-                                        style: SenBold.copyWith(fontSize: 16, color: kWhite),
+                                        style: SenBold.copyWith(
+                                            fontSize: 16, color: kWhite),
                                       ),
                                       const SizedBox(height: 4),
                                       Text(
                                         song['Artist'],
-                                        style: SenMedium.copyWith(fontSize: 12, color: kLightGrey),
+                                        style: SenMedium.copyWith(
+                                            fontSize: 12, color: kLightGrey),
                                       ),
                                     ],
                                   ),
@@ -166,6 +171,14 @@ class _LikedSongsState extends State<LikedSongs> {
               ],
             ),
           ),
+          // Positioned(
+          //     bottom: 0,
+          //     left: 0,
+          //     right: 0,
+          //     child: PlayerDeck(
+          //       songHandler: widget.songHandler,
+          //     ),
+          //   ),
         ],
       ),
     );
