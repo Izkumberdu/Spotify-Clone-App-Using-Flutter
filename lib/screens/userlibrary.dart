@@ -125,7 +125,7 @@ class _UserLibraryPageState extends State<UserLibraryPage> {
             return playlistTile(
               'assets/images/genreImages/indie.jpg',
               'Playlist 1',
-              '1 likes',
+              '23 likes',
             );
           },
         ),
