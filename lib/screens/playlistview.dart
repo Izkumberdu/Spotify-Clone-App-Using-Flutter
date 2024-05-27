@@ -184,7 +184,7 @@ class _PlaylistViewPageState extends State<PlaylistViewPage> {
     return Align(
                   alignment: Alignment.centerLeft,
                   child: Text(
-                    '1,629,592 likes • 6h 48m', // change to be based on playlist
+                    '23 likes • 15m 30s', // change to be based on playlist
                     style: GoogleFonts.sen(color: const Color(0xFFB3B3B3), fontSize: 13, fontWeight: FontWeight.w500),
                     ),
                 );

@@ -263,7 +263,7 @@ class _HomepageState extends State<Homepage> {
                       recentlyPlayedItems.isEmpty
                           ? Container(
                               padding: const EdgeInsets.all(16),
-                              color: kDarkGrey,
+                              color: Colors.red,
                               child: const Text(
                                 'No recently played items found',
                                 style: TextStyle(color: Colors.white),
