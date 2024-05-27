@@ -25,7 +25,7 @@ class _LibraryState extends State<Library> {
 
   int navbarIndex = 2; // Initially setting it to the library index
   String selectedTile = 'Playlists'; // Initially setting it to Playlists
-  
+
   @override
   void initState() {
     super.initState();
@@ -293,8 +293,12 @@ class _LibraryState extends State<Library> {
         List<dynamic> likedSongs = snapshot.data!.get('liked_songs') ?? [];
         return GestureDetector(
           onTap: () {
-            Navigator.push(context,
-                MaterialPageRoute(builder: ((context) => LikedSongs())));
+            Navigator.push(
+                context,
+                MaterialPageRoute(
+                    builder: ((context) => LikedSongs(
+                          songHandler: widget.songHandler,
+                        ))));
           },
           child: ListTile(
             leading: Container(
