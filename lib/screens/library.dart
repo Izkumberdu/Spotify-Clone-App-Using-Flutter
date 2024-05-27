@@ -172,7 +172,8 @@ class _LibraryState extends State<Library> {
         itemCount: 3, // replace with actual playlist song count
         itemBuilder: (context, index) {
           return Padding(
-            padding: const EdgeInsets.symmetric(vertical: 5.0), // Add vertical padding between tiles
+            padding: const EdgeInsets.symmetric(
+                vertical: 5.0), // Add vertical padding between tiles
             child: ListTile(
               leading: Container(
                 width: 60,
@@ -192,56 +193,56 @@ class _LibraryState extends State<Library> {
               ),
             ),
           );
-
         },
       ),
     );
   }
 
-SizedBox playlistList(BuildContext context) {
-  return SizedBox(
-    width: MediaQuery.of(context).size.width,
-    child: ListView.builder(
-      physics: const NeverScrollableScrollPhysics(),
-      shrinkWrap: true,
-      padding: EdgeInsets.zero,
-      itemCount: 3, // replace with actual playlist song count
-      itemBuilder: (context, index) {
-        return GestureDetector(
-          onTap: () {
-            Navigator.pushNamed(context, '/playlistView'); // Navigate to PlaylistViewPage
-          },
-          child: ListTile(
-            leading: Container(
-              width: 50,
-              height: 50,
-              decoration: const BoxDecoration(
-                color: Colors.amber, // Replace with actual stuff from the songs
+  SizedBox playlistList(BuildContext context) {
+    return SizedBox(
+      width: MediaQuery.of(context).size.width,
+      child: ListView.builder(
+        physics: const NeverScrollableScrollPhysics(),
+        shrinkWrap: true,
+        padding: EdgeInsets.zero,
+        itemCount: 3, // replace with actual playlist song count
+        itemBuilder: (context, index) {
+          return GestureDetector(
+            onTap: () {
+              Navigator.pushNamed(
+                  context, '/playlistView'); // Navigate to PlaylistViewPage
+            },
+            child: ListTile(
+              leading: Container(
+                width: 50,
+                height: 50,
+                decoration: const BoxDecoration(
+                  color:
+                      Colors.amber, // Replace with actual stuff from the songs
+                ),
+              ),
+              title: Text(
+                'Playlist ${index + 1}',
+                style: GoogleFonts.sen(
+                  color: Colors.white,
+                  fontSize: 16,
+                  fontWeight: FontWeight.w500,
+                ),
+              ),
+              subtitle: Text(
+                'Playlist ${index + 1}',
+                style: GoogleFonts.sen(
+                  color: const Color(0xFFB3B3B3),
+                  fontSize: 13,
+                  fontWeight: FontWeight.w600,
+                ),
               ),
             ),
-            title: Text(
-              'Playlist ${index + 1}',
-              style: GoogleFonts.sen(
-                color: Colors.white,
-                fontSize: 16,
-                fontWeight: FontWeight.w500,
-              ),
-            ),
-            subtitle: Text(
-              'Playlist ${index + 1}',
-              style: GoogleFonts.sen(
-                color: const Color(0xFFB3B3B3),
-                fontSize: 13,
-                fontWeight: FontWeight.w600,
-              ),
-            ),
-          ),
-        );
-      },
-    ),
-  );
-}
-
+          );
+        },
+      ),
+    );
+  }
 
   Row filters() {
     return Row(
@@ -270,11 +271,10 @@ SizedBox playlistList(BuildContext context) {
     return GestureDetector(
       onTap: () {
         Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: ((context) => LikedSongs())
-          )
-        );
+            context,
+            MaterialPageRoute(
+                builder: ((context) =>
+                    LikedSongs(songHandler: widget.songHandler))));
       },
       child: ListTile(
         leading: Container(
@@ -289,7 +289,9 @@ SizedBox playlistList(BuildContext context) {
         ),
         title: Text('Liked Songs',
             style: GoogleFonts.sen(
-                color: Colors.white, fontSize: 16, fontWeight: FontWeight.w500)),
+                color: Colors.white,
+                fontSize: 16,
+                fontWeight: FontWeight.w500)),
         subtitle: Row(
           children: [
             Image.asset('assets/images/icons/pin.png', width: 15, height: 15),

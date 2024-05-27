@@ -74,7 +74,7 @@ class SongHandler extends BaseAudioHandler with QueueHandler, SeekHandler {
     final audioSource = songs.map(_createAudioSource).toList();
     await audioPlayer.setAudioSource(
         ConcatenatingAudioSource(children: audioSource),
-        preload: false); // Preload but don't play
+        preload: false);
     queue.value.clear();
     queue.value.addAll(songs);
     queue.add(queue.value);
@@ -97,11 +97,9 @@ class SongHandler extends BaseAudioHandler with QueueHandler, SeekHandler {
     currentQueue.add(song);
     queue.add(currentQueue);
     if (currentQueue.length == 1) {
-      // If this is the first song in the queue, start playback
       play();
     }
   }
-
 
   void clearQueue() {
     queue.value.clear();
